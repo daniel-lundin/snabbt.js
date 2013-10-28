@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title></title>
+  <script src="mat.js"></script>
+  <style>
+    .patch {
+      position: absolute;
+      width: 50px;
+      height: 50px;
+      background: #afa;
+      opacity: 0.8;
+      border-radius: 10px;
+      -webkit-transform-style: preserve-3d;
+    }
+  </style>
+</head>
+<body>
+  <script>
+    var items = 30;
+    var elements = [];
+
+    for(var i=0;i<items;++i) {
+      for(var j=0;j<5;++j) {
+        var rot_x = (j)*Math.PI/8;
+        var transY = j;
+
+        // Create the div
+        var e = document.createElement('div');
+        e.className = 'patch';
+        document.body.appendChild(e);
+
+        // Set up translations
+        var m = ident();
+        //m = rotY(rot_x);
+        m = m.mult(rotY(Math.PI/2));
+        m = m.mult(trans(300, j*40, 0));
+        m = m.mult(rotY(i*(2*Math.PI/items)));
+        m = m.mult(trans(300, j*60, 0));
+        var elem = element(e, m);
+        elements.push(elem);
+        set_css_transform(elem.element, elem.matrix.m);
+      }
+    }
+    
+    var step = 0;
+    function update() {
+      step++;
+      if(step > 360) {
+        step = 0;
+      }
+      var y = rotY(step * (2*Math.PI/360));
+      for(var i in elements) {
+        var e = elements[i];
+        var m = e.matrix;
+        m = m.mult(trans(-300, 0, 0));
+        m = m.mult(y);
+        m = m.mult(trans(300, 0, 0));
+        set_css_transform(e.element, m.m);
+      }
+    }
+
+    setInterval(update, 20);
+  </script>
+</body>
+</html>
