@@ -23,7 +23,11 @@ function mat_to_css(matrix) {
       css += matrix[i][j].toFixed(10) + ",";
     }
   }
-  return 'perspective(3000px) ' + css.substring(0, css.length - 1) + ')';
+  //return  css.substring(0, css.length - 1) + ')';
+  //console.log(css);
+  //return css.substring(0, css.length - 1) + ')';
+  return 'perspective(2000px) ' + css.substring(0, css.length - 1) + ')';
+  //console.log(css.substring(0, css.length - 1) + ') perspective(1000px) ');
 }
 
 
@@ -63,6 +67,15 @@ var trans = function(x, y, z) {
   ]);
 };
 
+var scale = function(x, y, z) {
+  return new Matrix([
+    [x, 0, 0, 0],
+    [0, y, 0, 0],
+    [0, 0, z, 0],
+    [0, 0, 0, 1]
+  ]);
+};
+
 var ident = function() {
   return new Matrix([
     [1, 0, 0, 0],
@@ -83,6 +96,15 @@ var transform = function(mat, next) {
 var set_css_transform = function(el, matrix) {
   el.style.webkitTransform = mat_to_css(matrix);
 };
+
+function get_transform(obj) {
+  var m = ident();
+  m = m.mult(rotX(obj.rotx));
+  m = m.mult(rotY(obj.roty));
+  m = m.mult(rotZ(obj.rotz));
+  m = m.mult(trans(obj.x, obj.y, obj.z));
+  return m;
+}
 
 var element = function(e, matrix) {
   return {

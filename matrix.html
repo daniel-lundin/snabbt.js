@@ -4,24 +4,44 @@
   <meta charset="UTF-8">
   <title></title>
   <script src="mat.js"></script>
+  <script src="ring.js"></script>
   <style>
     .patch {
       position: absolute;
       width: 50px;
       height: 50px;
       background: #afa;
-      opacity: 0.8;
-      border-radius: 10px;
+      opacity: 1.0;
+      //border-radius: 10px;
       -webkit-transform-style: preserve-3d;
     }
   </style>
 </head>
 <body>
   <script>
-    var items = 30;
-    var elements = [];
+    var items = 40;
+    var x = document.body.clientWidth/2;
+    var y = document.body.scrollHeight/2;
+    //var pers_transform = perspective(10000, x, y);
 
-    for(var i=0;i<items;++i) {
+    var rings = [];
+    for(var i=0;i<items;i++) {
+      var ring = new Ring(15, 150, x, y, -200+i*60);
+      //var ring = new Ring(i, (i+1)*15, x, y, -200+i*60);
+      rings.push(ring);
+    }
+
+    function update() {
+      for(var i in rings) {
+        rings[i].z += 5.00;
+        rings[i].rotz += 0.011;
+        if(rings[i].z > 200 + items*60) 
+          rings[i].z = 200.00;
+        rings[i].update_elements();
+      }
+    };
+    setInterval(update, 40);
+    /*for(var i=0;i<items;++i) {
       for(var j=0;j<5;++j) {
         var rot_x = (j)*Math.PI/8;
         var transY = j;
@@ -37,13 +57,33 @@
         m = m.mult(rotY(Math.PI/2));
         m = m.mult(trans(300, j*40, 0));
         m = m.mult(rotY(i*(2*Math.PI/items)));
-        m = m.mult(trans(300, j*60, 0));
+        m = m.mult(trans(300, j*60, 200));
+        m = m.mult(rotX(Math.PI/2));
         var elem = element(e, m);
         elements.push(elem);
         set_css_transform(elem.element, elem.matrix.m);
       }
     }
     
+    var startx = 0;
+    var starty = 0;
+    var currx = 0;
+    var curry = 0;
+    var down = false;
+    document.body.addEventListener('mousemove', function(e) {
+      console.log('mouse move');
+    });
+    document.body.addEventListener('mousedown', function(e) {
+      console.log('mousedown');
+      down = true;
+      startx = e.clientX;
+      starty = e.clientY;
+    });
+    document.body.addEventListener('mouseup', function(e) {
+      down = false;
+      console.log(e);
+      console.log('mouseup');
+    });
     var step = 0;
     function update() {
       step++;
@@ -62,6 +102,8 @@
     }
 
     setInterval(update, 20);
+    */
+
   </script>
 </body>
 </html>
