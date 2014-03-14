@@ -1,60 +1,75 @@
-function Element(e, x, y, z, rotx, roty, rotz) {
+function Element(e, pos, animation_complete) {
   this.e = e;
-  this.x = x;
-  this.y = y;
-  this.z = z;
-  this.rotx = rotx;
-  this.roty = roty;
-  this.rotz = rotz;
+  this.pos = pos;
   this.animation = undefined;
+  this.animation_complete = animation_complete;
 }
 
-Element.prototype.tick = function() {
+Element.prototype.tick = function(time) {
   if(this.animation) {
     if(this.animation.completed()) {
       // If animation is complete, set pos/rot to animation end state
-      this.x = this.animation.x;
-      this.y = this.animation.y;
-      this.z = this.animation.z;
-      this.rotx = this.animation.rotx;
-      this.roty = this.animation.roty;
-      this.rotz = this.animation.rotz;
+      this.pos = this.animation.end_position();
 
-      this.rotx += 2*Math.PI;
-      while(this.rotx >= 2*Math.PI)
-        this.rotx -= 2*Math.PI;
-      this.roty += 2*Math.PI;
-      while(this.roty >= 2*Math.PI)
-        this.roty -= 2*Math.PI;
-      this.rotz += 2*Math.PI;
-      while(this.rotz >= 2*Math.PI)
-        this.rotz -= 2*Math.PI;
+      this.pos.ax += 2*Math.PI;
+      while(this.pos.ax >= 2*Math.PI)
+        this.pos.ax -= 2*Math.PI;
+      this.pos.ay += 2*Math.PI;
+      while(this.pos.ay >= 2*Math.PI)
+        this.pos.ay -= 2*Math.PI;
+      this.pos.az += 2*Math.PI;
+      while(this.pos.az >= 2*Math.PI)
+        this.pos.az -= 2*Math.PI;
+      this.pos.bx += 2*Math.PI;
+      while(this.pos.bx >= 2*Math.PI)
+        this.pos.bx -= 2*Math.PI;
+      this.pos.by += 2*Math.PI;
+      while(this.pos.by >= 2*Math.PI)
+        this.pos.by -= 2*Math.PI;
+      this.pos.bz += 2*Math.PI;
+      while(this.pos.bz >= 2*Math.PI)
+        this.pos.bz -= 2*Math.PI;
 
       this.animation = undefined;
-      var p = get_transform(this);
-      set_css_transform(this.e, p.m);
+      set_css_transform(this.e, this.pos.as_matrix());
+      if(this.animation_complete) {
+        this.animation_complete();
+      }
     } else {
-      this.animation.tick();
-      var t = this.animation.current_transform(this);
-      set_css_transform(this.e, t.m);
+      this.animation.tick(time);
+      set_css_transform(this.e, this.animation.current_transform().as_matrix());
     }
   } else {
-    var r = get_transform(this);
-    set_css_transform(this.e, r.m);
+    set_css_transform(this.e, this.pos.as_matrix());
   }
 };
 
 
-function Position(ax, ay, az, x, y, z, bx, by, bz) {
-  if(typeof(ax) === 'undefined') ax = 0;
-  if(typeof(ay) === 'undefined') ay = 0;
-  if(typeof(az) === 'undefined') az = 0;
-  if(typeof(x) === 'undefined') x = 0;
-  if(typeof(y) === 'undefined') y = 0;
-  if(typeof(z) === 'undefined') z = 0;
-  if(typeof(bx) === 'undefined') bx = 0;
-  if(typeof(by) === 'undefined') by = 0;
-  if(typeof(bz) === 'undefined') bz = 0;
+function Position(config) {
+  this.ax = config.ax || 0;
+  this.ay = config.ay || 0;
+  this.az = config.az || 0;
+  this.x = config.x || 0;
+  this.y = config.y || 0;
+  this.z = config.z || 0;
+  this.bx = config.bx || 0;
+  this.by = config.by || 0;
+  this.bz = config.bz || 0;
+}
+
+Position.prototype.clone = function() {
+  var p = new Position({
+    ax: this.ax,
+    ay: this.ay,
+    az: this.az,
+    x: this.x,
+    y: this.y,
+    z: this.z,
+    bx: this.bx,
+    by: this.by,
+    bz: this.bz
+  });
+  return p;
 }
 
 Position.prototype.as_matrix = function() {
@@ -63,8 +78,8 @@ Position.prototype.as_matrix = function() {
   m = m.mult(rotY(this.ay));
   m = m.mult(rotZ(this.az));
   m = m.mult(trans(this.x, this.y, this.z));
-  m = m.mult(rotX(this.bx));
   m = m.mult(rotY(this.by));
+  m = m.mult(rotX(this.bx));
   m = m.mult(rotZ(this.bz));
-  return m;
+  return m.m;
 }

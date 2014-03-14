@@ -4,32 +4,99 @@ function Matrix(m) {
 
 Matrix.prototype.mult = function(other) {
   var res = [Array(4), Array(4), Array(4), Array(4)];
-  for(var i=0;i<4;++i) {
-    for(var j=0;j<4;++j) {
-      var sum = 0;
-      for(var k=0;k<4;++k) {
-        sum += this.m[i][k] * other.m[k][j];
-      }
-      res[i][j] = sum;
-    }
-  }
+  // Unrolled loop
+  res[0][0] = this.m[0][0] * other.m[0][0] +
+              this.m[0][1] * other.m[1][0] +
+              this.m[0][2] * other.m[2][0] +
+              this.m[0][3] * other.m[3][0];
+  res[0][1] = this.m[0][0] * other.m[0][1] +
+              this.m[0][1] * other.m[1][1] +
+              this.m[0][2] * other.m[2][1] +
+              this.m[0][3] * other.m[3][1];
+  res[0][2] = this.m[0][0] * other.m[0][2] +
+              this.m[0][1] * other.m[1][2] +
+              this.m[0][2] * other.m[2][2] +
+              this.m[0][3] * other.m[3][2];
+  res[0][3] = this.m[0][0] * other.m[0][3] +
+              this.m[0][1] * other.m[1][3] +
+              this.m[0][2] * other.m[2][3] +
+              this.m[0][3] * other.m[3][3];
+
+  res[1][0] = this.m[1][0] * other.m[0][0] +
+              this.m[1][1] * other.m[1][0] +
+              this.m[1][2] * other.m[2][0] +
+              this.m[1][3] * other.m[3][0];
+  res[1][1] = this.m[1][0] * other.m[0][1] +
+              this.m[1][1] * other.m[1][1] +
+              this.m[1][2] * other.m[2][1] +
+              this.m[1][3] * other.m[3][1];
+  res[1][2] = this.m[1][0] * other.m[0][2] +
+              this.m[1][1] * other.m[1][2] +
+              this.m[1][2] * other.m[2][2] +
+              this.m[1][3] * other.m[3][2];
+  res[1][3] = this.m[1][0] * other.m[0][3] +
+              this.m[1][1] * other.m[1][3] +
+              this.m[1][2] * other.m[2][3] +
+              this.m[1][3] * other.m[3][3];
+
+  res[2][0] = this.m[2][0] * other.m[0][0] +
+              this.m[2][1] * other.m[1][0] +
+              this.m[2][2] * other.m[2][0] +
+              this.m[2][3] * other.m[3][0];
+  res[2][1] = this.m[2][0] * other.m[0][1] +
+              this.m[2][1] * other.m[1][1] +
+              this.m[2][2] * other.m[2][1] +
+              this.m[2][3] * other.m[3][1];
+  res[2][2] = this.m[2][0] * other.m[0][2] +
+              this.m[2][1] * other.m[1][2] +
+              this.m[2][2] * other.m[2][2] +
+              this.m[2][3] * other.m[3][2];
+  res[2][3] = this.m[2][0] * other.m[0][3] +
+              this.m[2][1] * other.m[1][3] +
+              this.m[2][2] * other.m[2][3] +
+              this.m[2][3] * other.m[3][3];
+
+  res[3][0] = this.m[3][0] * other.m[0][0] +
+              this.m[3][1] * other.m[1][0] +
+              this.m[3][2] * other.m[2][0] +
+              this.m[3][3] * other.m[3][0];
+  res[3][1] = this.m[3][0] * other.m[0][1] +
+              this.m[3][1] * other.m[1][1] +
+              this.m[3][2] * other.m[2][1] +
+              this.m[3][3] * other.m[3][1];
+  res[3][2] = this.m[3][0] * other.m[0][2] +
+              this.m[3][1] * other.m[1][2] +
+              this.m[3][2] * other.m[2][2] +
+              this.m[3][3] * other.m[3][2];
+  res[3][3] = this.m[3][0] * other.m[0][3] +
+              this.m[3][1] * other.m[1][3] +
+              this.m[3][2] * other.m[2][3] +
+              this.m[3][3] * other.m[3][3];
+
   return new Matrix(res);
 };
 
 function mat_to_css(matrix) {
-  var css = 'matrix3d(';
-  for(var i in matrix) {
-    for(var j in matrix[i]) {
-      css += matrix[i][j].toFixed(10) + ",";
-    }
-  }
-  //return  css.substring(0, css.length - 1) + ')';
-  //console.log(css);
-  //return css.substring(0, css.length - 1) + ')';
-  return 'perspective(2000px) ' + css.substring(0, css.length - 1) + ')';
-  //console.log(css.substring(0, css.length - 1) + ') perspective(1000px) ');
-}
+  var css = 'perspective(1000px) matrix3d(' +
+            matrix[0][0].toFixed(10) + ', ' +
+            matrix[0][1].toFixed(10) + ', ' +
+            matrix[0][2].toFixed(10) + ', ' +
+            matrix[0][3].toFixed(10) + ', ' +
+            matrix[1][0].toFixed(10) + ', ' +
+            matrix[1][1].toFixed(10) + ', ' +
+            matrix[1][2].toFixed(10) + ', ' +
+            matrix[1][3].toFixed(10) + ', ' +
+            matrix[2][0].toFixed(10) + ', ' +
+            matrix[2][1].toFixed(10) + ', ' +
+            matrix[2][2].toFixed(10) + ', ' +
+            matrix[2][3].toFixed(10) + ', ' +
+            matrix[3][0].toFixed(10) + ', ' +
+            matrix[3][1].toFixed(10) + ', ' +
+            matrix[3][2].toFixed(10) + ', ' +
+            matrix[3][3].toFixed(10) + ')';
+  return css;
 
+}
 
 var rotX = function(rad) {
   return new Matrix([
@@ -95,6 +162,7 @@ var transform = function(mat, next) {
 
 var set_css_transform = function(el, matrix) {
   el.style.webkitTransform = mat_to_css(matrix);
+  el.style.transform = mat_to_css(matrix);
 };
 
 function get_transform(obj) {
