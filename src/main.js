@@ -27,7 +27,7 @@ function end_from_opts(options) {
 }
 
 
-function anim(e, options) {
+function snabbt(e, options) {
   var start = start_from_opts(options);
   var end = end_from_opts(options);
 
