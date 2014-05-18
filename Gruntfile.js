@@ -9,7 +9,7 @@ module.exports = function(grunt) {
       },
       build: {
         src: 'src/*.js',
-        dest: 'dist/snabb.min.js'
+        dest: 'dist/snabbt.min.js'
       }
     }
   });

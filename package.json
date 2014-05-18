@@ -1,5 +1,5 @@
 {
-  "name": "snabb.js",
+  "name": "snabbt.js",
   "version": "0.0.0",
   "description": "Move things fast",
   "main": "main.js",
@@ -8,14 +8,10 @@
   },
   "repository": {
     "type": "git",
-    "url": "git://github.com/diggidanne/css-matrix.git"
+    "url": "git@bitbucket.org:diggidanne/snabbt.js.git"
   },
   "author": "",
   "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/diggidanne/css-matrix/issues"
-  },
-  "homepage": "https://github.com/diggidanne/css-matrix",
   "devDependencies": {
     "grunt-contrib-uglify": "^0.4.0"
   }

@@ -1,4 +1,4 @@
-snabb.js
+snabbt.js
 ========
 Arbitrary DOM animations. (WIP)
 
@@ -6,7 +6,7 @@ Arbitrary DOM animations. (WIP)
 Basic usage
 -----------
 
-	anim(e, {
+	snabbt(e, {
 	  start_pos: [0, 0, 0],
 	  end_pos: [10, 10, 10],
 	  start_rot: [0, 0, 0],
@@ -19,7 +19,7 @@ Basic usage
 Chaining animations
 -------------------
 
-    anims([e1, e2, e3], {
+    snabbt(e3, {
 	  start_pos: [0, 0, 0],
 	  end_pos: [10, 10, 10],
 	  start_rot: [0, 0, 0],
