@@ -77,7 +77,7 @@ Matrix.prototype.mult = function(other) {
 };
 
 function mat_to_css(matrix) {
-  var css = 'perspective(1000px) matrix3d(' +
+  var css = 'matrix3d(' +
             matrix[0][0].toFixed(10) + ', ' +
             matrix[0][1].toFixed(10) + ', ' +
             matrix[0][2].toFixed(10) + ', ' +
@@ -165,25 +165,41 @@ var set_css_transform = function(el, matrix) {
   el.style.transform = mat_to_css(matrix);
 };
 
-function get_transform(obj) {
-  var m = ident();
-  m = m.mult(rotX(obj.rotx));
-  m = m.mult(rotY(obj.roty));
-  m = m.mult(rotZ(obj.rotz));
-  m = m.mult(trans(obj.x, obj.y, obj.z));
-  return m;
+function Position(config) {
+  this.ax = config.ax || 0;
+  this.ay = config.ay || 0;
+  this.az = config.az || 0;
+  this.x = config.x || 0;
+  this.y = config.y || 0;
+  this.z = config.z || 0;
+  this.bx = config.bx || 0;
+  this.by = config.by || 0;
+  this.bz = config.bz || 0;
 }
 
-var element = function(e, matrix) {
-  return {
-    element: e,
-    matrix: matrix
-  };
-};
+Position.prototype.clone = function() {
+  var p = new Position({
+    ax: this.ax,
+    ay: this.ay,
+    az: this.az,
+    x: this.x,
+    y: this.y,
+    z: this.z,
+    bx: this.bx,
+    by: this.by,
+    bz: this.bz
+  });
+  return p;
+}
 
-var group = function(elems, matrix) {
-  return {
-    elems: elems,
-    matrix: matrix
-  };
+Position.prototype.as_matrix = function() {
+  var m = ident();
+  m = m.mult(rotX(this.ax));
+  m = m.mult(rotY(this.ay));
+  m = m.mult(rotZ(this.az));
+  m = m.mult(trans(this.x, this.y, this.z));
+  m = m.mult(rotY(this.by));
+  m = m.mult(rotX(this.bx));
+  m = m.mult(rotZ(this.bz));
+  return m.m;
 }

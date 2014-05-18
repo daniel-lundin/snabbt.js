@@ -1,0 +1,22 @@
+{
+  "name": "snabb.js",
+  "version": "0.0.0",
+  "description": "Move things fast",
+  "main": "main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/diggidanne/css-matrix.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/diggidanne/css-matrix/issues"
+  },
+  "homepage": "https://github.com/diggidanne/css-matrix",
+  "devDependencies": {
+    "grunt-contrib-uglify": "^0.4.0"
+  }
+}

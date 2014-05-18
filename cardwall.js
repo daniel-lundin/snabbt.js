@@ -95,15 +95,16 @@ CardWall.prototype.cube_formation = function() {
           y: 40 -((rows+1)/2)*width + Math.floor(j/self.elems_per_row) * width,
           z: -100,
           az: Math.PI,
-          ax: 2*Math.PI
+          ax: 2*Math.PI,
+          //bz: Math.PI/4
         });
         self.elems[j].animation = new Animation({
           start_pos: start,
           end_pos: to_pos,
           stepper: self.stepper,
-          duration: 1000
+          duration: 900
           });
-      }, j*100);
+      }, j*50);
     })(i);
 
   }
