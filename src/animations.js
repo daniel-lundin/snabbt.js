@@ -1,49 +1,9 @@
-// Steppers
-function pow2_stepper(curr, max) {
-  return Math.pow(curr/max, 0.5);
-}
-
-function linear_stepper(curr, max) {
-  return curr/max;
-}
-
-function cos_stepper(curr, max) {
-  return (Math.cos((curr/max)*Math.PI + Math.PI) + 1)/2;
-}
-
-function create_cubic_bezier_stepper(p1, p2, p3, p4) {
-  return function(curr, max) {
-    var t = curr/max;
-    return Math.pow(1-t, 3)*p1 + 3*Math.pow(1-t, 2)*t*p2 + 3*(1-t)*Math.pow(t, 2)*p3 + Math.pow(t, 3)*p4;
-  }
-}
-
-function cubic_stepper(curr, max) {
-  var t = curr/max;
-  return (Math.pow(2*t - 1, 3)+1)/2;
-}
-
-function cos_wooble_stepper(curr, max) {
-  var t = curr/max;
-  return t*Math.cos(4*Math.PI*t);
-}
-
-function atan_stepper(curr, max) {
-  var t = curr/max;
-  return (Math.atan(Math.PI*t - Math.PI/2) + 1)/2;
-}
-
-function sinc_wobbler_stepper(curr, max) {
-  var t = curr/max;
-  var k = 5;
-  return (-Math.sin(k*Math.PI*t)/(k*t) + Math.PI)/Math.PI;
-}
 
 function Animation(options) {
   this.start_pos = options.start_pos || new Position({});
   this.end_pos = options.end_pos || new Position({});
   this.duration = options.duration || 500;
-  this.stepper = options.stepper || linear_stepper;
+  this.easing = options.easing || linear_easing;
   this.transition = options.transition || closest;
 
   this.start_time = 0;
@@ -62,7 +22,7 @@ Animation.prototype.current_transform = function() {
   var curr = Math.min(Math.max(0.001, this.current_time - this.start_time), this.duration);
   var max = this.duration;
   var q = curr/max;
-  return this.transition(this.start_pos, this.end_pos, curr, max, this.stepper);
+  return this.transition(this.start_pos, this.end_pos, curr, max, this.easing);
 };
 
 Animation.prototype.completed = function() {
@@ -80,7 +40,7 @@ Animation.prototype.end_position = function() {
 
 
 // Transitions
-function closest(start_pos, end_pos, step, steps, stepper) {
+function closest(start_pos, end_pos, step, steps, easing) {
   var x = (end_pos.x - start_pos.x);
   var y = (end_pos.y - start_pos.y);
   var z = (end_pos.z - start_pos.z);
@@ -99,7 +59,7 @@ function closest(start_pos, end_pos, step, steps, stepper) {
   if(by <= -Math.PI)
     by += 2*Math.PI;
 
-  var s = this.stepper(step, steps);
+  var s = this.easing(step, steps);
   var p = new Position({
     ax: start_pos.ax + s*ax,
     ay: start_pos.ay + s*ay,
@@ -114,7 +74,7 @@ function closest(start_pos, end_pos, step, steps, stepper) {
   return p;
 }
 
-function back_and_forth(start, end, step, steps, stepper) {
+function back_and_forth(start, end, step, steps, easing) {
   var x = (end.x - start.x);
   var y = (end.y - start.y);
   var z = (end.z - start.z);
@@ -125,7 +85,7 @@ function back_and_forth(start, end, step, steps, stepper) {
   var by = (end.by - start.by);
   var bz = (end.bz - start.bz);
 
-  var s = this.stepper(this.step, this.steps);
+  var s = this.easing(this.step, this.steps);
 
   if(s > 0.5)
     s = 1 - s;

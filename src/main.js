@@ -35,8 +35,10 @@ function anim(e, options) {
     start_pos: start,
     end_pos: end,
     duration: options.duration || 1000,
-    stepper: atan_stepper
   });
+  if(options.easing) {
+    animation.easing = EASING_FUNCS[options.easing];
+  }
 
   var queue = [];
   var chainer = {
@@ -59,9 +61,11 @@ function anim(e, options) {
         animation = new Animation({
           start_pos: next_start,
           end_pos: next_end,
-          stepper: atan_stepper,
           duration: next_opts.duration || 1000
         });
+        if(next_opts.easing) {
+          animation.easing = EASING_FUNCS[next_opts.easing];
+        }
         window.requestAnimationFrame(tick);
       }
     } else {

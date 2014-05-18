@@ -25,15 +25,23 @@ Chaining animations
 	  start_rot: [0, 0, 0],
 	  end_rot: [0, 0, 0],
 	  duration: 100,
-	  easing: 'linear'
 	}).then({
 	  start_pos: [0, 0, 0],
 	  end_pos: [10, 10, 10],
 	  start_rot: [0, 0, 0],
 	  end_rot: [0, 0, 0],
 	  duration: 100,
-	  easing: 'linear'
 	});
+
+Chaining animations
+-------------------
+The following easing function are present:
+
+ - 'linear'
+ - 'cubic'
+ - 'atan'
+ - 'cos'
+ - 'sinc_wobbler'
 
 Under the hood
 --------------
