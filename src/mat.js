@@ -161,8 +161,15 @@ var transform = function(mat, next) {
 };
 
 var set_css_transform = function(el, matrix) {
-  el.style.webkitTransform = mat_to_css(matrix);
-  el.style.transform = mat_to_css(matrix);
+  if(el instanceof Array) {
+    for(var i=0;i<el.length;++i) {
+      el[i].style.webkitTransform = mat_to_css(matrix);
+      el[i].style.transform = mat_to_css(matrix);
+    }
+  } else {
+    el.style.webkitTransform = mat_to_css(matrix);
+    el.style.transform = mat_to_css(matrix);
+  }
 };
 
 function Position(config) {

@@ -3,6 +3,7 @@ function Animation(options) {
   this.start_pos = options.start_pos || new Position({});
   this.end_pos = options.end_pos || new Position({});
   this.duration = options.duration || 500;
+  this.delay = options.delay || 0;
   this.easing = options.easing || linear_easing;
   this.transition = options.transition || closest;
 
@@ -15,7 +16,8 @@ Animation.prototype.tick = function(time) {
   if(!this.start_time) {
     this.start_time = time;
   }
-  this.current_time = time;
+  if(time - this.start_time > this.delay)
+    this.current_time = time - this.delay;
 };
 
 Animation.prototype.current_transform = function() {
@@ -30,7 +32,6 @@ Animation.prototype.completed = function() {
     return false;
   }
   return this.current_time - this.start_time > this.duration;
-  //return this.step >= this.steps;
 };
 
 Animation.prototype.end_position = function() {
@@ -50,14 +51,6 @@ function closest(start_pos, end_pos, step, steps, easing) {
   var bx = (end_pos.bx - start_pos.bx);
   var by = (end_pos.by - start_pos.by);
   var bz = (end_pos.bz - start_pos.bz);
-  if(ay >= Math.PI)
-    ay -= 2*Math.PI;
-  if(ay < -Math.PI)
-    ay += 2*Math.PI;
-  if(by >= Math.PI)
-    by -= 2*Math.PI;
-  if(by <= -Math.PI)
-    by += 2*Math.PI;
 
   var s = this.easing(step, steps);
   var p = new Position({
@@ -70,35 +63,6 @@ function closest(start_pos, end_pos, step, steps, easing) {
     bx: start_pos.bx + s*bx,
     by: start_pos.by + s*by,
     bz: start_pos.bz + s*bz,
-  });
-  return p;
-}
-
-function back_and_forth(start, end, step, steps, easing) {
-  var x = (end.x - start.x);
-  var y = (end.y - start.y);
-  var z = (end.z - start.z);
-  var ax = (end.ax - start.ax);
-  var ay = (end.ay - start.ay);
-  var az = (end.az - start.az);
-  var bx = (end.bx - start.bx);
-  var by = (end.by - start.by);
-  var bz = (end.bz - start.bz);
-
-  var s = this.easing(this.step, this.steps);
-
-  if(s > 0.5)
-    s = 1 - s;
-  var p = new Position({
-    ax: start.ax + s*ax,
-    ay: start.ay + s*ay,
-    az: start.az + s*az,
-    x: start.x + s*x,
-    y: start.y + s*y,
-    z: start.z + s*z,
-    bx: start.bx + s*bx,
-    by: start.by + s*by,
-    bz: start.bz + s*bz,
   });
   return p;
 }

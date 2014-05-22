@@ -1,44 +1,56 @@
-function start_from_opts(options) {
-  var p = new Position({
-    x: options.start_pos[0],
-    y: options.start_pos[1],
-    z: options.start_pos[2],
-  });
-  if(options.start_rot) {
-    p.ax = options.start_rot[0];
-    p.ay = options.start_rot[1];
-    p.az = options.start_rot[2];
-  }
-  return p;
+var tick_requests = [];
+
+function requestAnimFrame(func) {
+  tick_requests.push(func);
 }
 
-function end_from_opts(options) {
-  var p = new Position({
-    x: options.end_pos[0],
-    y: options.end_pos[1],
-    z: options.end_pos[2],
-  });
-  if(options.end_rot) {
-    p.ax =  options.end_rot[0];
-    p.ay =  options.end_rot[1];
-    p.az =  options.end_rot[2];
+function master_tick(time) {
+  var length = tick_requests.length;
+  for(var i=0;i<length;++i) {
+    tick_requests[i](time);
+  }
+  tick_requests.splice(0, length);
+  window.requestAnimationFrame(master_tick);
+}
+window.requestAnimationFrame(master_tick);
+
+function pos_from_options(p, options, prefix) {
+
+  if(options[prefix + '_pos']) {
+    p.x = options[prefix + '_pos'][0];
+    p.y = options[prefix + '_pos'][1];
+    p.z = options[prefix + '_pos'][2];
+  }
+  if(options[prefix + '_rot']) {
+    p.ax =  options[prefix + '_rot'][0];
+    p.ay =  options[prefix + '_rot'][1];
+    p.az =  options[prefix + '_rot'][2];
+  }
+  if(options[prefix + '_rot_post']) {
+    p.bx =  options[prefix + '_rot_post'][0];
+    p.by =  options[prefix + '_rot_post'][1];
+    p.bz =  options[prefix + '_rot_post'][2];
   }
   return p;
 }
 
 
 function snabbt(e, options) {
-  var start = start_from_opts(options);
-  var end = end_from_opts(options);
+  var start = new Position({});
+  start = pos_from_options(start, options, 'start');
+  var end = new Position({});
+  end = pos_from_options(end, options, 'end');
 
-  var animation = new Animation({
+  var anim_options = {
     start_pos: start,
     end_pos: end,
     duration: options.duration || 1000,
-  });
+    delay: options.delay || 0,
+  };
   if(options.easing) {
-    animation.easing = EASING_FUNCS[options.easing];
+    anim_options.easing = EASING_FUNCS[options.easing];
   }
+  var animation = new Animation(anim_options);
 
   var queue = [];
   var chainer = {
@@ -54,26 +66,41 @@ function snabbt(e, options) {
     set_css_transform(e, current_transform.as_matrix());
 
     if(animation.completed()) {
-      if(queue.length) {
-        var next_opts = queue.pop();
-        var next_start = start_from_opts(next_opts);
-        var next_end = end_from_opts(next_opts);
-        animation = new Animation({
-          start_pos: next_start,
-          end_pos: next_end,
-          duration: next_opts.duration || 1000
-        });
-        if(next_opts.easing) {
-          animation.easing = EASING_FUNCS[next_opts.easing];
+      var end_transform = animation.end_position();
+      set_css_transform(e, end_transform.as_matrix());
+
+      if(options.loop > 1) {
+        options.loop -= 1;
+        animation = new Animation(anim_options);
+        requestAnimFrame(tick);
+      } else {
+        if(options.callback) {
+          options.callback();
         }
-        window.requestAnimationFrame(tick);
+        if(queue.length) {
+          options = queue.pop();
+
+
+          start = pos_from_options(end, options, 'start');
+          end = pos_from_options(new Position({}), options, 'end');
+          animation = new Animation({
+            start_pos: start,
+            end_pos: end,
+            duration: options.duration || 1000,
+            delay: options.delay || 0,
+          });
+          if(options.easing)
+            animation.easing = EASING_FUNCS[options.easing];
+          //window.requestAnimationFrame(tick);
+          requestAnimFrame(tick);
+        }
       }
     } else {
-      window.requestAnimationFrame(tick);
+      requestAnimFrame(tick);
     }
   }
 
-  window.requestAnimationFrame(tick);
+  requestAnimFrame(tick);
 
   return chainer;
 }
