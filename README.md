@@ -1,6 +1,7 @@
 snabbt.js
 ========
 Arbitrary DOM animations. (WIP)
+[Demo](http://diggidanne.github.io/snabbt.js/)
 
 
 Basic usage
