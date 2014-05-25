@@ -16,20 +16,20 @@ window.requestAnimationFrame(master_tick);
 
 function pos_from_options(p, options, prefix) {
 
-  if(options[prefix + '_pos']) {
-    p.x = options[prefix + '_pos'][0];
-    p.y = options[prefix + '_pos'][1];
-    p.z = options[prefix + '_pos'][2];
+  if(options[prefix + 'pos']) {
+    p.x = options[prefix + 'pos'][0];
+    p.y = options[prefix + 'pos'][1];
+    p.z = options[prefix + 'pos'][2];
   }
-  if(options[prefix + '_rot']) {
-    p.ax =  options[prefix + '_rot'][0];
-    p.ay =  options[prefix + '_rot'][1];
-    p.az =  options[prefix + '_rot'][2];
+  if(options[prefix + 'rot']) {
+    p.ax =  options[prefix + 'rot'][0];
+    p.ay =  options[prefix + 'rot'][1];
+    p.az =  options[prefix + 'rot'][2];
   }
-  if(options[prefix + '_rot_post']) {
-    p.bx =  options[prefix + '_rot_post'][0];
-    p.by =  options[prefix + '_rot_post'][1];
-    p.bz =  options[prefix + '_rot_post'][2];
+  if(options[prefix + 'rot_post']) {
+    p.bx =  options[prefix + 'rot_post'][0];
+    p.by =  options[prefix + 'rot_post'][1];
+    p.bz =  options[prefix + 'rot_post'][2];
   }
   return p;
 }
@@ -37,9 +37,10 @@ function pos_from_options(p, options, prefix) {
 
 function snabbt(e, options) {
   var start = new Position({});
-  start = pos_from_options(start, options, 'start');
+  start = pos_from_options(start, options, 'from_');
   var end = new Position({});
-  end = pos_from_options(end, options, 'end');
+  end = pos_from_options(end, options, '');
+  console.log(end);
 
   var anim_options = {
     start_pos: start,
@@ -82,8 +83,8 @@ function snabbt(e, options) {
           options = queue.pop();
 
 
-          start = pos_from_options(end, options, 'start');
-          end = pos_from_options(new Position({}), options, 'end');
+          start = pos_from_options(end, options, 'from_');
+          end = pos_from_options(new Position({}), options, '');
           animation = new Animation({
             start_pos: start,
             end_pos: end,

@@ -7,12 +7,10 @@ Basic usage
 -----------
 
 	snabbt(e, {
-	  start_pos: [0, 0, 0],
-	  end_pos: [10, 10, 10],
-	  start_rot: [0, 0, 0],
-	  end_rot: [0, 0, 0],
-	  duration: 100,
-	  easing: 'linear'
+	  pos: [100, 0, 0],
+	  from_rot: [Math.PI, 0, 0],
+	  rot: [2*Math.PI, 0, 0],
+	  duration: 700,
 	});
 
 
@@ -20,18 +18,17 @@ Chaining animations
 -------------------
 
     snabbt(e, {
-	  start_pos: [0, 0, 0],
-	  end_pos: [10, 10, 10],
+	  pos: [100, 0, 0],
 	  duration: 200,
 	  easing: 'cos',
 	}).then({
-	  start_pos: [0, 0, 0],
-	  end_rot: [0, 0, 0],
-	  duration: 100,
+	  pos: [100, 100, 0],
+	  rot: [0, 0, 0],
+	  duration: 1000,
 	});
 
-Chaining animations
--------------------
+Easing functions
+----------------
 The following easing function are present:
 
  - 'linear'
@@ -39,6 +36,11 @@ The following easing function are present:
  - 'atan'
  - 'cos'
  - 'sinc_wobbler'
+
+
+Options
+-------
+T.B.D
 
 Under the hood
 --------------
