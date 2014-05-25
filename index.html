@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title></title>
+  <script src="dist/snabbt.min.js"></script>
+  <style>
+    @font-face {
+      font-family: 'Fira Sans';
+      src: url('FiraSans-Thin.otf') format('opentype');
+    }
+    body {
+      background: #933;
+      font-family: 'Fira Sans';
+      font-size: 4em;
+      font-weight: 200;
+      text-align: center;
+    }
+
+    #container {
+      position: absolute;
+      -webkit-perspective: 2000px;
+      -moz-perspective: 2000px;
+    }
+    .patch {
+      position: absolute;
+      width: 70px;
+      height: 90px;
+      background: #ddd;
+      -webkit-transform-style: preserve-3d;
+    }
+    #banner {
+      background: #ddd;
+      width: 600px;
+      height: 90px;
+      -webkit-backface-visibility: hidden;
+      -webkit-transform: rotateY(190deg);
+      -webkit-transform-style: preserve-3d;
+      -moz-backface-visibility: hidden;
+      -moz-transform: rotateY(190deg);
+      -moz-transform-style: preserve-3d;
+    }
+    #again {
+      visibility: hidden;
+      position: absolute;
+      top: 200px;
+      background: #ddd;
+      width: 400px;
+      height: 90px;
+      -webkit-transform-style: preserve-3d;
+    }
+  </style>
+</head>
+<body>
+  <a href="https://github.com/diggidanne/snabbt.js"><img id="ribbon" style="visibility: hidden; position: absolute; top: 0; right: 0; border: 0;" src="https://camo.githubusercontent.com/38ef81f8aca64bb9a64448d0d70f1308ef5341ab/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f6461726b626c75655f3132313632312e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png"></a>
+  <div id="container">
+    <div id="a" class="patch">s</div>
+    <div id="b" class="patch">n</div>
+    <div id="c" class="patch">a</div>
+    <div id="d" class="patch">b</div>
+    <div id="e" class="patch">b</div>
+    <div id="f" class="patch">t</div>
+    <div id="dot" class="patch">.</div>
+    <div id="j" class="patch">j</div>
+    <div id="s" class="patch">s</div>
+    <div id="banner">move things fast</div>
+    <div id="again"><a href="#">do it again!</a><div>
+  </div>
+  <script>
+    function flip_flip() {
+      var c = document.getElementById('container');
+
+      var e = document.getElementById('again');
+      snabbt(e, {
+        from_pos: [200,0,0],
+        pos: [200,0,0],
+        offset: [-800, 0,0],
+        start_rot_post: [0, -Math.PI, 0],
+        end_rot_post: [0, 0, 0],
+        duration: 500
+      }).then({
+        from_pos: [-200, 0,0],
+        pos: [-200, 0,0],
+        offset: [-400, 0,0],
+        start_rot_post: [0, 0, 0],
+        end_rot_post: [0, Math.PI, 0],
+        duration: 500
+      }).then({
+        from_pos: [200, 0,0],
+        pos: [200, 0,0],
+        offset: [00, 0,0],
+        start_rot_post: [0, -Math.PI, 0],
+        end_rot_post: [0, 0, 0],
+        duration: 500
+      });
+    }
+    //flip_flip();
+    function ribbon_twist() {
+      var r = document.getElementById('ribbon');
+      
+      var w = window.innerWidth;
+      snabbt(r, {
+        from_pos: [-w, 0, 0],
+        pos: [-w, 0, 0],
+        callback: function() { r.style.visibility = 'visible'; },
+        duration: 1,
+      }).then({
+        from_pos: [-w, 0, 0],
+        pos: [0, 0, 0],
+        rot: [2*Math.PI, 0, 0],
+        easing: 'cos'
+      });
+    }
+
+    (function() {
+      var c = document.getElementById('container');
+      c.style.left = window.innerWidth/2 + 'px';
+      c.style.top = '200px';
+
+      var a = document.getElementById('a');
+      var b = document.getElementById('b');
+      var c = document.getElementById('c');
+      var d = document.getElementById('d');
+      var e = document.getElementById('e');
+      var f = document.getElementById('f');
+      var dot = document.getElementById('dot');
+      var j = document.getElementById('j');
+      var s = document.getElementById('s');
+      var elems = [a, b, c, d, e, f, dot, j, s];
+
+      var finish_calls = 0;
+      function finished() {
+        finish_calls++;
+        if(finish_calls < elems.length )
+          return;
+        var banner = document.getElementById('banner');
+        snabbt(banner, {
+          from_pos: [-300, 100, -10],
+          pos: [-300, 100, -10],
+          rot: [0, 0, 0],
+          from_rot_post: [0.02 + Math.PI/2, 0, 0],
+          rot_post: [0, 0, 0],
+          duration: 1000,
+          easing: 'sinc_wobbler',
+          callback: ribbon_twist
+        });
+      }
+
+      var letters_width = elems.length*70 + (elems.length-1) * 10;
+      var letter_start = -letters_width/2;
+      var letter_width = 80;
+      for(var i=0;i<elems.length;++i) {
+        snabbt(elems[i], {
+          pos: [letters_width/2 - letter_width*i - letter_width + 10, 200, 0],
+          easing: 'atan',
+          from_rot: [0, 0, -2*Math.PI],
+          //easing: 'cos',
+          delay: i * 200,
+          duration: 200,
+        }).then({
+          pos: [letter_start + letter_width*i, -100, 0],
+          rot_post: [Math.PI, 0, 0],
+          easing: 'cos',
+          delay: (elems.length - 1)*200,
+          duration: 500
+        }).then({
+          pos: [letter_start + letter_width*i, 0, 0],
+          rot_post: [2*Math.PI, 0, 0],
+          callback: finished,
+          delay: 1400,
+          duration: 500
+        });
+      }
+  })();
+  </script>
+</body>
+</html>
+
