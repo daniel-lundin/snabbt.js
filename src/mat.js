@@ -1,8 +1,10 @@
-function Matrix(m) {
-  this.m = m;
-}
+var snabbtjs = snabbtjs || {};
 
-Matrix.prototype.mult = function(other) {
+snabbtjs.Matrix = function(m) {
+  this.m = m;
+};
+
+snabbtjs.Matrix.prototype.mult = function(other) {
   var res = [Array(4), Array(4), Array(4), Array(4)];
   // Unrolled loop
   res[0][0] = this.m[0][0] * other.m[0][0] +
@@ -73,10 +75,10 @@ Matrix.prototype.mult = function(other) {
               this.m[3][2] * other.m[2][3] +
               this.m[3][3] * other.m[3][3];
 
-  return new Matrix(res);
+  return new snabbtjs.Matrix(res);
 };
 
-function mat_to_css(matrix) {
+snabbtjs.mat_to_css = function(matrix) {
   var css = 'matrix3d(' +
             matrix[0][0].toFixed(10) + ', ' +
             matrix[0][1].toFixed(10) + ', ' +
@@ -95,11 +97,10 @@ function mat_to_css(matrix) {
             matrix[3][2].toFixed(10) + ', ' +
             matrix[3][3].toFixed(10) + ')';
   return css;
+};
 
-}
-
-var rotX = function(rad) {
-  return new Matrix([
+snabbtjs.rotX = function(rad) {
+  return new snabbtjs.Matrix([
     [1, 0, 0, 0],
     [0, Math.cos(rad), -Math.sin(rad), 0],
     [0, Math.sin(rad), Math.cos(rad), 0],
@@ -107,8 +108,8 @@ var rotX = function(rad) {
   ]);
 };
 
-var rotY = function(rad) {
-  return new Matrix([
+snabbtjs.rotY = function(rad) {
+  return new snabbtjs.Matrix([
     [Math.cos(rad), 0, Math.sin(rad), 0],
     [0, 1, 0, 0],
     [-Math.sin(rad), 0, Math.cos(rad), 0],
@@ -116,8 +117,8 @@ var rotY = function(rad) {
   ]);
 };
 
-var rotZ = function(rad) {
-  return new Matrix([
+snabbtjs.rotZ = function(rad) {
+  return new snabbtjs.Matrix([
     [Math.cos(rad), -Math.sin(rad), 0, 0],
     [Math.sin(rad), Math.cos(rad), 0, 0],
     [0, 0, 1, 0],
@@ -125,8 +126,8 @@ var rotZ = function(rad) {
   ]);
 };
 
-var trans = function(x, y, z) {
-  return new Matrix([
+snabbtjs.trans = function(x, y, z) {
+  return new snabbtjs.Matrix([
     [1, 0, 0, 0],
     [0, 1, 0, 0],
     [0, 0, 1, 0],
@@ -134,8 +135,8 @@ var trans = function(x, y, z) {
   ]);
 };
 
-var scale = function(x, y, z) {
-  return new Matrix([
+snabbtjs.scale = function(x, y, z) {
+  return new snabbtjs.Matrix([
     [x, 0, 0, 0],
     [0, y, 0, 0],
     [0, 0, z, 0],
@@ -143,8 +144,8 @@ var scale = function(x, y, z) {
   ]);
 };
 
-var ident = function() {
-  return new Matrix([
+snabbtjs.ident = function() {
+  return new snabbtjs.Matrix([
     [1, 0, 0, 0],
     [0, 1, 0, 0],
     [0, 0, 1, 0],
@@ -152,27 +153,20 @@ var ident = function() {
   ]);
 };
 
-var transform = function(mat, next) {
-  return function() {
-    if(!next)
-      return mat;
-    return mmult(mat, next());
-  };
-};
 
-var set_css_transform = function(el, matrix) {
+snabbtjs.set_css_transform = function(el, matrix) {
   if(el instanceof Array) {
     for(var i=0;i<el.length;++i) {
       el[i].style.webkitTransform = mat_to_css(matrix);
       el[i].style.transform = mat_to_css(matrix);
     }
   } else {
-    el.style.webkitTransform = mat_to_css(matrix);
-    el.style.transform = mat_to_css(matrix);
+    el.style.webkitTransform = snabbtjs.mat_to_css(matrix);
+    el.style.transform = snabbtjs.mat_to_css(matrix);
   }
 };
 
-function Position(config) {
+snabbtjs.Position = function(config) {
   this.ax = config.ax || 0;
   this.ay = config.ay || 0;
   this.az = config.az || 0;
@@ -185,10 +179,10 @@ function Position(config) {
   this.offset_x = config.offset_x || 0;
   this.offset_y = config.offset_y || 0;
   this.offset_z = config.offset_z || 0;
-}
+};
 
-Position.prototype.clone = function() {
-  var p = new Position({
+snabbtjs.Position.prototype.clone = function() {
+  var p = new snabbtjs.Position({
     ax: this.ax,
     ay: this.ay,
     az: this.az,
@@ -202,15 +196,15 @@ Position.prototype.clone = function() {
   return p;
 };
 
-Position.prototype.as_matrix = function() {
-  var m = ident();
-  m = m.mult(rotX(this.ax));
-  m = m.mult(rotY(this.ay));
-  m = m.mult(rotZ(this.az));
-  m = m.mult(trans(this.x, this.y, this.z));
-  m = m.mult(rotY(this.by));
-  m = m.mult(rotX(this.bx));
-  m = m.mult(rotZ(this.bz));
-  m = m.mult(trans(this.offset_x, this.offset_y, this.offset_z));
+snabbtjs.Position.prototype.as_matrix = function() {
+  var m = snabbtjs.ident();
+  m = m.mult(snabbtjs.rotX(this.ax));
+  m = m.mult(snabbtjs.rotY(this.ay));
+  m = m.mult(snabbtjs.rotZ(this.az));
+  m = m.mult(snabbtjs.trans(this.x, this.y, this.z));
+  m = m.mult(snabbtjs.rotY(this.by));
+  m = m.mult(snabbtjs.rotX(this.bx));
+  m = m.mult(snabbtjs.rotZ(this.bz));
+  m = m.mult(snabbtjs.trans(this.offset_x, this.offset_y, this.offset_z));
   return m.m;
-}
+};

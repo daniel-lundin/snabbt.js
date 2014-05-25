@@ -36,11 +36,10 @@ function pos_from_options(p, options, prefix) {
 
 
 function snabbt(e, options) {
-  var start = new Position({});
+  var start = new snabbtjs.Position({});
   start = pos_from_options(start, options, 'from_');
-  var end = new Position({});
+  var end = new snabbtjs.Position({});
   end = pos_from_options(end, options, '');
-  console.log(end);
 
   var anim_options = {
     start_pos: start,
@@ -50,9 +49,9 @@ function snabbt(e, options) {
     offset: options.offset
   };
   if(options.easing) {
-    anim_options.easing = EASING_FUNCS[options.easing];
+    anim_options.easing = snabbtjs.EASING_FUNCS[options.easing];
   }
-  var animation = new Animation(anim_options);
+  var animation = new snabbtjs.Animation(anim_options);
 
   var queue = [];
   var chainer = {
@@ -65,15 +64,15 @@ function snabbt(e, options) {
   function tick(time) {
     animation.tick(time);
     var current_transform = animation.current_transform();
-    set_css_transform(e, current_transform.as_matrix());
+    snabbtjs.set_css_transform(e, current_transform.as_matrix());
 
     if(animation.completed()) {
       var end_transform = animation.end_position();
-      set_css_transform(e, end_transform.as_matrix());
+      snabbtjs.set_css_transform(e, end_transform.as_matrix());
 
       if(options.loop > 1) {
         options.loop -= 1;
-        animation = new Animation(anim_options);
+        animation = new snabbtjs.Animation(anim_options);
         requestAnimFrame(tick);
       } else {
         if(options.callback) {
@@ -82,10 +81,9 @@ function snabbt(e, options) {
         if(queue.length) {
           options = queue.pop();
 
-
           start = pos_from_options(end, options, 'from_');
-          end = pos_from_options(new Position({}), options, '');
-          animation = new Animation({
+          end = pos_from_options(new snabbtjs.Position({}), options, '');
+          animation = new snabbtjs.Animation({
             start_pos: start,
             end_pos: end,
             duration: options.duration || 1000,
@@ -93,7 +91,7 @@ function snabbt(e, options) {
             offset: options.offset
           });
           if(options.easing)
-            animation.easing = EASING_FUNCS[options.easing];
+            animation.easing = snabbtjs.EASING_FUNCS[options.easing];
           //window.requestAnimationFrame(tick);
           requestAnimFrame(tick);
         }
@@ -104,7 +102,6 @@ function snabbt(e, options) {
   }
 
   requestAnimFrame(tick);
-
   return chainer;
 }
 
