@@ -2,6 +2,7 @@
 function Animation(options) {
   this.start_pos = options.start_pos || new Position({});
   this.end_pos = options.end_pos || new Position({});
+  this.offset = options.offset;
   this.duration = options.duration || 500;
   this.delay = options.delay || 0;
   this.easing = options.easing || linear_easing;
@@ -24,7 +25,13 @@ Animation.prototype.current_transform = function() {
   var curr = Math.min(Math.max(0.001, this.current_time - this.start_time), this.duration);
   var max = this.duration;
   var q = curr/max;
-  return this.transition(this.start_pos, this.end_pos, curr, max, this.easing);
+  var t = this.transition(this.start_pos, this.end_pos, curr, max, this.easing);
+  if(this.offset) {
+    t.offset_x += this.offset[0];
+    t.offset_y += this.offset[1];
+    t.offset_z += this.offset[2];
+  }
+  return t;
 };
 
 Animation.prototype.completed = function() {
@@ -36,7 +43,13 @@ Animation.prototype.completed = function() {
 
 Animation.prototype.end_position = function() {
   //return this.current_transform();
-  return this.end_pos;
+  var end = this.end_pos;
+  if(this.offset) {
+    end.offset_x += this.offset[0];
+    end.offset_y += this.offset[1];
+    end.offset_z += this.offset[2];
+  }
+  return end;
 };
 
 

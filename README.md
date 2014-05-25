@@ -19,16 +19,13 @@ Basic usage
 Chaining animations
 -------------------
 
-    snabbt(e3, {
+    snabbt(e, {
 	  start_pos: [0, 0, 0],
 	  end_pos: [10, 10, 10],
-	  start_rot: [0, 0, 0],
-	  end_rot: [0, 0, 0],
-	  duration: 100,
+	  duration: 200,
+	  easing: 'cos',
 	}).then({
 	  start_pos: [0, 0, 0],
-	  end_pos: [10, 10, 10],
-	  start_rot: [0, 0, 0],
 	  end_rot: [0, 0, 0],
 	  duration: 100,
 	});
@@ -45,4 +42,4 @@ The following easing function are present:
 
 Under the hood
 --------------
-Makes use of CSS 3D-transforms and requestAnimationFrame so performance seems to be decent.
+matrix3d and requestAnimationFrame so performance seems to be decent.

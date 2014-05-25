@@ -46,6 +46,7 @@ function snabbt(e, options) {
     end_pos: end,
     duration: options.duration || 1000,
     delay: options.delay || 0,
+    offset: options.offset
   };
   if(options.easing) {
     anim_options.easing = EASING_FUNCS[options.easing];
@@ -88,6 +89,7 @@ function snabbt(e, options) {
             end_pos: end,
             duration: options.duration || 1000,
             delay: options.delay || 0,
+            offset: options.offset
           });
           if(options.easing)
             animation.easing = EASING_FUNCS[options.easing];

@@ -182,6 +182,9 @@ function Position(config) {
   this.bx = config.bx || 0;
   this.by = config.by || 0;
   this.bz = config.bz || 0;
+  this.offset_x = config.offset_x || 0;
+  this.offset_y = config.offset_y || 0;
+  this.offset_z = config.offset_z || 0;
 }
 
 Position.prototype.clone = function() {
@@ -197,7 +200,7 @@ Position.prototype.clone = function() {
     bz: this.bz
   });
   return p;
-}
+};
 
 Position.prototype.as_matrix = function() {
   var m = ident();
@@ -208,5 +211,6 @@ Position.prototype.as_matrix = function() {
   m = m.mult(rotY(this.by));
   m = m.mult(rotX(this.bx));
   m = m.mult(rotZ(this.bz));
+  m = m.mult(trans(this.offset_x, this.offset_y, this.offset_z));
   return m.m;
 }
