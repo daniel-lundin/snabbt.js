@@ -4,78 +4,77 @@ snabbtjs.Matrix = function(m) {
   this.m = m;
 };
 
-snabbtjs.Matrix.prototype.mult = function(other) {
-  var res = [Array(4), Array(4), Array(4), Array(4)];
+snabbtjs.mult_matrices = function(a, b, res) {
   // Unrolled loop
-  res[0][0] = this.m[0][0] * other.m[0][0] +
-              this.m[0][1] * other.m[1][0] +
-              this.m[0][2] * other.m[2][0] +
-              this.m[0][3] * other.m[3][0];
-  res[0][1] = this.m[0][0] * other.m[0][1] +
-              this.m[0][1] * other.m[1][1] +
-              this.m[0][2] * other.m[2][1] +
-              this.m[0][3] * other.m[3][1];
-  res[0][2] = this.m[0][0] * other.m[0][2] +
-              this.m[0][1] * other.m[1][2] +
-              this.m[0][2] * other.m[2][2] +
-              this.m[0][3] * other.m[3][2];
-  res[0][3] = this.m[0][0] * other.m[0][3] +
-              this.m[0][1] * other.m[1][3] +
-              this.m[0][2] * other.m[2][3] +
-              this.m[0][3] * other.m[3][3];
+  res.m[0][0] = a.m[0][0] * b.m[0][0] +
+                a.m[0][1] * b.m[1][0] +
+                a.m[0][2] * b.m[2][0] +
+                a.m[0][3] * b.m[3][0];
+  res.m[0][1] = a.m[0][0] * b.m[0][1] +
+                a.m[0][1] * b.m[1][1] +
+                a.m[0][2] * b.m[2][1] +
+                a.m[0][3] * b.m[3][1];
+  res.m[0][2] = a.m[0][0] * b.m[0][2] +
+                a.m[0][1] * b.m[1][2] +
+                a.m[0][2] * b.m[2][2] +
+                a.m[0][3] * b.m[3][2];
+  res.m[0][3] = a.m[0][0] * b.m[0][3] +
+                a.m[0][1] * b.m[1][3] +
+                a.m[0][2] * b.m[2][3] +
+                a.m[0][3] * b.m[3][3];
 
-  res[1][0] = this.m[1][0] * other.m[0][0] +
-              this.m[1][1] * other.m[1][0] +
-              this.m[1][2] * other.m[2][0] +
-              this.m[1][3] * other.m[3][0];
-  res[1][1] = this.m[1][0] * other.m[0][1] +
-              this.m[1][1] * other.m[1][1] +
-              this.m[1][2] * other.m[2][1] +
-              this.m[1][3] * other.m[3][1];
-  res[1][2] = this.m[1][0] * other.m[0][2] +
-              this.m[1][1] * other.m[1][2] +
-              this.m[1][2] * other.m[2][2] +
-              this.m[1][3] * other.m[3][2];
-  res[1][3] = this.m[1][0] * other.m[0][3] +
-              this.m[1][1] * other.m[1][3] +
-              this.m[1][2] * other.m[2][3] +
-              this.m[1][3] * other.m[3][3];
+  res.m[1][0] = a.m[1][0] * b.m[0][0] +
+                a.m[1][1] * b.m[1][0] +
+                a.m[1][2] * b.m[2][0] +
+                a.m[1][3] * b.m[3][0];
+  res.m[1][1] = a.m[1][0] * b.m[0][1] +
+                a.m[1][1] * b.m[1][1] +
+                a.m[1][2] * b.m[2][1] +
+                a.m[1][3] * b.m[3][1];
+  res.m[1][2] = a.m[1][0] * b.m[0][2] +
+                a.m[1][1] * b.m[1][2] +
+                a.m[1][2] * b.m[2][2] +
+                a.m[1][3] * b.m[3][2];
+  res.m[1][3] = a.m[1][0] * b.m[0][3] +
+                a.m[1][1] * b.m[1][3] +
+                a.m[1][2] * b.m[2][3] +
+                a.m[1][3] * b.m[3][3];
 
-  res[2][0] = this.m[2][0] * other.m[0][0] +
-              this.m[2][1] * other.m[1][0] +
-              this.m[2][2] * other.m[2][0] +
-              this.m[2][3] * other.m[3][0];
-  res[2][1] = this.m[2][0] * other.m[0][1] +
-              this.m[2][1] * other.m[1][1] +
-              this.m[2][2] * other.m[2][1] +
-              this.m[2][3] * other.m[3][1];
-  res[2][2] = this.m[2][0] * other.m[0][2] +
-              this.m[2][1] * other.m[1][2] +
-              this.m[2][2] * other.m[2][2] +
-              this.m[2][3] * other.m[3][2];
-  res[2][3] = this.m[2][0] * other.m[0][3] +
-              this.m[2][1] * other.m[1][3] +
-              this.m[2][2] * other.m[2][3] +
-              this.m[2][3] * other.m[3][3];
+  res.m[2][0] = a.m[2][0] * b.m[0][0] +
+                a.m[2][1] * b.m[1][0] +
+                a.m[2][2] * b.m[2][0] +
+                a.m[2][3] * b.m[3][0];
+  res.m[2][1] = a.m[2][0] * b.m[0][1] +
+                a.m[2][1] * b.m[1][1] +
+                a.m[2][2] * b.m[2][1] +
+                a.m[2][3] * b.m[3][1];
+  res.m[2][2] = a.m[2][0] * b.m[0][2] +
+                a.m[2][1] * b.m[1][2] +
+                a.m[2][2] * b.m[2][2] +
+                a.m[2][3] * b.m[3][2];
+  res.m[2][3] = a.m[2][0] * b.m[0][3] +
+                a.m[2][1] * b.m[1][3] +
+                a.m[2][2] * b.m[2][3] +
+                a.m[2][3] * b.m[3][3];
 
-  res[3][0] = this.m[3][0] * other.m[0][0] +
-              this.m[3][1] * other.m[1][0] +
-              this.m[3][2] * other.m[2][0] +
-              this.m[3][3] * other.m[3][0];
-  res[3][1] = this.m[3][0] * other.m[0][1] +
-              this.m[3][1] * other.m[1][1] +
-              this.m[3][2] * other.m[2][1] +
-              this.m[3][3] * other.m[3][1];
-  res[3][2] = this.m[3][0] * other.m[0][2] +
-              this.m[3][1] * other.m[1][2] +
-              this.m[3][2] * other.m[2][2] +
-              this.m[3][3] * other.m[3][2];
-  res[3][3] = this.m[3][0] * other.m[0][3] +
-              this.m[3][1] * other.m[1][3] +
-              this.m[3][2] * other.m[2][3] +
-              this.m[3][3] * other.m[3][3];
+  res.m[3][0] = a.m[3][0] * b.m[0][0] +
+                a.m[3][1] * b.m[1][0] +
+                a.m[3][2] * b.m[2][0] +
+                a.m[3][3] * b.m[3][0];
+  res.m[3][1] = a.m[3][0] * b.m[0][1] +
+                a.m[3][1] * b.m[1][1] +
+                a.m[3][2] * b.m[2][1] +
+                a.m[3][3] * b.m[3][1];
+  res.m[3][2] = a.m[3][0] * b.m[0][2] +
+                a.m[3][1] * b.m[1][2] +
+                a.m[3][2] * b.m[2][2] +
+                a.m[3][3] * b.m[3][2];
+  res.m[3][3] = a.m[3][0] * b.m[0][3] +
+                a.m[3][1] * b.m[1][3] +
+                a.m[3][2] * b.m[2][3] +
+                a.m[3][3] * b.m[3][3];
 
-  return new snabbtjs.Matrix(res);
+  return res;
 };
 
 snabbtjs.mat_to_css = function(matrix) {
@@ -99,40 +98,36 @@ snabbtjs.mat_to_css = function(matrix) {
   return css;
 };
 
-snabbtjs.rotX = function(rad) {
-  return new snabbtjs.Matrix([
-    [1, 0, 0, 0],
-    [0, Math.cos(rad), -Math.sin(rad), 0],
-    [0, Math.sin(rad), Math.cos(rad), 0],
-    [0, 0, 0, 1]
-  ]);
+snabbtjs.assign_rotX = function(m, rad) {
+  m.m[0][0] = 1; m.m[0][1] = 0; m.m[0][2] = 0; m.m[0][3] = 0;
+  m.m[1][0] = 0; m.m[1][1] = Math.cos(rad); m.m[1][2] = -Math.sin(rad); m.m[1][3] = 0;
+  m.m[2][0] = 0; m.m[2][1] = Math.sin(rad); m.m[2][2] = Math.cos(rad); m.m[2][3] = 0;
+  m.m[3][0] = 0; m.m[3][1] = 0; m.m[3][2] = 0; m.m[3][3] = 1;
+  return m;
 };
 
-snabbtjs.rotY = function(rad) {
-  return new snabbtjs.Matrix([
-    [Math.cos(rad), 0, Math.sin(rad), 0],
-    [0, 1, 0, 0],
-    [-Math.sin(rad), 0, Math.cos(rad), 0],
-    [0, 0, 0, 1]
-  ]);
+snabbtjs.assign_rotY = function(m, rad) {
+  m.m[0][0] = Math.cos(rad); m.m[0][1] = 0; m.m[0][2] = Math.sin(rad); m.m[0][3] = 0;
+  m.m[1][0] = 0; m.m[1][1] = 1; m.m[1][2] = 0; m.m[1][3] = 0;
+  m.m[2][0] = -Math.sin(rad); m.m[2][1] = 0; m.m[2][2] = Math.cos(rad); m.m[2][3] = 0;
+  m.m[3][0] = 0; m.m[3][1] = 0; m.m[3][2] = 0; m.m[3][3] = 1;
+  return m;
 };
 
-snabbtjs.rotZ = function(rad) {
-  return new snabbtjs.Matrix([
-    [Math.cos(rad), -Math.sin(rad), 0, 0],
-    [Math.sin(rad), Math.cos(rad), 0, 0],
-    [0, 0, 1, 0],
-    [0, 0, 0, 1]
-  ]);
+snabbtjs.assign_rotZ = function(m, rad) {
+  m.m[0][0] = Math.cos(rad); m.m[0][1] = -Math.sin(rad); m.m[0][2] = 0; m.m[0][3] = 0;
+  m.m[1][0] = Math.sin(rad); m.m[1][1] = Math.cos(rad); m.m[1][2] = 0; m.m[1][3] = 0;
+  m.m[2][0] = 0; m.m[2][1] = 0; m.m[2][2] = 1; m.m[2][3] = 0;
+  m.m[3][0] = 0; m.m[3][1] = 0; m.m[3][2] = 0; m.m[3][3] = 1;
+  return m;
 };
 
-snabbtjs.trans = function(x, y, z) {
-  return new snabbtjs.Matrix([
-    [1, 0, 0, 0],
-    [0, 1, 0, 0],
-    [0, 0, 1, 0],
-    [x, y, z, 1]
-  ]);
+snabbtjs.assign_trans = function(m, x, y, z) {
+  m.m[0][0] = 1; m.m[0][1] = 0; m.m[0][2] = 0; m.m[0][3] = 0;
+  m.m[1][0] = 0; m.m[1][1] = 1; m.m[1][2] = 0; m.m[1][3] = 0;
+  m.m[2][0] = 0; m.m[2][1] = 0; m.m[2][2] = 1; m.m[2][3] = 0;
+  m.m[3][0] = x; m.m[3][1] = y; m.m[3][2] = z; m.m[3][3] = 1;
+  return m;
 };
 
 snabbtjs.scale = function(x, y, z) {
@@ -151,6 +146,14 @@ snabbtjs.ident = function() {
     [0, 0, 1, 0],
     [0, 0, 0, 1]
   ]);
+};
+
+snabbtjs.assign_ident = function(m) {
+  m.m[0][0] = 1; m.m[0][1] = 0; m.m[0][2] = 0; m.m[0][3] = 0;
+  m.m[1][0] = 0; m.m[1][1] = 1; m.m[1][2] = 0; m.m[1][3] = 0;
+  m.m[2][0] = 0; m.m[2][1] = 0; m.m[2][2] = 1; m.m[2][3] = 0;
+  m.m[3][0] = 0; m.m[3][1] = 0; m.m[3][2] = 0; m.m[3][3] = 1;
+  return m;
 };
 
 
@@ -196,15 +199,22 @@ snabbtjs.Position.prototype.clone = function() {
   return p;
 };
 
+//  reuse the same three matrices everytime.
+//  Allocation causes lag
+var temp_m = snabbtjs.ident();
+var temp_res1 = snabbtjs.ident();
+var temp_res2 = snabbtjs.ident();
+
 snabbtjs.Position.prototype.as_matrix = function() {
-  var m = snabbtjs.ident();
-  m = m.mult(snabbtjs.rotX(this.ax));
-  m = m.mult(snabbtjs.rotY(this.ay));
-  m = m.mult(snabbtjs.rotZ(this.az));
-  m = m.mult(snabbtjs.trans(this.x, this.y, this.z));
-  m = m.mult(snabbtjs.rotY(this.by));
-  m = m.mult(snabbtjs.rotX(this.bx));
-  m = m.mult(snabbtjs.rotZ(this.bz));
-  m = m.mult(snabbtjs.trans(this.offset_x, this.offset_y, this.offset_z));
-  return m.m;
+  snabbtjs.assign_rotX(temp_m, this.ax);
+  snabbtjs.assign_rotY(temp_res1, this.ay);
+  snabbtjs.mult_matrices(temp_res1, temp_m, temp_res2);
+  snabbtjs.assign_rotZ(temp_m, this.az);
+  snabbtjs.mult_matrices(temp_m, temp_res2, temp_res1);
+  snabbtjs.mult_matrices(temp_res1, snabbtjs.assign_trans(temp_m, this.x, this.y, this.z), temp_res2);
+  snabbtjs.mult_matrices(temp_res2, snabbtjs.assign_rotX(temp_m, this.bx), temp_res1);
+  snabbtjs.mult_matrices(temp_res1, snabbtjs.assign_rotX(temp_m, this.by), temp_res2);
+  snabbtjs.mult_matrices(temp_res2, snabbtjs.assign_rotX(temp_m, this.bz), temp_res1);
+  snabbtjs.mult_matrices(snabbtjs.assign_trans(temp_m, this.offset_x, this.offset_y, this.offset_z), temp_res1, temp_res2);
+  return temp_res1.m;
 };

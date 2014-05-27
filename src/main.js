@@ -12,6 +12,7 @@ function master_tick(time) {
   tick_requests.splice(0, length);
   window.requestAnimationFrame(master_tick);
 }
+
 window.requestAnimationFrame(master_tick);
 
 function pos_from_options(p, options, prefix) {
