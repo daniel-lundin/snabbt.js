@@ -1,8 +1,9 @@
 snabbt.js
 ========
 Fast animations with Javascript(Work in progress)
-[Demo](http://daniel-lundin.github.io/snabbt.js/)
-[Stress test](http://daniel-lundin.github.io/snabbt.js/)
+
+- [Demo](http://daniel-lundin.github.io/snabbt.js/)
+- [Stress test](http://daniel-lundin.github.io/snabbt.js/sticks.html)
 
 
 Basic usage
