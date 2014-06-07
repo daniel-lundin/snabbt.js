@@ -49,9 +49,8 @@ function snabbt(e, options) {
     delay: options.delay || 0,
     offset: options.offset
   };
-  if(options.easing) {
+  if(options.easing)
     anim_options.easing = snabbtjs.EASING_FUNCS[options.easing];
-  }
   var animation = new snabbtjs.Animation(anim_options);
 
   var queue = [];
@@ -73,7 +72,7 @@ function snabbt(e, options) {
 
       if(options.loop > 1) {
         options.loop -= 1;
-        animation = new snabbtjs.Animation(anim_options);
+        animation.assign(anim_options);
         requestAnimFrame(tick);
       } else {
         if(options.callback) {
@@ -84,7 +83,7 @@ function snabbt(e, options) {
 
           start = pos_from_options(end, options, 'from_');
           end = pos_from_options(new snabbtjs.Position({}), options, '');
-          animation = new snabbtjs.Animation({
+          animation.assign({
             start_pos: start,
             end_pos: end,
             duration: options.duration || 1000,
@@ -93,7 +92,8 @@ function snabbt(e, options) {
           });
           if(options.easing)
             animation.easing = snabbtjs.EASING_FUNCS[options.easing];
-          //window.requestAnimationFrame(tick);
+
+          animation.tick(time);
           requestAnimFrame(tick);
         }
       }

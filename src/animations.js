@@ -1,6 +1,10 @@
 var snabbtjs = snabbtjs || {};
 
 snabbtjs.Animation = function(options) {
+  this.assign(options);
+};
+
+snabbtjs.Animation.prototype.assign = function(options) {
   this.start_pos = options.start_pos || new snabbtjs.Position({});
   this.end_pos = options.end_pos || new snabbtjs.Position({});
   this.offset = options.offset;
@@ -11,7 +15,7 @@ snabbtjs.Animation = function(options) {
   this.start_time = 0;
   this.current_time = 0;
   this.current_position = new snabbtjs.Position({});
-  if(this.offset) {
+  if(options.offset) {
     this.current_position.offset_x = this.offset[0];
     this.current_position.offset_y = this.offset[1];
     this.current_position.offset_z = this.offset[2];

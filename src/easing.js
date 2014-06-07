@@ -2,8 +2,10 @@
 
 var snabbtjs = snabbtjs || {};
 
+
 snabbtjs.pow2_easing = function(curr, max) {
-  return Math.pow(curr/max, 0.5);
+  var t = curr/max;
+  return t*t;
 };
 
 snabbtjs.linear_easing = function(curr, max) {
@@ -26,10 +28,11 @@ snabbtjs.cubic_easing = function(curr, max) {
   return (Math.pow(2*t - 1, 3)+1)/2;
 };
 
-snabbtjs.sqrt_eqsing = function(curr, max) {
+snabbtjs.sqrt_easing = function(curr, max) {
   var t = curr/max;
   return (Math.pow(t, 0.5));
-}
+};
+
 snabbtjs.cos_wooble_easing = function (curr, max) {
   var t = curr/max;
   return t*Math.cos(4*Math.PI*t);
@@ -54,10 +57,11 @@ snabbtjs.sinc2 = function(curr, max) {
 snabbtjs.EASING_FUNCS = {
   'linear': snabbtjs.linear_easing,
   'cubic': snabbtjs.cubic_easing,
+  'square': snabbtjs.pow2_easing,
   'atan': snabbtjs.atan_easing,
   'cos': snabbtjs.cos_easing,
   'sinc_wobbler': snabbtjs.sinc_wobbler_easing,
   'sinc2_wobbler': snabbtjs.sinc2,
   'c2': snabbtjs.create_cubic_bezier_easing(0.780, 0.205, 0.100, 1),
-  'sqrt': snabbtjs.sqrt_eqsing
+  'sqrt': snabbtjs.sqrt_easing
 };
