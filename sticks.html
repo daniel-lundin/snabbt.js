@@ -10,7 +10,7 @@
     body {
       -webkit-perspective: 2000px;
     }
-    #container {
+    #c1, #c2 {
       position: absolute;
     }
     .stick {
@@ -22,21 +22,26 @@
   </style>
 </head>
 <body>
-  <div id="container">
+  <div id="c1">
+  </div>
+  <div id="c2">
   </div>
 
   <script type="text/javascript">
-    var c = document.getElementById('container');
-    c.style.top = window.innerHeight/2 + 'px';
-    c.style.left = (window.innerWidth/2 - 50) + 'px';
+    var c1 = document.getElementById('c1');
+    c1.style.top = window.innerHeight/2 + 'px';
+    c1.style.left = (3*(window.innerWidth/4) - 25) + 'px';
+    var c2 = document.getElementById('c2');
+    c2.style.top = window.innerHeight/2 + 'px';
+    c2.style.left = ((window.innerWidth/4) - 25) + 'px';
 
     var stick_count = 100;
-    function animate(index) {
+    function animate(prefix, index) {
       if(index != stick_count - 1)
         return;
 
       for(var i=0;i<stick_count;++i) {
-        var stick = document.getElementById('s' + i);
+        var stick = document.getElementById(prefix + i);
         snabbt(stick, {
           pos: [200, 0, 0],
           duration: 500,
@@ -72,7 +77,7 @@
           easing: 'cos',
           delay: stick_count*10 + i*10,
           duration: 1000,
-          callback: (function(j) { return function() { animate(j) } })(i),
+          callback: (function(j) { return function() { animate(prefix, j) } })(i),
         });
       }
     }
@@ -82,14 +87,19 @@
       format: 'rgb'
     });
 
-    for(var i=0;i<stick_count;++i) {
-      var stick = document.createElement('div');
-      stick.className = 'stick';
-      stick.style.background = colors[i%colors.length];
-      stick.id = 's' + i;
-      c.appendChild(stick);
+    function setup_sticks(root, prefix) {
+      for(var i=0;i<stick_count;++i) {
+        var stick = document.createElement('div');
+        stick.className = 'stick';
+        stick.style.background = colors[i % colors.length];
+        stick.id = prefix + i;
+        root.appendChild(stick);
+      }
     }
-    animate(stick_count - 1);
+    setup_sticks(c1, 'r');
+    animate('r', stick_count - 1);
+    setup_sticks(c2, 'l');
+    animate('l', stick_count - 1);
   </script>
 </body>
 </html>
