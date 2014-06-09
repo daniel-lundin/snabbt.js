@@ -2,13 +2,22 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, user-scalable=no">
   <title>Sticks</title>
   <script src="randomColor.js"></script>
+  <script src="fpsmeter.min.js"></script>
   <script src="dist/snabbt.min.js"></script>
   <style>
     body {
       -webkit-perspective: 2000px;
+    }
+    @font-face {
+      font-family: 'Fira Sans';
+      src: url('FiraSans-Thin.otf') format('opentype');
+    }
+    h1 {
+      font-family: 'Fira Sans';
+      text-align: center;
+      font-size: 3em;
     }
     #c1, #c2 {
       position: absolute;
@@ -22,12 +31,26 @@
   </style>
 </head>
 <body>
+  <h1 id="heading">200 DOM elements</h1>
   <div id="c1">
   </div>
   <div id="c2">
   </div>
 
   <script type="text/javascript">
+
+    var heading = document.getElementById('heading');
+    var meter = new FPSMeter(heading, {
+        heat: true,
+        theme: 'colorful',
+        graph: true
+    });
+    var _master_tick = master_tick;
+    master_tick = function(time) {
+      _master_tick(time);
+      meter.tick();
+    }
+    
     var c1 = document.getElementById('c1');
     c1.style.top = window.innerHeight/2 + 'px';
     c1.style.left = (3*(window.innerWidth/4) - 25) + 'px';
@@ -68,7 +91,7 @@
           rot_post: [0, 0, 0],
           delay: i*10,
           duration: 2000,
-          easing: 'sinc_wobbler',
+          easing: 'sinc2_wobbler',
         }).then({
           from_pos: [100, 0, 0],
           from_rot: [0, 0, 0],
