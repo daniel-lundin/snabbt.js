@@ -66,6 +66,7 @@
       for(var i=0;i<stick_count;++i) {
         var stick = document.getElementById(prefix + i);
         snabbt(stick, {
+          from_pos: [0, -(stick_count/2) * 5 + 5*i, 0],
           pos: [200, 0, 0],
           duration: 500,
           easing: 'cos',
@@ -94,6 +95,7 @@
           easing: 'sinc2_wobbler',
         }).then({
           from_pos: [100, 0, 0],
+          pos: [0, -(stick_count/2) * 5 + 5*i, 0],
           from_rot: [0, 0, 0],
           from_rot_post: [0, 0, (i/stick_count)*2*Math.PI],// + Math.PI],
           rot_post: [0, 0, 0],
