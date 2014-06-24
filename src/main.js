@@ -60,7 +60,6 @@ function snabbt(e, options) {
       return chainer;
     }
   };
-
   function tick(time) {
     animation.tick(time);
     var current_transform = animation.current_transform();

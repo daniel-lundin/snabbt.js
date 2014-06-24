@@ -65,7 +65,7 @@ snabbtjs.EASING_FUNCS = {
   'linear': snabbtjs.linear_easing,
   'cubic': snabbtjs.cubic_easing,
   'square': snabbtjs.pow2_easing,
-  'sqrt': snabbtjs.sqrt_easing
+  'sqrt': snabbtjs.sqrt_easing,
   'atan': snabbtjs.atan_easing,
   'cos': snabbtjs.cos_easing,
   'sinc_wobbler': snabbtjs.sinc_wobbler_easing,
