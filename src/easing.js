@@ -61,6 +61,18 @@ snabbtjs.sinc2 = function(curr, max) {
   return 1 - Math.sin(20*Math.PI*t)/(20*Math.PI*t);
 };
 
+snabbtjs.superman_easing = function(curr, max) {
+  var t = curr/max;
+  var x = 10*Math.PI*(t-0.5);
+  return t + 0.1*(Math.sin(x)/x);
+};
+
+snabbtjs.sinc = function(curr, max) {
+  var t = curr/max;
+  var x = 20*Math.PI*(t);
+  return (Math.sin(x)/x);
+};
+
 snabbtjs.EASING_FUNCS = {
   'linear': snabbtjs.linear_easing,
   'cubic': snabbtjs.cubic_easing,
@@ -70,4 +82,6 @@ snabbtjs.EASING_FUNCS = {
   'cos': snabbtjs.cos_easing,
   'sinc_wobbler': snabbtjs.sinc_wobbler_easing,
   'sinc2_wobbler': snabbtjs.sinc2_wobbler_easing,
+  'superman': snabbtjs.superman_easing,
+  'sinc': snabbtjs.sinc,
 };

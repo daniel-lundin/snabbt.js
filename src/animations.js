@@ -63,6 +63,8 @@ snabbtjs.Animation.prototype.update_current_transition = function() {
   var bx = (this.end_pos.bx - this.start_pos.bx);
   var by = (this.end_pos.by - this.start_pos.by);
   var bz = (this.end_pos.bz - this.start_pos.bz);
+  var sx = (this.end_pos.sx - this.start_pos.sx);
+  var sy = (this.end_pos.sy - this.start_pos.sy);
 
 
   var s = this.easing(curr, max);
@@ -75,4 +77,6 @@ snabbtjs.Animation.prototype.update_current_transition = function() {
   this.current_position.bx = this.start_pos.bx + s*bx;
   this.current_position.by = this.start_pos.by + s*by;
   this.current_position.bz = this.start_pos.bz + s*bz;
+  this.current_position.sx = this.start_pos.sx + s*sx;
+  this.current_position.sy = this.start_pos.sy + s*sy;
 };

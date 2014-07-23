@@ -169,14 +169,23 @@ snabbtjs.assign_trans = function(m, x, y, z) {
   return m;
 };
 
-snabbtjs.scale = function(x, y, z) {
+snabbtjs.scale = function(x, y) {
   return new Float32Array([
      x, 0, 0, 0,
      0, y, 0, 0,
-     0, 0, z, 0,
+     0, 0, 1, 0,
      0, 0, 0, 1
   ]);
 };
+
+snabbtjs.assign_scale = function(m, x, y) {
+  m[0] = x; m[1] = 0; m[2] = 0; m[3] = 0;
+  m[4] = 0; m[5] = y; m[6] = 0; m[7] = 0;
+  m[8] = 0; m[9] = 0; m[10] = 1; m[11] = 0;
+  m[12] = 0; m[13] = 0; m[14] = 0; m[15] = 1;
+  return m;
+};
+
 
 snabbtjs.ident = function() {
   return new Float32Array([
@@ -200,7 +209,7 @@ snabbtjs.set_css_transform = function(el, matrix) {
   if(el.hasOwnProperty('length')) {
     for(var i=0;i<el.length;++i) {
       el[i].style.webkitTransform = snabbtjs.mat_to_css(matrix);
-      el[i].style.MozTransform = mat_to_css(matrix);
+      el[i].style.MozTransform = snabbtjs.mat_to_css(matrix);
     }
   } else {
     el.style.webkitTransform = snabbtjs.mat_to_css(matrix);
@@ -221,6 +230,8 @@ snabbtjs.Position = function(config) {
   this.offset_x = config.offset_x || 0;
   this.offset_y = config.offset_y || 0;
   this.offset_z = config.offset_z || 0;
+  this.sx = config.sx || 1;
+  this.sy = config.sy || 1;
 };
 
 snabbtjs.Position.prototype.clone = function() {
@@ -233,7 +244,9 @@ snabbtjs.Position.prototype.clone = function() {
     z: this.z,
     bx: this.bx,
     by: this.by,
-    bz: this.bz
+    bz: this.bz,
+    sx: this.sx,
+    sy: this.sy
   });
   return p;
 };
@@ -244,8 +257,13 @@ var temp_res1 = snabbtjs.ident();
 var temp_res2 = snabbtjs.ident();
 
 snabbtjs.Position.prototype.as_matrix = function() {
+  // Scale
+  snabbtjs.assign_scale(temp_res1, this.sx, this.sy);
+
   // Pre-rotation
-  snabbtjs.assign_rotX(temp_m, this.ax);
+  snabbtjs.assign_rotX(temp_res2, this.ax);
+  snabbtjs.assigned_matrix_multiplication(temp_res1, temp_res2, temp_m);
+
   snabbtjs.assign_rotY(temp_res1, this.ay);
   snabbtjs.assigned_matrix_multiplication(temp_res1, temp_m, temp_res2);
   snabbtjs.assign_rotZ(temp_m, this.az);

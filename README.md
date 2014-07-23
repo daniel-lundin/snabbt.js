@@ -21,7 +21,7 @@ Animation can be chained by using the `then()`-method on the returned animation 
 
 	snabbt(element, {
 	  pos: [100, 0, 0],
-	  duration: 100o,
+	  duration: 500,
 	  easing: 'cos',
 	}).then({
 	  pos: [100, 100, 0],
@@ -40,6 +40,8 @@ Options
 - `pos`: End position
 - `from_rot`: Start rotation
 - `rot`: End rotation
+- `from_scale`: Start scale
+- `scale`: End scale
 - `from_rot_post`: Start rotation applied after `pos` and `rot`
 - `rot_post`: End rotation applied after `pos` and `rot`
 - `duration`: Animation duration in ms.
@@ -54,9 +56,9 @@ Easing functions
 The following easing function are present:
 
  - 'linear'
+ - 'cos'
  - 'cubic'
  - 'atan'
- - 'cos'
  - 'sinc_wobbler'
 
 Under the hood

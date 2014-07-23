@@ -32,6 +32,10 @@ function pos_from_options(p, options, prefix) {
     p.by =  options[prefix + 'rot_post'][1];
     p.bz =  options[prefix + 'rot_post'][2];
   }
+  if(options[prefix + 'scale']) {
+    p.sx =  options[prefix + 'scale'][0];
+    p.sy =  options[prefix + 'scale'][1];
+  }
   return p;
 }
 
