@@ -36,14 +36,18 @@ Animation can be chained by using the `then()`-method on the returned animation 
 Options
 -------
 
-- `from_pos`: Start position
+- `from_pos`: Start position ([x, y, z])
 - `pos`: End position
-- `from_rot`: Start rotation
+- `from_rot`: Start rotation ([a, b, c])
 - `rot`: End rotation
-- `from_scale`: Start scale
+- `from_scale`: Start scale ([x, y])
 - `scale`: End scale
-- `from_rot_post`: Start rotation applied after `pos` and `rot`
+- `from_rot_post`: Start rotation applied after `pos` and `rot` ([a, b, c])
 - `rot_post`: End rotation applied after `pos` and `rot`
+- `from_width`: Start width in pixels (single value)
+- `width`: End width in pixels
+- `from_height`: Start height in pixels (single value)
+- `height`: End height in pixels
 - `duration`: Animation duration in ms.
 - `delay`: Delay before the animation is started in ms.
 - `easing`: Easing function.

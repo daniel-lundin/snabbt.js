@@ -36,6 +36,12 @@ function pos_from_options(p, options, prefix) {
     p.sx =  options[prefix + 'scale'][0];
     p.sy =  options[prefix + 'scale'][1];
   }
+  if(options[prefix + 'width']) {
+    p.width =  options[prefix + 'width'];
+  }
+  if(options[prefix + 'height']) {
+    p.height =  options[prefix + 'height'];
+  }
   return p;
 }
 
@@ -67,11 +73,11 @@ function snabbt(e, options) {
   function tick(time) {
     animation.tick(time);
     var current_transform = animation.current_transform();
-    snabbtjs.set_css_transform(e, current_transform.as_matrix());
+    snabbtjs.set_css_transform(e, current_transform);
 
     if(animation.completed()) {
       var end_transform = animation.end_position();
-      snabbtjs.set_css_transform(e, end_transform.as_matrix());
+      snabbtjs.set_css_transform(e, end_transform);
 
       if(options.loop > 1) {
         options.loop -= 1;

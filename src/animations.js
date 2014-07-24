@@ -54,29 +54,35 @@ snabbtjs.Animation.prototype.update_current_transition = function() {
   var curr = Math.min(Math.max(0.001, this.current_time - this.start_time), this.duration);
   var max = this.duration;
 
-  var x = (this.end_pos.x - this.start_pos.x);
-  var y = (this.end_pos.y - this.start_pos.y);
-  var z = (this.end_pos.z - this.start_pos.z);
-  var ax = (this.end_pos.ax - this.start_pos.ax);
-  var ay = (this.end_pos.ay - this.start_pos.ay);
-  var az = (this.end_pos.az - this.start_pos.az);
-  var bx = (this.end_pos.bx - this.start_pos.bx);
-  var by = (this.end_pos.by - this.start_pos.by);
-  var bz = (this.end_pos.bz - this.start_pos.bz);
-  var sx = (this.end_pos.sx - this.start_pos.sx);
-  var sy = (this.end_pos.sy - this.start_pos.sy);
+  var dx = (this.end_pos.x - this.start_pos.x);
+  var dy = (this.end_pos.y - this.start_pos.y);
+  var dz = (this.end_pos.z - this.start_pos.z);
+  var dax = (this.end_pos.ax - this.start_pos.ax);
+  var day = (this.end_pos.ay - this.start_pos.ay);
+  var daz = (this.end_pos.az - this.start_pos.az);
+  var dbx = (this.end_pos.bx - this.start_pos.bx);
+  var dby = (this.end_pos.by - this.start_pos.by);
+  var dbz = (this.end_pos.bz - this.start_pos.bz);
+  var dsx = (this.end_pos.sx - this.start_pos.sx);
+  var dsy = (this.end_pos.sy - this.start_pos.sy);
+  var dwidth = (this.end_pos.width - this.start_pos.width);
+  var dheight = (this.end_pos.height - this.start_pos.height);
 
 
   var s = this.easing(curr, max);
-  this.current_position.ax = this.start_pos.ax + s*ax;
-  this.current_position.ay = this.start_pos.ay + s*ay;
-  this.current_position.az = this.start_pos.az + s*az;
-  this.current_position.x = this.start_pos.x + s*x;
-  this.current_position.y = this.start_pos.y + s*y;
-  this.current_position.z = this.start_pos.z + s*z;
-  this.current_position.bx = this.start_pos.bx + s*bx;
-  this.current_position.by = this.start_pos.by + s*by;
-  this.current_position.bz = this.start_pos.bz + s*bz;
-  this.current_position.sx = this.start_pos.sx + s*sx;
-  this.current_position.sy = this.start_pos.sy + s*sy;
+  this.current_position.ax = this.start_pos.ax + s*dax;
+  this.current_position.ay = this.start_pos.ay + s*day;
+  this.current_position.az = this.start_pos.az + s*daz;
+  this.current_position.x = this.start_pos.x + s*dx;
+  this.current_position.y = this.start_pos.y + s*dy;
+  this.current_position.z = this.start_pos.z + s*dz;
+  this.current_position.bx = this.start_pos.bx + s*dbx;
+  this.current_position.by = this.start_pos.by + s*dby;
+  this.current_position.bz = this.start_pos.bz + s*dbz;
+  this.current_position.sx = this.start_pos.sx + s*dsx;
+  this.current_position.sy = this.start_pos.sy + s*dsy;
+  if(this.end_pos.width)
+    this.current_position.width = this.start_pos.width + s*dwidth;
+  if(this.end_pos.height)
+    this.current_position.height = this.start_pos.height + s*dheight;
 };
