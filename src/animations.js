@@ -36,7 +36,6 @@ snabbtjs.Animation.prototype.assign = function(options) {
 snabbtjs.Animation.prototype.tick = function(time) {
   // If first tick, set start_time
   if(this.mode == snabbtjs.AnimationType.TIME) {
-    console.log('ticking');
     if(!this.start_time) {
       this.start_time = time;
     }
@@ -51,7 +50,6 @@ snabbtjs.Animation.prototype.stop_manual = function(complete) {
   }
   this.start_pos.assign(this.current_position);
   this.mode = snabbtjs.AnimationType.TIME;
-  console.log('stopping');
 };
 
 snabbtjs.Animation.prototype.set_value = function(value) {
