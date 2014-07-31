@@ -61,6 +61,8 @@ function snabbt(e, options) {
   };
   if(options.easing)
     anim_options.easing = snabbtjs.EASING_FUNCS[options.easing];
+  if(options.manual)
+    anim_options.mode = snabbtjs.AnimationType.MANUAL;
   var animation = new snabbtjs.Animation(anim_options);
 
   var queue = [];
@@ -70,6 +72,7 @@ function snabbt(e, options) {
       return chainer;
     }
   };
+
   function tick(time) {
     animation.tick(time);
     var current_transform = animation.current_transform();
@@ -112,7 +115,10 @@ function snabbt(e, options) {
   }
 
   requestAnimFrame(tick);
-  return chainer;
+  if(options.manual) 
+    return animation;
+  else
+    return chainer;
 }
 
 

@@ -1,5 +1,8 @@
 var snabbtjs = snabbtjs || {};
 
+snabbtjs.AnimationType = {};
+snabbtjs.AnimationType.TIME = 1;
+snabbtjs.AnimationType.MANUAL = 2;
 snabbtjs.Animation = function(options) {
   this.assign(options);
 };
@@ -11,9 +14,14 @@ snabbtjs.Animation.prototype.assign = function(options) {
   this.duration = options.duration || 500;
   this.delay = options.delay || 0;
   this.easing = options.easing || snabbtjs.linear_easing;
+  this.mode = options.mode || snabbtjs.AnimationType.TIME;
 
   this.start_time = 0;
   this.current_time = 0;
+  // Manual related, should probably be subclassed
+  this.value = 0;
+  this.cancelled = false;
+
   this.current_position = new snabbtjs.Position({});
   if(options.offset) {
     this.current_position.offset_x = this.offset[0];
@@ -27,11 +35,27 @@ snabbtjs.Animation.prototype.assign = function(options) {
 
 snabbtjs.Animation.prototype.tick = function(time) {
   // If first tick, set start_time
-  if(!this.start_time) {
-    this.start_time = time;
+  if(this.mode == snabbtjs.AnimationType.TIME) {
+    console.log('ticking');
+    if(!this.start_time) {
+      this.start_time = time;
+    }
+    if(time - this.start_time > this.delay)
+      this.current_time = time - this.delay;
   }
-  if(time - this.start_time > this.delay)
-    this.current_time = time - this.delay;
+};
+
+snabbtjs.Animation.prototype.stop_manual = function(complete) {
+  if(!complete) {
+    this.end_pos.assign(this.start_pos);
+  }
+  this.start_pos.assign(this.current_position);
+  this.mode = snabbtjs.AnimationType.TIME;
+  console.log('stopping');
+};
+
+snabbtjs.Animation.prototype.set_value = function(value) {
+  this.value = value;
 };
 
 snabbtjs.Animation.prototype.current_transform = function() {
@@ -40,19 +64,31 @@ snabbtjs.Animation.prototype.current_transform = function() {
 };
 
 snabbtjs.Animation.prototype.completed = function() {
-  if(this.start_time === 0) {
+  if(this.mode == snabbtjs.AnimationType.TIME) {
+    if(this.start_time === 0) {
+      return false;
+    }
+    return this.current_time - this.start_time > this.duration;
+  } else {
     return false;
   }
-  return this.current_time - this.start_time > this.duration;
 };
 
 snabbtjs.Animation.prototype.end_position = function() {
-  return this.end_pos;
+  if(this.mode == snabbtjs.AnimationType.TIME) {
+    return this.end_pos;
+  } else {
+    return this.current_transform();
+  }
 };
 
 snabbtjs.Animation.prototype.update_current_transition = function() {
-  var curr = Math.min(Math.max(0.001, this.current_time - this.start_time), this.duration);
-  var max = this.duration;
+  var curr = 0;
+  var max = 0;
+  if(this.mode == snabbtjs.AnimationType.TIME) {
+    curr = Math.min(Math.max(0.001, this.current_time - this.start_time), this.duration);
+    max = this.duration;
+  }
 
   var dx = (this.end_pos.x - this.start_pos.x);
   var dy = (this.end_pos.y - this.start_pos.y);
@@ -68,8 +104,12 @@ snabbtjs.Animation.prototype.update_current_transition = function() {
   var dwidth = (this.end_pos.width - this.start_pos.width);
   var dheight = (this.end_pos.height - this.start_pos.height);
 
-
-  var s = this.easing(curr, max);
+  var s = 0;
+  if(this.mode == snabbtjs.AnimationType.TIME) {
+    s = this.easing(curr, max);
+  } else {
+    s = this.value;
+  }
   this.current_position.ax = this.start_pos.ax + s*dax;
   this.current_position.ay = this.start_pos.ay + s*day;
   this.current_position.az = this.start_pos.az + s*daz;

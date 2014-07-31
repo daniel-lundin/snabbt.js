@@ -34,6 +34,20 @@ snabbtjs.Position.prototype.clone = function() {
   return p;
 };
 
+snabbtjs.Position.prototype.assign = function(p) {
+  this.ax = p.ax;
+  this.ay = p.ay;
+  this.az = p.az;
+  this.x = p.x;
+  this.y = p.y;
+  this.z = p.z;
+  this.bx = p.bx;
+  this.by = p.by;
+  this.bz = p.bz;
+  this.sx = p.sx;
+  this.sy = p.sy;
+};
+
 //  Reuse the same three matrices everytime.
 var temp_m = snabbtjs.ident();
 var temp_res1 = snabbtjs.ident();
