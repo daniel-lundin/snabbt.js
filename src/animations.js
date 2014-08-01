@@ -45,6 +45,8 @@ snabbtjs.Animation.prototype.tick = function(time) {
 };
 
 snabbtjs.Animation.prototype.stop_manual = function(complete) {
+  // Start a TIME based animation from current position
+  // to end_pos or start_pos depending on complete
   if(!complete) {
     this.end_pos.assign(this.start_pos);
   }
@@ -53,7 +55,8 @@ snabbtjs.Animation.prototype.stop_manual = function(complete) {
 };
 
 snabbtjs.Animation.prototype.set_value = function(value) {
-  this.value = value;
+  var delay = this.delay / this.duration;
+  this.value = Math.max(0, Math.min(value - delay, 1));
 };
 
 snabbtjs.Animation.prototype.current_transform = function() {
