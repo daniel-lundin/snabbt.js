@@ -8,7 +8,7 @@ snabbtjs.Animation = function(options) {
 };
 
 snabbtjs.Animation.prototype.assign = function(options) {
-  this.start_state = options.start_state || new snabbtjs.State({});
+  this._start_state = options.start_state || new snabbtjs.State({});
   this._end_state = options.end_state || new snabbtjs.State({});
   this.offset = options.offset;
   this.duration = options.duration || 500;
@@ -48,10 +48,10 @@ snabbtjs.Animation.prototype.stop_manual = function(complete) {
   // Start a TIME based animation from current state
   // to end_state or start_state depending on complete
   if(!complete) {
-    this._end_state.assign(this.start_state);
+    this._end_state.assign(this._start_state);
     this.delay = -this.delay;
   }
-  this.start_state.assign(this._current_state);
+  this._start_state.assign(this._current_state);
   this.mode = snabbtjs.AnimationType.TIME;
 };
 
@@ -92,20 +92,20 @@ snabbtjs.Animation.prototype.update_current_transition = function() {
     max = this.duration;
   }
 
-  var dx = (this._end_state.x - this.start_state.x);
-  var dy = (this._end_state.y - this.start_state.y);
-  var dz = (this._end_state.z - this.start_state.z);
-  var dax = (this._end_state.ax - this.start_state.ax);
-  var day = (this._end_state.ay - this.start_state.ay);
-  var daz = (this._end_state.az - this.start_state.az);
-  var dbx = (this._end_state.bx - this.start_state.bx);
-  var dby = (this._end_state.by - this.start_state.by);
-  var dbz = (this._end_state.bz - this.start_state.bz);
-  var dsx = (this._end_state.sx - this.start_state.sx);
-  var dsy = (this._end_state.sy - this.start_state.sy);
-  var dwidth = (this._end_state.width - this.start_state.width);
-  var dheight = (this._end_state.height - this.start_state.height);
-  var dopacity = (this._end_state.opacity - this.start_state.opacity);
+  var dx = (this._end_state.x - this._start_state.x);
+  var dy = (this._end_state.y - this._start_state.y);
+  var dz = (this._end_state.z - this._start_state.z);
+  var dax = (this._end_state.ax - this._start_state.ax);
+  var day = (this._end_state.ay - this._start_state.ay);
+  var daz = (this._end_state.az - this._start_state.az);
+  var dbx = (this._end_state.bx - this._start_state.bx);
+  var dby = (this._end_state.by - this._start_state.by);
+  var dbz = (this._end_state.bz - this._start_state.bz);
+  var dsx = (this._end_state.sx - this._start_state.sx);
+  var dsy = (this._end_state.sy - this._start_state.sy);
+  var dwidth = (this._end_state.width - this._start_state.width);
+  var dheight = (this._end_state.height - this._start_state.height);
+  var dopacity = (this._end_state.opacity - this._start_state.opacity);
 
   var s = 0;
   if(this.mode == snabbtjs.AnimationType.TIME) {
@@ -113,21 +113,21 @@ snabbtjs.Animation.prototype.update_current_transition = function() {
   } else {
     s = this.value;
   }
-  this._current_state.ax = this.start_state.ax + s*dax;
-  this._current_state.ay = this.start_state.ay + s*day;
-  this._current_state.az = this.start_state.az + s*daz;
-  this._current_state.x = this.start_state.x + s*dx;
-  this._current_state.y = this.start_state.y + s*dy;
-  this._current_state.z = this.start_state.z + s*dz;
-  this._current_state.bx = this.start_state.bx + s*dbx;
-  this._current_state.by = this.start_state.by + s*dby;
-  this._current_state.bz = this.start_state.bz + s*dbz;
-  this._current_state.sx = this.start_state.sx + s*dsx;
-  this._current_state.sy = this.start_state.sy + s*dsy;
+  this._current_state.ax = this._start_state.ax + s*dax;
+  this._current_state.ay = this._start_state.ay + s*day;
+  this._current_state.az = this._start_state.az + s*daz;
+  this._current_state.x = this._start_state.x + s*dx;
+  this._current_state.y = this._start_state.y + s*dy;
+  this._current_state.z = this._start_state.z + s*dz;
+  this._current_state.bx = this._start_state.bx + s*dbx;
+  this._current_state.by = this._start_state.by + s*dby;
+  this._current_state.bz = this._start_state.bz + s*dbz;
+  this._current_state.sx = this._start_state.sx + s*dsx;
+  this._current_state.sy = this._start_state.sy + s*dsy;
   if(this._end_state.width)
-    this._current_state.width = this.start_state.width + s*dwidth;
+    this._current_state.width = this._start_state.width + s*dwidth;
   if(this._end_state.height)
-    this._current_state.height = this.start_state.height + s*dheight;
+    this._current_state.height = this._start_state.height + s*dheight;
   if(this._end_state.opacity)
-    this._current_state.opacity = this.start_state.opacity + s*dopacity;
+    this._current_state.opacity = this._start_state.opacity + s*dopacity;
 };
