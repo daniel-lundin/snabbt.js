@@ -15,7 +15,7 @@ function master_tick(time) {
 
 window.requestAnimationFrame(master_tick);
 
-function pos_from_options(p, options, prefix) {
+function state_from_options(p, options, prefix) {
 
   if(options[prefix + 'pos']) {
     p.x = options[prefix + 'pos'][0];
@@ -42,19 +42,22 @@ function pos_from_options(p, options, prefix) {
   if(options[prefix + 'height']) {
     p.height =  options[prefix + 'height'];
   }
+  if(options[prefix + 'opacity']) {
+    p.opacity =  options[prefix + 'opacity'];
+  }
   return p;
 }
 
 
 function snabbt(e, options) {
-  var start = new snabbtjs.Position({});
-  start = pos_from_options(start, options, 'from_');
-  var end = new snabbtjs.Position({});
-  end = pos_from_options(end, options, '');
+  var start = new snabbtjs.State({});
+  start = state_from_options(start, options, 'from_');
+  var end = new snabbtjs.State({});
+  end = state_from_options(end, options, '');
 
   var anim_options = {
-    start_pos: start,
-    end_pos: end,
+    start_state: start,
+    end_state: end,
     duration: options.duration || 1000,
     delay: options.delay || 0,
     offset: options.offset
@@ -75,12 +78,12 @@ function snabbt(e, options) {
 
   function tick(time) {
     animation.tick(time);
-    var current_transform = animation.current_transform();
-    snabbtjs.set_css_transform(e, current_transform);
+    var current_state = animation.current_state();
+    snabbtjs.set_css(e, current_state);
 
     if(animation.completed()) {
-      var end_transform = animation.end_position();
-      snabbtjs.set_css_transform(e, end_transform);
+      var end_state = animation.end_state();
+      snabbtjs.set_css(e, end_state);
 
       if(options.loop > 1) {
         options.loop -= 1;
@@ -93,11 +96,11 @@ function snabbt(e, options) {
         if(queue.length) {
           options = queue.pop();
 
-          start = pos_from_options(end, options, 'from_');
-          end = pos_from_options(new snabbtjs.Position({}), options, '');
+          start = state_from_options(end, options, 'from_');
+          end = state_from_options(new snabbtjs.State({}), options, '');
           animation.assign({
-            start_pos: start,
-            end_pos: end,
+            start_state: start,
+            end_state: end,
             duration: options.duration || 1000,
             delay: options.delay || 0,
             offset: options.offset

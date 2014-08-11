@@ -8,8 +8,8 @@ snabbtjs.Animation = function(options) {
 };
 
 snabbtjs.Animation.prototype.assign = function(options) {
-  this.start_pos = options.start_pos || new snabbtjs.Position({});
-  this.end_pos = options.end_pos || new snabbtjs.Position({});
+  this.start_state = options.start_state || new snabbtjs.State({});
+  this._end_state = options.end_state || new snabbtjs.State({});
   this.offset = options.offset;
   this.duration = options.duration || 500;
   this.delay = options.delay || 0;
@@ -22,14 +22,14 @@ snabbtjs.Animation.prototype.assign = function(options) {
   this.value = 0;
   this.cancelled = false;
 
-  this.current_position = new snabbtjs.Position({});
+  this._current_state = new snabbtjs.State({});
   if(options.offset) {
-    this.current_position.offset_x = this.offset[0];
-    this.current_position.offset_y = this.offset[1];
-    this.current_position.offset_z = this.offset[2];
-    this.end_pos.offset_x = this.offset[0];
-    this.end_pos.offset_y = this.offset[1];
-    this.end_pos.offset_z = this.offset[2];
+    this._current_state.offset_x = this.offset[0];
+    this._current_state.offset_y = this.offset[1];
+    this._current_state.offset_z = this.offset[2];
+    this._end_state.offset_x = this.offset[0];
+    this._end_state.offset_y = this.offset[1];
+    this._end_state.offset_z = this.offset[2];
   }
 };
 
@@ -45,12 +45,13 @@ snabbtjs.Animation.prototype.tick = function(time) {
 };
 
 snabbtjs.Animation.prototype.stop_manual = function(complete) {
-  // Start a TIME based animation from current position
-  // to end_pos or start_pos depending on complete
+  // Start a TIME based animation from current state
+  // to end_state or start_state depending on complete
   if(!complete) {
-    this.end_pos.assign(this.start_pos);
+    this._end_state.assign(this.start_state);
+    this.delay = -this.delay;
   }
-  this.start_pos.assign(this.current_position);
+  this.start_state.assign(this._current_state);
   this.mode = snabbtjs.AnimationType.TIME;
 };
 
@@ -59,9 +60,9 @@ snabbtjs.Animation.prototype.set_value = function(value) {
   this.value = Math.max(0, Math.min(value - delay, 1));
 };
 
-snabbtjs.Animation.prototype.current_transform = function() {
+snabbtjs.Animation.prototype.current_state = function() {
   this.update_current_transition();
-  return this.current_position;
+  return this._current_state;
 };
 
 snabbtjs.Animation.prototype.completed = function() {
@@ -75,11 +76,11 @@ snabbtjs.Animation.prototype.completed = function() {
   }
 };
 
-snabbtjs.Animation.prototype.end_position = function() {
+snabbtjs.Animation.prototype.end_state = function() {
   if(this.mode == snabbtjs.AnimationType.TIME) {
-    return this.end_pos;
+    return this._end_state;
   } else {
-    return this.current_transform();
+    return this.current_state();
   }
 };
 
@@ -91,19 +92,20 @@ snabbtjs.Animation.prototype.update_current_transition = function() {
     max = this.duration;
   }
 
-  var dx = (this.end_pos.x - this.start_pos.x);
-  var dy = (this.end_pos.y - this.start_pos.y);
-  var dz = (this.end_pos.z - this.start_pos.z);
-  var dax = (this.end_pos.ax - this.start_pos.ax);
-  var day = (this.end_pos.ay - this.start_pos.ay);
-  var daz = (this.end_pos.az - this.start_pos.az);
-  var dbx = (this.end_pos.bx - this.start_pos.bx);
-  var dby = (this.end_pos.by - this.start_pos.by);
-  var dbz = (this.end_pos.bz - this.start_pos.bz);
-  var dsx = (this.end_pos.sx - this.start_pos.sx);
-  var dsy = (this.end_pos.sy - this.start_pos.sy);
-  var dwidth = (this.end_pos.width - this.start_pos.width);
-  var dheight = (this.end_pos.height - this.start_pos.height);
+  var dx = (this._end_state.x - this.start_state.x);
+  var dy = (this._end_state.y - this.start_state.y);
+  var dz = (this._end_state.z - this.start_state.z);
+  var dax = (this._end_state.ax - this.start_state.ax);
+  var day = (this._end_state.ay - this.start_state.ay);
+  var daz = (this._end_state.az - this.start_state.az);
+  var dbx = (this._end_state.bx - this.start_state.bx);
+  var dby = (this._end_state.by - this.start_state.by);
+  var dbz = (this._end_state.bz - this.start_state.bz);
+  var dsx = (this._end_state.sx - this.start_state.sx);
+  var dsy = (this._end_state.sy - this.start_state.sy);
+  var dwidth = (this._end_state.width - this.start_state.width);
+  var dheight = (this._end_state.height - this.start_state.height);
+  var dopacity = (this._end_state.opacity - this.start_state.opacity);
 
   var s = 0;
   if(this.mode == snabbtjs.AnimationType.TIME) {
@@ -111,19 +113,21 @@ snabbtjs.Animation.prototype.update_current_transition = function() {
   } else {
     s = this.value;
   }
-  this.current_position.ax = this.start_pos.ax + s*dax;
-  this.current_position.ay = this.start_pos.ay + s*day;
-  this.current_position.az = this.start_pos.az + s*daz;
-  this.current_position.x = this.start_pos.x + s*dx;
-  this.current_position.y = this.start_pos.y + s*dy;
-  this.current_position.z = this.start_pos.z + s*dz;
-  this.current_position.bx = this.start_pos.bx + s*dbx;
-  this.current_position.by = this.start_pos.by + s*dby;
-  this.current_position.bz = this.start_pos.bz + s*dbz;
-  this.current_position.sx = this.start_pos.sx + s*dsx;
-  this.current_position.sy = this.start_pos.sy + s*dsy;
-  if(this.end_pos.width)
-    this.current_position.width = this.start_pos.width + s*dwidth;
-  if(this.end_pos.height)
-    this.current_position.height = this.start_pos.height + s*dheight;
+  this._current_state.ax = this.start_state.ax + s*dax;
+  this._current_state.ay = this.start_state.ay + s*day;
+  this._current_state.az = this.start_state.az + s*daz;
+  this._current_state.x = this.start_state.x + s*dx;
+  this._current_state.y = this.start_state.y + s*dy;
+  this._current_state.z = this.start_state.z + s*dz;
+  this._current_state.bx = this.start_state.bx + s*dbx;
+  this._current_state.by = this.start_state.by + s*dby;
+  this._current_state.bz = this.start_state.bz + s*dbz;
+  this._current_state.sx = this.start_state.sx + s*dsx;
+  this._current_state.sy = this.start_state.sy + s*dsy;
+  if(this._end_state.width)
+    this._current_state.width = this.start_state.width + s*dwidth;
+  if(this._end_state.height)
+    this._current_state.height = this.start_state.height + s*dheight;
+  if(this._end_state.opacity)
+    this._current_state.opacity = this.start_state.opacity + s*dopacity;
 };

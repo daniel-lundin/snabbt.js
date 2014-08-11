@@ -205,24 +205,28 @@ snabbtjs.assign_ident = function(m) {
 };
 
 
-snabbtjs.set_css_transform = function(el, position) {
-  var matrix = position.as_matrix();
+snabbtjs.set_css = function(el, state) {
+  var matrix = state.as_matrix();
   if(el.hasOwnProperty('length')) {
     for(var i=0;i<el.length;++i) {
       el[i].style.webkitTransform = snabbtjs.mat_to_css(matrix);
-      el[i].style.MozTransform = snabbtjs.mat_to_css(matrix);
-      if(position.width)
-        el[i].style.width = position.width + 'px';
-      if(position.height)
-        el[i].style.height = position.height + 'px';
+      el[i].style.transform = snabbtjs.mat_to_css(matrix);
+      if(state.width)
+        el[i].style.width = state.width + 'px';
+      if(state.height)
+        el[i].style.height = state.height + 'px';
+      if(state.opacity)
+        el[i].style.opacity = state.opacity;
     }
   } else {
     el.style.webkitTransform = snabbtjs.mat_to_css(matrix);
-    el.style.MozTransform = snabbtjs.mat_to_css(matrix);
-      if(position.width)
-        el.style.width = position.width + 'px';
-      if(position.height)
-        el.style.height = position.height + 'px';
+    el.style.transform = snabbtjs.mat_to_css(matrix);
+      if(state.width)
+        el.style.width = state.width + 'px';
+      if(state.height)
+        el.style.height = state.height + 'px';
+      if(state.opacity)
+        el.style.opacity = state.opacity;
   }
 };
 

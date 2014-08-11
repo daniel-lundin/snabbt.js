@@ -12,7 +12,7 @@ module.exports = function(grunt) {
         dest: 'dist/jquery.snabbt.min.js'
       },
       standalone: {
-        src: ['src/animations.js', 'src/easing.js', 'src/main.js', 'src/mat.js', 'src/position.js'],
+        src: ['src/animations.js', 'src/easing.js', 'src/main.js', 'src/mat.js', 'src/state.js'],
         dest: 'dist/snabbt.min.js'
       }
     }

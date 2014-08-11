@@ -1,4 +1,4 @@
-snabbtjs.Position = function(config) {
+snabbtjs.State = function(config) {
   this.ax = config.ax || 0;
   this.ay = config.ay || 0;
   this.az = config.az || 0;
@@ -15,10 +15,11 @@ snabbtjs.Position = function(config) {
   this.sy = config.sy || 1;
   this.width = config.width;
   this.height = config.height;
+  this.opacity = config.opacity;
 };
 
-snabbtjs.Position.prototype.clone = function() {
-  var p = new snabbtjs.Position({
+snabbtjs.State.prototype.clone = function() {
+  var p = new snabbtjs.State({
     ax: this.ax,
     ay: this.ay,
     az: this.az,
@@ -29,12 +30,15 @@ snabbtjs.Position.prototype.clone = function() {
     by: this.by,
     bz: this.bz,
     sx: this.sx,
-    sy: this.sy
+    sy: this.sy,
+    height: this.height,
+    width: this.width,
+    opacity: this.opacity
   });
   return p;
 };
 
-snabbtjs.Position.prototype.assign = function(p) {
+snabbtjs.State.prototype.assign = function(p) {
   this.ax = p.ax;
   this.ay = p.ay;
   this.az = p.az;
@@ -46,6 +50,7 @@ snabbtjs.Position.prototype.assign = function(p) {
   this.bz = p.bz;
   this.sx = p.sx;
   this.sy = p.sy;
+  this.opacity = p.opacity;
 };
 
 //  Reuse the same three matrices everytime.
@@ -53,7 +58,7 @@ var temp_m = snabbtjs.ident();
 var temp_res1 = snabbtjs.ident();
 var temp_res2 = snabbtjs.ident();
 
-snabbtjs.Position.prototype.as_matrix = function() {
+snabbtjs.State.prototype.as_matrix = function() {
   // Scale
   snabbtjs.assign_scale(temp_res1, this.sx, this.sy);
 
