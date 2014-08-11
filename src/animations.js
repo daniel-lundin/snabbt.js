@@ -131,3 +131,41 @@ snabbtjs.Animation.prototype.update_current_transition = function() {
   if(this._end_state.opacity)
     this._current_state.opacity = this._start_state.opacity + s*dopacity;
 };
+
+
+snabbtjs.ScrollAnimation = function(options) {
+  this.start_scroll = window.scrollY;
+  this.end_scroll = options.scroll_pos;
+  this.duration = options.duration || 500;
+  this.delay = options.delay || 0;
+  this.easing = options.easing || snabbtjs.cos_easing;
+
+  this.start_time = 0;
+  this.current_time = 0;
+};
+
+snabbtjs.ScrollAnimation.prototype.tick = function(time) {
+  if(!this.start_time) {
+    this.start_time = time;
+  }
+  if(time - this.start_time > this.delay)
+    this.current_time = time - this.delay;
+  this.update_scrolling();
+};
+
+snabbtjs.ScrollAnimation.prototype.update_scrolling = function(time) {
+  var curr = Math.min(Math.max(0.001, this.current_time - this.start_time), this.duration);
+  var max = this.duration;
+  var s = this.easing(curr, max);
+  var scroll_diff = this.end_scroll - this.start_scroll;
+  var current_scroll = this.start_scroll + s * scroll_diff;
+
+  window.scrollTo(0, current_scroll);
+};
+
+snabbtjs.ScrollAnimation.prototype.completed = function() {
+  if(this.start_time === 0) {
+    return false;
+  }
+  return this.current_time - this.start_time > this.duration;
+};

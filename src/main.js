@@ -50,6 +50,10 @@ function state_from_options(p, options, prefix) {
 
 
 function snabbt(e, options) {
+  if(e == 'scroll') {
+    return snabbtjs.setup_scroll_animation(options);
+  }
+
   var start = new snabbtjs.State({});
   start = state_from_options(start, options, 'from_');
   var end = new snabbtjs.State({});
@@ -124,5 +128,15 @@ function snabbt(e, options) {
     return chainer;
 }
 
+snabbtjs.setup_scroll_animation = function(options) {
+  var animation = new snabbtjs.ScrollAnimation(options);
 
+  function tick(time) {
+    animation.tick(time);
+    if(!animation.completed()) {
+      requestAnimFrame(tick);
+    }
+  }
+  requestAnimFrame(tick);
+};
 
