@@ -124,11 +124,11 @@ snabbtjs.Animation.prototype.update_current_transition = function() {
   this._current_state.bz = this._start_state.bz + s*dbz;
   this._current_state.sx = this._start_state.sx + s*dsx;
   this._current_state.sy = this._start_state.sy + s*dsy;
-  if(this._end_state.width)
+  if(this._end_state.width !== undefined)
     this._current_state.width = this._start_state.width + s*dwidth;
-  if(this._end_state.height)
+  if(this._end_state.height !== undefined)
     this._current_state.height = this._start_state.height + s*dheight;
-  if(this._end_state.opacity)
+  if(this._end_state.opacity !== undefined)
     this._current_state.opacity = this._start_state.opacity + s*dopacity;
 };
 

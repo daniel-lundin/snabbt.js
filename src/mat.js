@@ -211,22 +211,22 @@ snabbtjs.set_css = function(el, state) {
     for(var i=0;i<el.length;++i) {
       el[i].style.webkitTransform = snabbtjs.mat_to_css(matrix);
       el[i].style.transform = snabbtjs.mat_to_css(matrix);
-      if(state.width)
+      if(state.width !== undefined)
         el[i].style.width = state.width + 'px';
-      if(state.height)
+      if(state.height !== undefined)
         el[i].style.height = state.height + 'px';
-      if(state.opacity)
+      if(state.opacity !== undefined)
         el[i].style.opacity = state.opacity;
     }
   } else {
     el.style.webkitTransform = snabbtjs.mat_to_css(matrix);
     el.style.transform = snabbtjs.mat_to_css(matrix);
-      if(state.width)
-        el.style.width = state.width + 'px';
-      if(state.height)
-        el.style.height = state.height + 'px';
-      if(state.opacity)
-        el.style.opacity = state.opacity;
+    if(state.width !== undefined)
+      el.style.width = state.width + 'px';
+    if(state.height !== undefined)
+      el.style.height = state.height + 'px';
+    if(state.opacity !== undefined)
+      el.style.opacity = state.opacity;
   }
 };
 

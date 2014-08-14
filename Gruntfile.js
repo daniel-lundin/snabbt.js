@@ -15,12 +15,26 @@ module.exports = function(grunt) {
         src: ['src/animations.js', 'src/easing.js', 'src/main.js', 'src/mat.js', 'src/state.js'],
         dest: 'dist/snabbt.min.js'
       }
-    }
+    },
+    concat: {
+      options: {
+        separator: ';',
+      },
+      jquery: {
+        src: 'src/*.js',
+        dest: 'src/jquery.snabbt.js',
+      },
+      dist: {
+        src: ['src/animations.js', 'src/easing.js', 'src/main.js', 'src/mat.js', 'src/state.js'],
+        dest: 'dist/snabbt.js'
+      },
+    },
   });
 
   // Load the plugin that provides the "uglify" task.
   grunt.loadNpmTasks('grunt-contrib-uglify');
+  grunt.loadNpmTasks('grunt-contrib-concat');
 
   // Default task(s).
-  grunt.registerTask('default', ['uglify']);
+  grunt.registerTask('default', ['uglify', 'concat']);
 };

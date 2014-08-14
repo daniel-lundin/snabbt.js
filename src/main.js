@@ -36,13 +36,13 @@ function state_from_options(p, options, prefix) {
     p.sx =  options[prefix + 'scale'][0];
     p.sy =  options[prefix + 'scale'][1];
   }
-  if(options[prefix + 'width']) {
+  if(options[prefix + 'width'] !== undefined) {
     p.width =  options[prefix + 'width'];
   }
-  if(options[prefix + 'height']) {
+  if(options[prefix + 'height'] !== undefined) {
     p.height =  options[prefix + 'height'];
   }
-  if(options[prefix + 'opacity']) {
+  if(options[prefix + 'opacity'] !== undefined) {
     p.opacity =  options[prefix + 'opacity'];
   }
   return p;
