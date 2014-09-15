@@ -1,15 +1,30 @@
-var tick_requests = [];
+
+queue_length = 100;
+tick_requests = [];
+tick_start = 0;
+tick_end = 0;
+
 
 function requestAnimFrame(func) {
   tick_requests.push(func);
+  //tick_requests[tick_end] = func;
+  //tick_end = (tick_end + 1) % queue_length;
 }
 
 function master_tick(time) {
-  var length = tick_requests.length;
-  for(var i=0;i<length;++i) {
+  //if(tick_start != tick_end) {
+  //  var curr_end = tick_end;
+  //  for(var i=tick_start;i<curr_end + queue_length; ++i) {
+  //    var real_i = i % tick_requests.length;
+  //    tick_requests[real_i](time);
+  //  }
+  //  tick_start = curr_end;
+  //}
+  var len = tick_requests.length;
+  for(var i=0;i<len;++i) {
     tick_requests[i](time);
   }
-  tick_requests.splice(0, length);
+  tick_requests.splice(0, len);
   window.requestAnimationFrame(master_tick);
 }
 
@@ -49,10 +64,14 @@ function state_from_options(p, options, prefix) {
 }
 
 
-function snabbt(e, options) {
-  if(e == 'scroll') {
-    return snabbtjs.setup_scroll_animation(options);
-  }
+function snabbt(arg1, arg2, arg3) {
+  if(arg1 == 'scroll')
+    return snabbtjs.setup_scroll_animation(arg2);
+  if(arg1 == 'attention')
+    return snabbtjs.setup_attention_animation(arg2, arg3);
+  var e = arg1;
+  var options = arg2;
+
 
   var start = new snabbtjs.State({});
   start = state_from_options(start, options, 'from_');
@@ -120,6 +139,8 @@ function snabbt(e, options) {
       requestAnimFrame(tick);
     }
   }
+  var start_state = animation.start_state();
+  snabbtjs.set_css(e, start_state);
 
   requestAnimFrame(tick);
   if(options.manual) 
@@ -140,3 +161,21 @@ snabbtjs.setup_scroll_animation = function(options) {
   requestAnimFrame(tick);
 };
 
+snabbtjs.setup_attention_animation = function(e,  options) {
+
+  var movement = state_from_options(new snabbtjs.State({}), options, '');
+  var animation = new snabbtjs.AttentionAnimation({
+    movement: movement,
+    stiffness: options.stiffness,
+    deacceleration: options.deacceleration
+  });
+  function tick(time) {
+    animation.tick(time);
+    var current_state = animation.current_state();
+    snabbtjs.set_css(e, current_state);
+    if(!animation.completed()) {
+      requestAnimFrame(tick);
+    }
+  }
+  requestAnimFrame(tick);
+};

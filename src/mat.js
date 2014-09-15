@@ -73,6 +73,22 @@ snabbtjs.assigned_matrix_multiplication = function(a, b, res) {
   return res;
 };
 
+//snabbtjs.mat_to_css = function(matrix) {
+//  var css = 'matrix3d(';
+//  var MIN = 0.00000001;
+//  for(var i=0;i<matrix.length-1;++i) {
+//    if(matrix[i] < MIN)
+//      css += '0,';
+//    else
+//      css += matrix[i].toFixed(10) + ",";
+//  }
+//  if(matrix[15] < MIN)
+//    css += '0';
+//  else
+//    css += matrix[15].toFixed(10);
+//  return css + ")";
+//};
+
 snabbtjs.mat_to_css = function(matrix) {
   var css = 'matrix3d(' +
             matrix[0].toFixed(10) + ', ' +

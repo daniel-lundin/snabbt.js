@@ -76,6 +76,10 @@ snabbtjs.Animation.prototype.completed = function() {
   }
 };
 
+snabbtjs.Animation.prototype.start_state = function() {
+  return this._start_state;
+};
+
 snabbtjs.Animation.prototype.end_state = function() {
   if(this.mode == snabbtjs.AnimationType.TIME) {
     return this._end_state;
@@ -133,6 +137,10 @@ snabbtjs.Animation.prototype.update_current_transition = function() {
 };
 
 
+// ---------------------- \\
+// -- ScrollAnimation --  \\
+// ---------------------- \\
+
 snabbtjs.ScrollAnimation = function(options) {
   this.start_scroll = window.scrollY;
   this.end_scroll = options.scroll_pos;
@@ -169,3 +177,56 @@ snabbtjs.ScrollAnimation.prototype.completed = function() {
   }
   return this.current_time - this.start_time > this.duration;
 };
+
+// ------------------------
+// -- AttantionAnimation --
+// ------------------------
+
+snabbtjs.AttentionAnimation = function(options) {
+  this.movement = options.movement;
+  this.current_movement = new snabbtjs.State({});
+  this.position = 0;
+  this.velocity = 1;
+  this.mass = 1;
+  this.stiffness = options.stiffness || 0.8;
+  this.deacceleration = options.deacceleration || 0.9;
+
+  this.equilibrium = false;
+};
+
+snabbtjs.AttentionAnimation.prototype.tick = function(time) {
+  if(this.equilibrium)
+    return;
+  var spring_force = -this.position * this.stiffness;
+  // f = m * a
+  // a = f / m
+  var a = spring_force / this.mass;
+  // s = v * t
+  // t = 1 ( for now )
+  this.velocity += a;
+  this.position += this.velocity;
+
+  // Deacceleartion
+  this.position *= this.deacceleration;
+
+  if(Math.abs(this.position) < 0.01 && Math.abs(this.velocity) < 0.01)
+    this.equilibrium = true;
+  this.update_movement();
+};
+
+snabbtjs.AttentionAnimation.prototype.update_movement = function() {
+  this.current_movement.x = this.movement.x * this.position;
+  this.current_movement.y = this.movement.y * this.position;
+  this.current_movement.z = this.movement.z * this.position;
+  this.current_movement.ax = this.movement.ax * this.position;
+  this.current_movement.ay = this.movement.ay * this.position;
+  this.current_movement.az = this.movement.az * this.position;
+}
+
+snabbtjs.AttentionAnimation.prototype.current_state = function() {
+  return this.current_movement;
+}
+
+snabbtjs.AttentionAnimation.prototype.completed = function() {
+  return this.equilibrium;
+}
