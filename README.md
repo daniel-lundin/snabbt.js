@@ -4,7 +4,7 @@ Fast animations with Javascript(Work in progress)
 
 - [Demo](http://daniel-lundin.github.io/snabbt.js/)
 - [Stress test](http://daniel-lundin.github.io/snabbt.js/sticks.html)
-
+- [Stress test (mobile)] (http://daniel-lundin.github.io/snabbt.js/sticks_mobile.html)
 
 Basic usage
 -----------
