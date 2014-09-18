@@ -129,15 +129,17 @@ function snabbt(arg1, arg2, arg3) {
 
           start = state_from_options(end, options, 'from_');
           end = state_from_options(new snabbtjs.State({}), options, '');
-          animation.assign({
-            start_state: start,
-            end_state: end,
-            duration: options.duration || 1000,
-            delay: options.delay || 0,
-            offset: options.offset
-          });
-          if(options.easing)
-            animation.easing = snabbtjs.EASING_FUNCS[options.easing];
+          if(options.easing == 'spring') {
+            options.mode = snabbtjs.AnimationType.SPRING;
+            options.spring_constant = options.spring_constant;
+            options.deacceleration = options.deacceleration;
+            options.initial_velocity = options.initial_velocity;
+          } else if(options.easing) {
+            options.easing = snabbtjs.EASING_FUNCS[options.easing];
+          }
+          options.start_state = start;
+          options.end_state = end;
+          animation.assign(options);
 
           animation.tick(time);
           requestAnimFrame(tick);
