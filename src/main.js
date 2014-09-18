@@ -85,8 +85,16 @@ function snabbt(arg1, arg2, arg3) {
     delay: options.delay || 0,
     offset: options.offset
   };
-  if(options.easing)
+
+  if(options.easing == 'spring') {
+    anim_options.mode = snabbtjs.AnimationType.SPRING;
+    anim_options.spring_constant = options.spring_constant;
+    anim_options.deacceleration = options.deacceleration;
+    anim_options.initial_velocity = options.initial_velocity;
+  } else if(options.easing) {
     anim_options.easing = snabbtjs.EASING_FUNCS[options.easing];
+  }
+
   if(options.manual)
     anim_options.mode = snabbtjs.AnimationType.MANUAL;
   var animation = new snabbtjs.Animation(anim_options);
@@ -166,8 +174,9 @@ snabbtjs.setup_attention_animation = function(e,  options) {
   var movement = state_from_options(new snabbtjs.State({}), options, '');
   var animation = new snabbtjs.AttentionAnimation({
     movement: movement,
-    stiffness: options.stiffness,
-    deacceleration: options.deacceleration
+    spring_constant: options.spring_constant,
+    deacceleration: options.deacceleration,
+    initial_velocity: options.initial_velocity
   });
   function tick(time) {
     animation.tick(time);

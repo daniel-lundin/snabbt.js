@@ -3,6 +3,8 @@ var snabbtjs = snabbtjs || {};
 snabbtjs.AnimationType = {};
 snabbtjs.AnimationType.TIME = 1;
 snabbtjs.AnimationType.MANUAL = 2;
+snabbtjs.AnimationType.SPRING = 3;
+
 snabbtjs.Animation = function(options) {
   this.assign(options);
 };
@@ -21,6 +23,11 @@ snabbtjs.Animation.prototype.assign = function(options) {
   // Manual related, should probably be subclassed
   this.value = 0;
   this.cancelled = false;
+
+  if(this.mode === snabbtjs.AnimationType.SPRING) {
+    options.equilibrium_position = 1;
+    this.spring = new snabbtjs.SpringEasing(options);
+  }
 
   this._current_state = new snabbtjs.State({});
   if(options.offset) {
@@ -41,6 +48,8 @@ snabbtjs.Animation.prototype.tick = function(time) {
     }
     if(time - this.start_time > this.delay)
       this.current_time = time - this.delay;
+  } else if(this.mode == snabbtjs.AnimationType.SPRING) {
+    this.spring.tick();
   }
 };
 
@@ -71,6 +80,8 @@ snabbtjs.Animation.prototype.completed = function() {
       return false;
     }
     return this.current_time - this.start_time > this.duration;
+  } else if(this.mode == snabbtjs.AnimationType.SPRING) {
+    return this.spring.equilibrium;
   } else {
     return false;
   }
@@ -81,7 +92,7 @@ snabbtjs.Animation.prototype.start_state = function() {
 };
 
 snabbtjs.Animation.prototype.end_state = function() {
-  if(this.mode == snabbtjs.AnimationType.TIME) {
+  if(this.mode == snabbtjs.AnimationType.TIME || this.mode == snabbtjs.AnimationType.SPRING) {
     return this._end_state;
   } else {
     return this.current_state();
@@ -94,6 +105,9 @@ snabbtjs.Animation.prototype.update_current_transition = function() {
   if(this.mode == snabbtjs.AnimationType.TIME) {
     curr = Math.min(Math.max(0.001, this.current_time - this.start_time), this.duration);
     max = this.duration;
+  }
+  if(this.mode == snabbtjs.AnimationType.SPRING) {
+    curr = this.spring.position;
   }
 
   var dx = (this._end_state.x - this._start_state.x);
@@ -114,7 +128,9 @@ snabbtjs.Animation.prototype.update_current_transition = function() {
   var s = 0;
   if(this.mode == snabbtjs.AnimationType.TIME) {
     s = this.easing(curr, max);
-  } else {
+  } else if(this.mode == snabbtjs.AnimationType.SPRING) {
+    s = curr;
+  }else {
     s = this.value;
   }
   this._current_state.ax = this._start_state.ax + s*dax;
@@ -185,48 +201,34 @@ snabbtjs.ScrollAnimation.prototype.completed = function() {
 snabbtjs.AttentionAnimation = function(options) {
   this.movement = options.movement;
   this.current_movement = new snabbtjs.State({});
-  this.position = 0;
-  this.velocity = 1;
-  this.mass = 1;
-  this.stiffness = options.stiffness || 0.8;
-  this.deacceleration = options.deacceleration || 0.9;
-
-  this.equilibrium = false;
+  options.initial_velocity = 0.1;
+  this.spring = new snabbtjs.SpringEasing(options);
 };
 
 snabbtjs.AttentionAnimation.prototype.tick = function(time) {
-  if(this.equilibrium)
+  if(this.spring.equilibrium)
     return;
-  var spring_force = -this.position * this.stiffness;
-  // f = m * a
-  // a = f / m
-  var a = spring_force / this.mass;
-  // s = v * t
-  // t = 1 ( for now )
-  this.velocity += a;
-  this.position += this.velocity;
+  this.spring.tick();
 
-  // Deacceleartion
-  this.position *= this.deacceleration;
-
-  if(Math.abs(this.position) < 0.01 && Math.abs(this.velocity) < 0.01)
-    this.equilibrium = true;
   this.update_movement();
 };
 
 snabbtjs.AttentionAnimation.prototype.update_movement = function() {
-  this.current_movement.x = this.movement.x * this.position;
-  this.current_movement.y = this.movement.y * this.position;
-  this.current_movement.z = this.movement.z * this.position;
-  this.current_movement.ax = this.movement.ax * this.position;
-  this.current_movement.ay = this.movement.ay * this.position;
-  this.current_movement.az = this.movement.az * this.position;
-}
+  this.current_movement.x = this.movement.x * this.spring.position;
+  this.current_movement.y = this.movement.y * this.spring.position;
+  this.current_movement.z = this.movement.z * this.spring.position;
+  this.current_movement.ax = this.movement.ax * this.spring.position;
+  this.current_movement.ay = this.movement.ay * this.spring.position;
+  this.current_movement.az = this.movement.az * this.spring.position;
+  this.current_movement.bx = this.movement.bx * this.spring.position;
+  this.current_movement.by = this.movement.by * this.spring.position;
+  this.current_movement.bz = this.movement.bz * this.spring.position;
+};
 
 snabbtjs.AttentionAnimation.prototype.current_state = function() {
   return this.current_movement;
-}
+};
 
 snabbtjs.AttentionAnimation.prototype.completed = function() {
-  return this.equilibrium;
-}
+  return this.spring.equilibrium;
+};

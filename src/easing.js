@@ -73,6 +73,41 @@ snabbtjs.sinc = function(curr, max) {
   return (Math.sin(x)/x);
 };
 
+
+
+snabbtjs.SpringEasing = function(options) {
+  console.log(options);
+  this.position = snabbtjs.option_or_default(options.start_position, 0);
+  this.equilibrium_position = snabbtjs.option_or_default(options.equilibrium_position, 0);
+  this.velocity = snabbtjs.option_or_default(options.initial_velocity, 0);
+  this.spring_constant = snabbtjs.option_or_default(options.spring_constant, 0.8);
+  this.deacceleration = snabbtjs.option_or_default(options.deacceleration, 0.9);
+  this.mass = 10;
+
+  this.equilibrium = false;
+};
+
+snabbtjs.SpringEasing.prototype.tick = function() {
+  if(this.equilibrium)
+    return;
+  var spring_force = -(this.position - this.equilibrium_position) * this.spring_constant;
+  //spring_force *= Math.abs(spring_force);
+  // f = m * a
+  // a = f / m
+  var a = spring_force / this.mass;
+  // s = v * t
+  // t = 1 ( for now )
+  this.velocity += a;
+  this.position += this.velocity;
+
+  // Deacceleartion
+  this.velocity *= this.deacceleration;
+
+  if(Math.abs(this.position - this.equilibrium_position) < 0.001 && Math.abs(this.velocity) < 0.001) {
+    this.equilibrium = true;
+  }
+};
+
 snabbtjs.EASING_FUNCS = {
   'linear': snabbtjs.linear_easing,
   'cubic': snabbtjs.cubic_easing,
