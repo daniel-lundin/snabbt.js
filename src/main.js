@@ -63,13 +63,28 @@ function state_from_options(p, options, prefix) {
   return p;
 }
 
+snabbtjs.setup_animation_options = function(start, end, options) {
+  options.start_state = start;
+  options.end_state = end;
+  if(options.easing == 'spring') {
+    options.mode = snabbtjs.AnimationType.SPRING;
+    options.spring_constant = options.spring_constant;
+    options.deacceleration = options.deacceleration;
+    options.initial_velocity = options.initial_velocity;
+  } else if(options.easing) {
+    options.easing = snabbtjs.EASING_FUNCS[options.easing];
+  }
+  if(options.manual)
+    options.mode = snabbtjs.AnimationType.MANUAL;
+  return options;
+};
 
 function snabbt(arg1, arg2, arg3) {
   if(arg1 == 'scroll')
     return snabbtjs.setup_scroll_animation(arg2);
   if(arg1 == 'attention')
     return snabbtjs.setup_attention_animation(arg2, arg3);
-  var e = arg1;
+  var element = arg1;
   var options = arg2;
 
 
@@ -78,25 +93,7 @@ function snabbt(arg1, arg2, arg3) {
   var end = new snabbtjs.State({});
   end = state_from_options(end, options, '');
 
-  var anim_options = {
-    start_state: start,
-    end_state: end,
-    duration: options.duration || 1000,
-    delay: options.delay || 0,
-    offset: options.offset
-  };
-
-  if(options.easing == 'spring') {
-    anim_options.mode = snabbtjs.AnimationType.SPRING;
-    anim_options.spring_constant = options.spring_constant;
-    anim_options.deacceleration = options.deacceleration;
-    anim_options.initial_velocity = options.initial_velocity;
-  } else if(options.easing) {
-    anim_options.easing = snabbtjs.EASING_FUNCS[options.easing];
-  }
-
-  if(options.manual)
-    anim_options.mode = snabbtjs.AnimationType.MANUAL;
+  var anim_options = snabbtjs.setup_animation_options(start, end, options);
   var animation = new snabbtjs.Animation(anim_options);
 
   var queue = [];
@@ -110,11 +107,11 @@ function snabbt(arg1, arg2, arg3) {
   function tick(time) {
     animation.tick(time);
     var current_state = animation.current_state();
-    snabbtjs.set_css(e, current_state);
+    snabbtjs.set_css(element, current_state);
 
     if(animation.completed()) {
       var end_state = animation.end_state();
-      snabbtjs.set_css(e, end_state);
+      snabbtjs.set_css(element, end_state);
 
       if(options.loop > 1) {
         options.loop -= 1;
@@ -129,16 +126,7 @@ function snabbt(arg1, arg2, arg3) {
 
           start = state_from_options(end, options, 'from_');
           end = state_from_options(new snabbtjs.State({}), options, '');
-          if(options.easing == 'spring') {
-            options.mode = snabbtjs.AnimationType.SPRING;
-            options.spring_constant = options.spring_constant;
-            options.deacceleration = options.deacceleration;
-            options.initial_velocity = options.initial_velocity;
-          } else if(options.easing) {
-            options.easing = snabbtjs.EASING_FUNCS[options.easing];
-          }
-          options.start_state = start;
-          options.end_state = end;
+          snabbtjs.setup_animation_options(start, end, options);
           animation.assign(options);
 
           animation.tick(time);
@@ -150,7 +138,7 @@ function snabbt(arg1, arg2, arg3) {
     }
   }
   var start_state = animation.start_state();
-  snabbtjs.set_css(e, start_state);
+  snabbtjs.set_css(element, start_state);
 
   requestAnimFrame(tick);
   if(options.manual) 
@@ -171,7 +159,7 @@ snabbtjs.setup_scroll_animation = function(options) {
   requestAnimFrame(tick);
 };
 
-snabbtjs.setup_attention_animation = function(e,  options) {
+snabbtjs.setup_attention_animation = function(element,  options) {
 
   var movement = state_from_options(new snabbtjs.State({}), options, '');
   var animation = new snabbtjs.AttentionAnimation({
@@ -183,7 +171,7 @@ snabbtjs.setup_attention_animation = function(e,  options) {
   function tick(time) {
     animation.tick(time);
     var current_state = animation.current_state();
-    snabbtjs.set_css(e, current_state);
+    snabbtjs.set_css(element, current_state);
     if(!animation.completed()) {
       requestAnimFrame(tick);
     }
