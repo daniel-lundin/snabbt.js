@@ -42,14 +42,15 @@ snabbtjs.Animation.prototype.assign = function(options) {
 
 snabbtjs.Animation.prototype.tick = function(time) {
   // If first tick, set start_time
+  if(!this.start_time) {
+    this.start_time = time;
+  }
   if(this.mode == snabbtjs.AnimationType.TIME) {
-    if(!this.start_time) {
-      this.start_time = time;
-    }
     if(time - this.start_time > this.delay)
       this.current_time = time - this.delay;
   } else if(this.mode == snabbtjs.AnimationType.SPRING) {
-    this.spring.tick();
+    if(time - this.start_time > this.delay)
+      this.spring.tick();
   }
 };
 
