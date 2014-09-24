@@ -76,7 +76,6 @@ snabbtjs.sinc = function(curr, max) {
 
 
 snabbtjs.SpringEasing = function(options) {
-  console.log(options);
   this.position = snabbtjs.option_or_default(options.start_position, 0);
   this.equilibrium_position = snabbtjs.option_or_default(options.equilibrium_position, 0);
   this.velocity = snabbtjs.option_or_default(options.initial_velocity, 0);
@@ -91,7 +90,6 @@ snabbtjs.SpringEasing.prototype.tick = function() {
   if(this.equilibrium)
     return;
   var spring_force = -(this.position - this.equilibrium_position) * this.spring_constant;
-  //spring_force *= Math.abs(spring_force);
   // f = m * a
   // a = f / m
   var a = spring_force / this.mass;

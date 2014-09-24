@@ -20,9 +20,9 @@ snabbtjs.Animation.prototype.assign = function(options) {
 
   this.start_time = 0;
   this.current_time = 0;
+  this._stopped = false;
   // Manual related, should probably be subclassed
   this.value = 0;
-  this.cancelled = false;
 
   if(this.mode === snabbtjs.AnimationType.SPRING) {
     options.equilibrium_position = 1;
@@ -40,8 +40,19 @@ snabbtjs.Animation.prototype.assign = function(options) {
   }
 };
 
+snabbtjs.Animation.prototype.stop = function() {
+  this._stopped = true;
+};
+
+snabbtjs.Animation.prototype.stopped = function() {
+  return this._stopped;
+};
+
 snabbtjs.Animation.prototype.tick = function(time) {
   // If first tick, set start_time
+  if(this._stopped)
+    return;
+
   if(!this.start_time) {
     this.start_time = time;
   }
@@ -71,11 +82,14 @@ snabbtjs.Animation.prototype.set_value = function(value) {
 };
 
 snabbtjs.Animation.prototype.current_state = function() {
-  this.update_current_transition();
+  if(!this._stopped)
+    this.update_current_transition();
   return this._current_state;
 };
 
 snabbtjs.Animation.prototype.completed = function() {
+  if(this._stopped)
+    return true;
   if(this.mode == snabbtjs.AnimationType.TIME) {
     if(this.start_time === 0) {
       return false;
@@ -93,6 +107,9 @@ snabbtjs.Animation.prototype.start_state = function() {
 };
 
 snabbtjs.Animation.prototype.end_state = function() {
+  if(this._stopped)
+    return this.current_state();
+
   if(this.mode == snabbtjs.AnimationType.TIME || this.mode == snabbtjs.AnimationType.SPRING) {
     return this._end_state;
   } else {
@@ -196,7 +213,7 @@ snabbtjs.ScrollAnimation.prototype.completed = function() {
 };
 
 // ------------------------
-// -- AttantionAnimation --
+// -- AttentionAnimation --
 // ------------------------
 
 snabbtjs.AttentionAnimation = function(options) {
@@ -204,9 +221,20 @@ snabbtjs.AttentionAnimation = function(options) {
   this.current_movement = new snabbtjs.State({});
   options.initial_velocity = 0.1;
   this.spring = new snabbtjs.SpringEasing(options);
+  this._stopped = false;
+};
+
+snabbtjs.AttentionAnimation.prototype.stop = function() {
+  this._stopped = true;
+};
+
+snabbtjs.AttentionAnimation.prototype.stopped = function(time) {
+  return this._stopped;
 };
 
 snabbtjs.AttentionAnimation.prototype.tick = function(time) {
+  if(this._stopped)
+    return;
   if(this.spring.equilibrium)
     return;
   this.spring.tick();
@@ -231,5 +259,5 @@ snabbtjs.AttentionAnimation.prototype.current_state = function() {
 };
 
 snabbtjs.AttentionAnimation.prototype.completed = function() {
-  return this.spring.equilibrium;
+  return this.spring.equilibrium || this._stopped;
 };

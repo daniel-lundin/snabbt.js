@@ -1,36 +1,134 @@
+var snabbtjs = snabbtjs || {};
 
-queue_length = 100;
-tick_requests = [];
-tick_start = 0;
-tick_end = 0;
+/* Entry point, only function to be called by user */
+function snabbt(arg1, arg2, arg3) {
+  if(arg1 == 'scroll')
+    return snabbtjs.setup_scroll_animation(arg2);
+  if(arg1 == 'attention')
+    return snabbtjs.setup_attention_animation(arg2, arg3);
+  if(arg1 == 'stop')
+    return snabbtjs.stop_animation(arg2);
+  var element = arg1;
+  var options = arg2;
 
 
-function requestAnimFrame(func) {
-  tick_requests.push(func);
-  //tick_requests[tick_end] = func;
-  //tick_end = (tick_end + 1) % queue_length;
-}
+  var start = snabbtjs.current_animation_transform(element);
+  start = snabbtjs.state_from_options(start, options, 'from_');
+  var end = new snabbtjs.State({});
+  end = snabbtjs.state_from_options(end, options, '');
 
-function master_tick(time) {
-  //if(tick_start != tick_end) {
-  //  var curr_end = tick_end;
-  //  for(var i=tick_start;i<curr_end + queue_length; ++i) {
-  //    var real_i = i % tick_requests.length;
-  //    tick_requests[real_i](time);
-  //  }
-  //  tick_start = curr_end;
-  //}
-  var len = tick_requests.length;
-  for(var i=0;i<len;++i) {
-    tick_requests[i](time);
+  var anim_options = snabbtjs.setup_animation_options(start, end, options);
+  var animation = new snabbtjs.Animation(anim_options);
+  snabbtjs.running_animations.push([element, animation]);
+
+  var queue = [];
+  var chainer = {
+    then: function(opts) {
+      queue.unshift(opts);
+      return chainer;
+    }
+  };
+
+  function tick(time) {
+    animation.tick(time);
+    var current_state = animation.current_state();
+    snabbtjs.set_css(element, current_state);
+
+    if(animation.completed()) {
+      var end_state = animation.end_state();
+      snabbtjs.set_css(element, end_state);
+
+      if(options.loop > 1 && !animation.stopped()) {
+        options.loop -= 1;
+        animation.assign(anim_options);
+        snabbtjs.requestAnimationFrame(tick);
+      } else {
+        if(options.callback) {
+          options.callback();
+        }
+        if(queue.length) {
+          options = queue.pop();
+
+          start = snabbtjs.state_from_options(end, options, 'from_');
+          end = snabbtjs.state_from_options(new snabbtjs.State({}), options, '');
+          snabbtjs.setup_animation_options(start, end, options);
+          animation.assign(options);
+
+          animation.tick(time);
+          snabbtjs.requestAnimationFrame(tick);
+        }
+      }
+    } else {
+      snabbtjs.requestAnimationFrame(tick);
+    }
   }
-  tick_requests.splice(0, len);
-  window.requestAnimationFrame(master_tick);
+  var start_state = animation.start_state();
+  snabbtjs.set_css(element, start_state);
+
+  snabbtjs.requestAnimationFrame(tick);
+  if(options.manual) 
+    return animation;
+  else
+    return chainer;
 }
 
-window.requestAnimationFrame(master_tick);
+snabbtjs.setup_scroll_animation = function(options) {
+  var animation = new snabbtjs.ScrollAnimation(options);
+  snabbtjs.running_animations.push([undefined, animation]);
 
-function state_from_options(p, options, prefix) {
+  function tick(time) {
+    animation.tick(time);
+    if(!animation.completed()) {
+      snabbtjs.requestAnimationFrame(tick);
+    }
+  }
+  snabbtjs.requestAnimationFrame(tick);
+};
+
+snabbtjs.setup_attention_animation = function(element,  options) {
+  var movement = snabbtjs.state_from_options(new snabbtjs.State({}), options, '');
+  var animation = new snabbtjs.AttentionAnimation({
+    movement: movement,
+    spring_constant: options.spring_constant,
+    deacceleration: options.deacceleration,
+    initial_velocity: options.initial_velocity
+  });
+  snabbtjs.running_animations.push([element, animation]);
+  function tick(time) {
+    animation.tick(time);
+    var current_state = animation.current_state();
+    snabbtjs.set_css(element, current_state);
+    if(!animation.completed()) {
+      snabbtjs.requestAnimationFrame(tick);
+    }
+  }
+  snabbtjs.requestAnimationFrame(tick);
+};
+
+snabbtjs.stop_animation = function(element) {
+  for(var i=0;i<snabbtjs.running_animations.length;++i) {
+    var animated_element = snabbtjs.running_animations[i][0];
+    var animation = snabbtjs.running_animations[i][1];
+    if(animated_element === element) {
+      animation.stop();
+    }
+  }
+};
+
+snabbtjs.current_animation_transform = function(element) {
+  for(var i=0;i<snabbtjs.running_animations.length;++i) {
+    var animated_element = snabbtjs.running_animations[i][0];
+    var animation = snabbtjs.running_animations[i][1];
+    if(animated_element === element) {
+      var state = animation.current_state();
+      animation.stop();
+      return state;
+    }
+  }
+  return new snabbtjs.State({});
+};
+
+snabbtjs.state_from_options = function(p, options, prefix) {
 
   if(options[prefix + 'pos']) {
     p.x = options[prefix + 'pos'][0];
@@ -61,7 +159,7 @@ function state_from_options(p, options, prefix) {
     p.opacity =  options[prefix + 'opacity'];
   }
   return p;
-}
+};
 
 snabbtjs.setup_animation_options = function(start, end, options) {
   options.start_state = start;
@@ -79,102 +177,23 @@ snabbtjs.setup_animation_options = function(start, end, options) {
   return options;
 };
 
-function snabbt(arg1, arg2, arg3) {
-  if(arg1 == 'scroll')
-    return snabbtjs.setup_scroll_animation(arg2);
-  if(arg1 == 'attention')
-    return snabbtjs.setup_attention_animation(arg2, arg3);
-  var element = arg1;
-  var options = arg2;
+snabbtjs.tick_requests = [];
+snabbtjs.running_animations = [];
 
-
-  var start = new snabbtjs.State({});
-  start = state_from_options(start, options, 'from_');
-  var end = new snabbtjs.State({});
-  end = state_from_options(end, options, '');
-
-  var anim_options = snabbtjs.setup_animation_options(start, end, options);
-  var animation = new snabbtjs.Animation(anim_options);
-
-  var queue = [];
-  var chainer = {
-    then: function(opts) {
-      queue.unshift(opts);
-      return chainer;
-    }
-  };
-
-  function tick(time) {
-    animation.tick(time);
-    var current_state = animation.current_state();
-    snabbtjs.set_css(element, current_state);
-
-    if(animation.completed()) {
-      var end_state = animation.end_state();
-      snabbtjs.set_css(element, end_state);
-
-      if(options.loop > 1) {
-        options.loop -= 1;
-        animation.assign(anim_options);
-        requestAnimFrame(tick);
-      } else {
-        if(options.callback) {
-          options.callback();
-        }
-        if(queue.length) {
-          options = queue.pop();
-
-          start = state_from_options(end, options, 'from_');
-          end = state_from_options(new snabbtjs.State({}), options, '');
-          snabbtjs.setup_animation_options(start, end, options);
-          animation.assign(options);
-
-          animation.tick(time);
-          requestAnimFrame(tick);
-        }
-      }
-    } else {
-      requestAnimFrame(tick);
-    }
-  }
-  var start_state = animation.start_state();
-  snabbtjs.set_css(element, start_state);
-
-  requestAnimFrame(tick);
-  if(options.manual) 
-    return animation;
-  else
-    return chainer;
-}
-
-snabbtjs.setup_scroll_animation = function(options) {
-  var animation = new snabbtjs.ScrollAnimation(options);
-
-  function tick(time) {
-    animation.tick(time);
-    if(!animation.completed()) {
-      requestAnimFrame(tick);
-    }
-  }
-  requestAnimFrame(tick);
+snabbtjs.requestAnimationFrame = function(func) {
+  snabbtjs.tick_requests.push(func);
 };
 
-snabbtjs.setup_attention_animation = function(element,  options) {
-
-  var movement = state_from_options(new snabbtjs.State({}), options, '');
-  var animation = new snabbtjs.AttentionAnimation({
-    movement: movement,
-    spring_constant: options.spring_constant,
-    deacceleration: options.deacceleration,
-    initial_velocity: options.initial_velocity
+snabbtjs.tick_animations = function(time) {
+  var len = snabbtjs.tick_requests.length;
+  for(var i=0;i<len;++i) {
+    snabbtjs.tick_requests[i](time);
+  }
+  snabbtjs.tick_requests.splice(0, len);
+  window.requestAnimationFrame(snabbtjs.tick_animations);
+  snabbtjs.running_animations = snabbtjs.running_animations.filter(function(a) {
+    return !a[1].completed();
   });
-  function tick(time) {
-    animation.tick(time);
-    var current_state = animation.current_state();
-    snabbtjs.set_css(element, current_state);
-    if(!animation.completed()) {
-      requestAnimFrame(tick);
-    }
-  }
-  requestAnimFrame(tick);
 };
+
+window.requestAnimationFrame(snabbtjs.tick_animations);
