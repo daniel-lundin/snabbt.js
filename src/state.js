@@ -53,35 +53,25 @@ snabbtjs.State.prototype.assign = function(p) {
   this.opacity = p.opacity;
 };
 
-//  Reuse the same three matrices everytime.
-var temp_m = snabbtjs.ident();
-var temp_res1 = snabbtjs.ident();
-var temp_res2 = snabbtjs.ident();
-
 snabbtjs.State.prototype.as_matrix = function() {
   // Scale
-  snabbtjs.assign_scale(temp_res1, this.sx, this.sy);
+  var m = snabbtjs.scale(this.sx, this.sy);
 
   // Pre-rotation
-  snabbtjs.assign_rotX(temp_res2, this.ax);
-  snabbtjs.assigned_matrix_multiplication(temp_res1, temp_res2, temp_m);
-
-  snabbtjs.assign_rotY(temp_res1, this.ay);
-  snabbtjs.assigned_matrix_multiplication(temp_res1, temp_m, temp_res2);
-  snabbtjs.assign_rotZ(temp_m, this.az);
-  snabbtjs.assigned_matrix_multiplication(temp_m, temp_res2, temp_res1);
+  m = snabbtjs.mult(m, snabbtjs.rotX(this.ax));
+  m = snabbtjs.mult(m, snabbtjs.rotY(this.ay));
+  m = snabbtjs.mult(m, snabbtjs.rotZ(this.az));
 
   // Translation
-  snabbtjs.assigned_matrix_multiplication(temp_res1, snabbtjs.assign_trans(temp_m, this.x, this.y, this.z), temp_res2);
+  m = snabbtjs.mult(m, snabbtjs.trans(this.x, this.y, this.z));
 
   // Post-rotation
-  snabbtjs.assigned_matrix_multiplication(temp_res2, snabbtjs.assign_rotX(temp_m, this.bx), temp_res1);
-  snabbtjs.assigned_matrix_multiplication(temp_res1, snabbtjs.assign_rotY(temp_m, this.by), temp_res2);
-  snabbtjs.assigned_matrix_multiplication(temp_res2, snabbtjs.assign_rotZ(temp_m, this.bz), temp_res1);
+  m = snabbtjs.mult(m, snabbtjs.rotX(this.bx));
+  m = snabbtjs.mult(m, snabbtjs.rotY(this.by));
+  m = snabbtjs.mult(m, snabbtjs.rotZ(this.bz));
 
   // Final offset
-  snabbtjs.assign_trans(temp_m, this.offset_x, this.offset_y, this.offset_z);
-  snabbtjs.assigned_matrix_multiplication(temp_m, temp_res1, temp_res2);
-  return temp_res2;
+  m = snabbtjs.mult(m, snabbtjs.trans(this.offset_x, this.offset_y, this.offset_z));
+  return m;
 };
 
