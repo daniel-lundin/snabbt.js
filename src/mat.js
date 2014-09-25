@@ -73,22 +73,6 @@ snabbtjs.assigned_matrix_multiplication = function(a, b, res) {
   return res;
 };
 
-//snabbtjs.mat_to_css = function(matrix) {
-//  var css = 'matrix3d(';
-//  var MIN = 0.00000001;
-//  for(var i=0;i<matrix.length-1;++i) {
-//    if(matrix[i] < MIN)
-//      css += '0,';
-//    else
-//      css += matrix[i].toFixed(10) + ",";
-//  }
-//  if(matrix[15] < MIN)
-//    css += '0';
-//  else
-//    css += matrix[15].toFixed(10);
-//  return css + ")";
-//};
-
 snabbtjs.mat_to_css = function(matrix) {
   var css = 'matrix3d(' +
             matrix[0].toFixed(10) + ', ' +
@@ -125,7 +109,6 @@ snabbtjs.rotX = function(rad) {
   return m;
 };
 
-
 snabbtjs.assign_rotX = function(m, rad) {
   m[0] = 1; m[1] = 0; m[2] = 0; m[3] = 0;
   m[4] = 0; m[5] = Math.cos(rad); m[6] = -Math.sin(rad); m[7] = 0;
@@ -160,24 +143,8 @@ snabbtjs.rotZ = function(rad) {
   return m;
 };
 
-snabbtjs.assign_rotZ = function(m, rad) {
-  m[0] = Math.cos(rad); m[1] = -Math.sin(rad); m[2] = 0; m[3] = 0;
-  m[4] = Math.sin(rad); m[5] = Math.cos(rad); m[6] = 0; m[7] = 0;
-  m[8] = 0; m[9] = 0; m[10] = 1; m[11] = 0;
-  m[12] = 0; m[13] = 0; m[14] = 0; m[15] = 1;
-  return m;
-};
-
 snabbtjs.trans = function(x, y, z) {
   var m = new Float32Array(16);
-  m[0] = 1; m[1] = 0; m[2] = 0; m[3] = 0;
-  m[4] = 0; m[5] = 1; m[6] = 0; m[7] = 0;
-  m[8] = 0; m[9] = 0; m[10] = 1; m[11] = 0;
-  m[12] = x; m[13] = y; m[14] = z; m[15] = 1;
-  return m;
-};
-
-snabbtjs.assign_trans = function(m, x, y, z) {
   m[0] = 1; m[1] = 0; m[2] = 0; m[3] = 0;
   m[4] = 0; m[5] = 1; m[6] = 0; m[7] = 0;
   m[8] = 0; m[9] = 0; m[10] = 1; m[11] = 0;
@@ -194,15 +161,6 @@ snabbtjs.scale = function(x, y) {
   ]);
 };
 
-snabbtjs.assign_scale = function(m, x, y) {
-  m[0] = x; m[1] = 0; m[2] = 0; m[3] = 0;
-  m[4] = 0; m[5] = y; m[6] = 0; m[7] = 0;
-  m[8] = 0; m[9] = 0; m[10] = 1; m[11] = 0;
-  m[12] = 0; m[13] = 0; m[14] = 0; m[15] = 1;
-  return m;
-};
-
-
 snabbtjs.ident = function() {
   return new Float32Array([
      1, 0, 0, 0,
@@ -211,15 +169,6 @@ snabbtjs.ident = function() {
      0, 0, 0, 1
   ]);
 };
-
-snabbtjs.assign_ident = function(m) {
-  m[0] = 1; m[1] = 0; m[2] = 0; m[3] = 0;
-  m[4] = 0; m[5] = 1; m[6] = 0; m[7] = 0;
-  m[8] = 0; m[9] = 0; m[10] = 1; m[11] = 0;
-  m[12] = 0; m[13] = 0; m[14] = 0; m[15] = 1;
-  return m;
-};
-
 
 snabbtjs.set_css = function(el, state) {
   var matrix = state.as_matrix();
@@ -245,4 +194,3 @@ snabbtjs.set_css = function(el, state) {
       el.style.opacity = state.opacity;
   }
 };
-

@@ -22,7 +22,7 @@ module.exports = function(grunt) {
       },
       jquery: {
         src: 'src/*.js',
-        dest: 'src/jquery.snabbt.js',
+        dest: 'dist/jquery.snabbt.js',
       },
       dist: {
         src: ['src/animations.js', 'src/easing.js', 'src/main.js', 'src/mat.js', 'src/state.js', 'src/utils.js'],
