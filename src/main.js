@@ -12,7 +12,9 @@ function snabbt(arg1, arg2, arg3) {
   var options = arg2;
 
 
-  var start = snabbtjs.current_animation_transform(element);
+  //var start = snabbtjs.current_animation_transform(element);
+  //start = snabbtjs.state_from_options(start, options, 'from_');
+  var start = snabbtjs.current_animation_transform(snabbtjs.State({}), options, 'from_');
   start = snabbtjs.state_from_options(start, options, 'from_');
   var end = new snabbtjs.State({});
   end = snabbtjs.state_from_options(end, options, '');

@@ -71,7 +71,7 @@ snabbtjs.State.prototype.as_matrix = function() {
   m = snabbtjs.mult(m, snabbtjs.rotZ(this.bz));
 
   // Final offset
-  m = snabbtjs.mult(m, snabbtjs.trans(this.offset_x, this.offset_y, this.offset_z));
+  m = snabbtjs.mult(snabbtjs.trans(this.offset_x, this.offset_y, this.offset_z), m);
   return m;
 };
 
