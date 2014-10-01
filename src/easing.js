@@ -77,7 +77,7 @@ snabbtjs.sinc = function(curr, max) {
 
 snabbtjs.SpringEasing = function(options) {
   this.position = snabbtjs.option_or_default(options.start_position, 0);
-  this.equilibrium_position = snabbtjs.option_or_default(options.equilibrium_position, 0);
+  this.equilibrium_position = snabbtjs.option_or_default(options.equilibrium_position, 1);
   this.velocity = snabbtjs.option_or_default(options.initial_velocity, 0);
   this.spring_constant = snabbtjs.option_or_default(options.spring_constant, 0.8);
   this.deacceleration = snabbtjs.option_or_default(options.deacceleration, 0.9);
@@ -106,6 +106,14 @@ snabbtjs.SpringEasing.prototype.tick = function() {
   }
 };
 
+snabbtjs.SpringEasing.prototype.value = function() {
+  return this.position;
+};
+
+snabbtjs.SpringEasing.prototype.completed = function() {
+  return this.equilibrium;
+};
+
 snabbtjs.EASING_FUNCS = {
   'linear': snabbtjs.linear_easing,
   'cubic': snabbtjs.cubic_easing,
@@ -117,4 +125,30 @@ snabbtjs.EASING_FUNCS = {
   'sinc2_wobbler': snabbtjs.sinc2_wobbler_easing,
   'superman': snabbtjs.superman_easing,
   'sinc': snabbtjs.sinc,
+};
+
+snabbtjs.Easer = function(easer) {
+  this.easer = easer;
+  this._value = 0;
+};
+
+snabbtjs.Easer.prototype.tick = function(curr, max) {
+  this._value = this.easer(curr, max);
+  this.last_value = curr/max;
+};
+
+snabbtjs.Easer.prototype.value = function() {
+  return this._value;
+};
+
+snabbtjs.Easer.prototype.completed = function() {
+  return this.last_value >= 1;
+};
+
+snabbtjs.create_easer = function(easer_name, options) {
+  if(easer_name == 'spring') {
+    return new snabbtjs.SpringEasing(options);
+  }
+  var ease_func = snabbtjs.EASING_FUNCS[easer_name];
+  return new snabbtjs.Easer(ease_func);
 };

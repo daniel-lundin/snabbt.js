@@ -6,3 +6,34 @@ snabbtjs.option_or_default = function(option, def) {
   }
   return option;
 };
+
+snabbtjs._update_element_transform = function(element, matrix) {
+  element.style.webkitTransform = snabbtjs.mat_to_css(matrix);
+  element.style.transform = snabbtjs.mat_to_css(matrix);
+};
+
+snabbtjs.update_element_transform = function(element, matrix) {
+  if(element.hasOwnProperty('length')) {
+    for(var i=0;i<element.length;++i) {
+      snabbtjs._update_element_transform(element[i], matrix);
+    }
+  } else {
+    snabbtjs._update_element_transform(element, matrix);
+  }
+};
+
+snabbtjs._update_element_properties = function(element, properties) {
+  for(var key in properties) {
+    element.style[key] = properties[key];
+  }
+};
+
+snabbtjs.update_element_properties = function(element, properties) {
+  if(element.hasOwnProperty('length')) {
+    for(var i=0;i<element.length;++i) {
+      snabbtjs._update_element_properties(element[i], properties);
+    }
+  } else {
+    snabbtjs._update_element_properties(element, properties);
+  }
+};

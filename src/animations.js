@@ -1,35 +1,19 @@
 var snabbtjs = snabbtjs || {};
 
-snabbtjs.AnimationType = {};
-snabbtjs.AnimationType.TIME = 1;
-snabbtjs.AnimationType.MANUAL = 2;
-snabbtjs.AnimationType.SPRING = 3;
+// ------------------------------ 
+// Time animation
+// ------------------------------ 
 
 snabbtjs.Animation = function(options) {
-  this.assign(options);
-};
-
-snabbtjs.Animation.prototype.assign = function(options) {
-  this._start_state = options.start_state || new snabbtjs.State({});
-  this._end_state = options.end_state || new snabbtjs.State({});
+  this._start_state = options.start_state;
+  this._end_state = options.end_state;
   this.offset = options.offset;
   this.duration = options.duration || 500;
   this.delay = options.delay || 0;
-  this.easing = options.easing || snabbtjs.linear_easing;
-  this.mode = options.mode || snabbtjs.AnimationType.TIME;
-
-  this.start_time = 0;
-  this.current_time = 0;
-  this._stopped = false;
-  // Manual related, should probably be subclassed
-  this.value = 0;
-
-  if(this.mode === snabbtjs.AnimationType.SPRING) {
-    options.equilibrium_position = 1;
-    this.spring = new snabbtjs.SpringEasing(options);
-  }
-
-  this._current_state = new snabbtjs.State({});
+  this.easing = snabbtjs.create_easer('linear');
+  if(options.easing)
+    this.easing = snabbtjs.create_easer(options.easing, options);
+  this._current_state = this._start_state.clone();
   if(options.offset) {
     this._current_state.offset_x = this.offset[0];
     this._current_state.offset_y = this.offset[1];
@@ -38,6 +22,10 @@ snabbtjs.Animation.prototype.assign = function(options) {
     this._end_state.offset_y = this.offset[1];
     this._end_state.offset_z = this.offset[2];
   }
+
+  this.start_time = 0;
+  this.current_time = 0;
+  this._stopped = false;
 };
 
 snabbtjs.Animation.prototype.stop = function() {
@@ -49,127 +37,117 @@ snabbtjs.Animation.prototype.stopped = function() {
 };
 
 snabbtjs.Animation.prototype.tick = function(time) {
-  // If first tick, set start_time
   if(this._stopped)
     return;
 
-  if(!this.start_time) {
+  // If first tick, set start_time
+  if(!this.start_time) 
     this.start_time = time;
-  }
-  if(this.mode == snabbtjs.AnimationType.TIME) {
-    if(time - this.start_time > this.delay)
-      this.current_time = time - this.delay;
-  } else if(this.mode == snabbtjs.AnimationType.SPRING) {
-    if(time - this.start_time > this.delay)
-      this.spring.tick();
-  }
-};
+  if(time - this.start_time > this.delay)
+    this.current_time = time - this.delay;
 
-snabbtjs.Animation.prototype.stop_manual = function(complete) {
-  // Start a TIME based animation from current state
-  // to end_state or start_state depending on complete
-  if(!complete) {
-    this._end_state.assign(this._start_state);
-    this.delay = -this.delay;
-  }
-  this._start_state.assign(this._current_state);
-  this.mode = snabbtjs.AnimationType.TIME;
-};
-
-snabbtjs.Animation.prototype.set_value = function(value) {
-  var delay = this.delay / this.duration;
-  this.value = Math.max(0, Math.min(value - delay, 1));
+  var curr = Math.min(Math.max(0.001, this.current_time - this.start_time), this.duration);
+  var max = this.duration;
+  this.easing.tick(curr, max);
+  this.update_current_transform();
 };
 
 snabbtjs.Animation.prototype.current_state = function() {
-  if(!this._stopped)
-    this.update_current_transition();
   return this._current_state;
+};
+
+snabbtjs.Animation.prototype.update_current_transform = function() {
+  var tween_value = this.easing.value();
+  snabbtjs.TweenStates(this._start_state, this._end_state, this._current_state, tween_value);
 };
 
 snabbtjs.Animation.prototype.completed = function() {
   if(this._stopped)
     return true;
-  if(this.mode == snabbtjs.AnimationType.TIME) {
-    if(this.start_time === 0) {
-      return false;
-    }
-    return this.current_time - this.start_time > this.duration;
-  } else if(this.mode == snabbtjs.AnimationType.SPRING) {
-    return this.spring.equilibrium;
-  } else {
+  if(this.start_time === 0) {
     return false;
   }
+  return this.easing.completed();
 };
 
-snabbtjs.Animation.prototype.start_state = function() {
-  return this._start_state;
+snabbtjs.Animation.prototype.update_element = function(element) {
+  var matrix = this._current_state.as_matrix();
+  var properties = this._current_state.properties();
+  snabbtjs.update_element_transform(element, matrix);
+  snabbtjs.update_element_properties(element, properties);
 };
 
-snabbtjs.Animation.prototype.end_state = function() {
+// ------------------------------ 
+// End Time animation
+// ------------------------------ 
+
+// ------------------------------ 
+// Value feeded animation
+// ------------------------------ 
+
+snabbtjs.ValueFeededAnimation = function(options) {
+  this.value_feeder = options.value_feeder;
+  this.duration = options.duration || 500;
+  this.delay = options.delay || 0;
+
+  this.easing = snabbtjs.create_easer('linear');
+  if(options.easing)
+    this.easing = snabbtjs.create_easer(options.easing, options);
+  this._current_state = new snabbtjs.State({});
+  this.current_matrix = this.value_feeder(0);
+
+  this.start_time = 0;
+  this.current_time = 0;
+  this._stopped = false;
+};
+
+snabbtjs.ValueFeededAnimation.prototype.stop = function() {
+  this._stopped = true;
+};
+
+snabbtjs.ValueFeededAnimation.prototype.stopped = function() {
+  return this._stopped;
+};
+
+snabbtjs.ValueFeededAnimation.prototype.tick = function(time) {
   if(this._stopped)
-    return this.current_state();
+    return;
 
-  if(this.mode == snabbtjs.AnimationType.TIME || this.mode == snabbtjs.AnimationType.SPRING) {
-    return this._end_state;
-  } else {
-    return this.current_state();
-  }
+  // If first tick, set start_time
+  if(!this.start_time) 
+    this.start_time = time;
+  if(time - this.start_time > this.delay)
+    this.current_time = time - this.delay;
+
+  var curr = Math.min(Math.max(0.001, this.current_time - this.start_time), this.duration);
+  var max = this.duration;
+  this.easing.tick(curr, max);
+
+  this.update_current_transform();
 };
 
-snabbtjs.Animation.prototype.update_current_transition = function() {
-  var curr = 0;
-  var max = 0;
-  if(this.mode == snabbtjs.AnimationType.TIME) {
-    curr = Math.min(Math.max(0.001, this.current_time - this.start_time), this.duration);
-    max = this.duration;
-  }
-  if(this.mode == snabbtjs.AnimationType.SPRING) {
-    curr = this.spring.position;
-  }
-
-  var dx = (this._end_state.x - this._start_state.x);
-  var dy = (this._end_state.y - this._start_state.y);
-  var dz = (this._end_state.z - this._start_state.z);
-  var dax = (this._end_state.ax - this._start_state.ax);
-  var day = (this._end_state.ay - this._start_state.ay);
-  var daz = (this._end_state.az - this._start_state.az);
-  var dbx = (this._end_state.bx - this._start_state.bx);
-  var dby = (this._end_state.by - this._start_state.by);
-  var dbz = (this._end_state.bz - this._start_state.bz);
-  var dsx = (this._end_state.sx - this._start_state.sx);
-  var dsy = (this._end_state.sy - this._start_state.sy);
-  var dwidth = (this._end_state.width - this._start_state.width);
-  var dheight = (this._end_state.height - this._start_state.height);
-  var dopacity = (this._end_state.opacity - this._start_state.opacity);
-
-  var s = 0;
-  if(this.mode == snabbtjs.AnimationType.TIME) {
-    s = this.easing(curr, max);
-  } else if(this.mode == snabbtjs.AnimationType.SPRING) {
-    s = curr;
-  }else {
-    s = this.value;
-  }
-  this._current_state.ax = this._start_state.ax + s*dax;
-  this._current_state.ay = this._start_state.ay + s*day;
-  this._current_state.az = this._start_state.az + s*daz;
-  this._current_state.x = this._start_state.x + s*dx;
-  this._current_state.y = this._start_state.y + s*dy;
-  this._current_state.z = this._start_state.z + s*dz;
-  this._current_state.bx = this._start_state.bx + s*dbx;
-  this._current_state.by = this._start_state.by + s*dby;
-  this._current_state.bz = this._start_state.bz + s*dbz;
-  this._current_state.sx = this._start_state.sx + s*dsx;
-  this._current_state.sy = this._start_state.sy + s*dsy;
-  if(this._end_state.width !== undefined)
-    this._current_state.width = this._start_state.width + s*dwidth;
-  if(this._end_state.height !== undefined)
-    this._current_state.height = this._start_state.height + s*dheight;
-  if(this._end_state.opacity !== undefined)
-    this._current_state.opacity = this._start_state.opacity + s*dopacity;
+snabbtjs.ValueFeededAnimation.prototype.current_state = function() {
+  return this._current_state;
 };
 
+snabbtjs.ValueFeededAnimation.prototype.update_current_transform = function() {
+  var tween_value = this.easing.value();
+  this.current_matrix = this.value_feeder(tween_value);
+};
+
+snabbtjs.ValueFeededAnimation.prototype.completed = function() {
+  if(this._stopped)
+    return true;
+  return this.easing.completed();
+};
+
+snabbtjs.ValueFeededAnimation.prototype.update_element = function(element) {
+  snabbtjs.update_element_transform(element, this.current_matrix);
+};
+
+// ------------------------------ 
+// End value feeded animation
+// ------------------------------ 
 
 // ---------------------- \\
 // -- ScrollAnimation --  \\
@@ -220,6 +198,7 @@ snabbtjs.AttentionAnimation = function(options) {
   this.movement = options.movement;
   this.current_movement = new snabbtjs.State({});
   options.initial_velocity = 0.1;
+  options.equilibrium_position = 0;
   this.spring = new snabbtjs.SpringEasing(options);
   this._stopped = false;
 };
@@ -254,10 +233,25 @@ snabbtjs.AttentionAnimation.prototype.update_movement = function() {
   this.current_movement.bz = this.movement.bz * this.spring.position;
 };
 
+snabbtjs.AttentionAnimation.prototype.update_element = function(element) {
+  var matrix = this.current_movement.as_matrix();
+  var properties = this.current_movement.properties();
+  snabbtjs.update_element_transform(element, matrix);
+  snabbtjs.update_element_properties(element, properties);
+};
+
 snabbtjs.AttentionAnimation.prototype.current_state = function() {
   return this.current_movement;
 };
 
 snabbtjs.AttentionAnimation.prototype.completed = function() {
   return this.spring.equilibrium || this._stopped;
+};
+
+
+// Returns animation constructors based on options
+snabbtjs.create_animation = function(options) {
+  if(options.value_feeder)
+    return new snabbtjs.ValueFeededAnimation(options);
+  return new snabbtjs.Animation(options);
 };

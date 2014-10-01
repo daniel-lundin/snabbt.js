@@ -51,6 +51,8 @@ snabbtjs.State.prototype.assign = function(p) {
   this.sx = p.sx;
   this.sy = p.sy;
   this.opacity = p.opacity;
+  this.height = this.height;
+  this.width = this.width;
 };
 
 snabbtjs.State.prototype.as_matrix = function() {
@@ -75,3 +77,10 @@ snabbtjs.State.prototype.as_matrix = function() {
   return m;
 };
 
+snabbtjs.State.prototype.properties = function() {
+  return {
+    opacity: this.opacity,
+    width: this.width + 'px',
+    height: this.height + 'px'
+  };
+};

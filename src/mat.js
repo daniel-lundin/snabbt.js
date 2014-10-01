@@ -74,6 +74,18 @@ snabbtjs.assigned_matrix_multiplication = function(a, b, res) {
 };
 
 snabbtjs.mat_to_css = function(matrix) {
+  var css = 'matrix3d(';
+  for(var i=0;i<matrix.length-1;++i) {
+    if(Math.abs(matrix[i]) < 0.01)
+      css += '0,';
+    else
+      css += matrix[i].toFixed(10) + '0,';
+  }
+  css += matrix[15].toFixed(10) + ')';
+  return css;
+};
+
+snabbtjs.mat_to_css2 = function(matrix) {
   var css = 'matrix3d(' +
             matrix[0].toFixed(10) + ', ' +
             matrix[1].toFixed(10) + ', ' +
@@ -170,27 +182,26 @@ snabbtjs.ident = function() {
   ]);
 };
 
-snabbtjs.set_css = function(el, state) {
-  var matrix = state.as_matrix();
+snabbtjs.set_css = function(el, matrix) {
   if(el.hasOwnProperty('length')) {
     for(var i=0;i<el.length;++i) {
       el[i].style.webkitTransform = snabbtjs.mat_to_css(matrix);
       el[i].style.transform = snabbtjs.mat_to_css(matrix);
-      if(state.width !== undefined)
-        el[i].style.width = state.width + 'px';
-      if(state.height !== undefined)
-        el[i].style.height = state.height + 'px';
-      if(state.opacity !== undefined)
-        el[i].style.opacity = state.opacity;
+      //if(state.width !== undefined)
+      //  el[i].style.width = state.width + 'px';
+      //if(state.height !== undefined)
+      //  el[i].style.height = state.height + 'px';
+      //if(state.opacity !== undefined)
+      //  el[i].style.opacity = state.opacity;
     }
   } else {
     el.style.webkitTransform = snabbtjs.mat_to_css(matrix);
     el.style.transform = snabbtjs.mat_to_css(matrix);
-    if(state.width !== undefined)
-      el.style.width = state.width + 'px';
-    if(state.height !== undefined)
-      el.style.height = state.height + 'px';
-    if(state.opacity !== undefined)
-      el.style.opacity = state.opacity;
+    //if(state.width !== undefined)
+    //  el.style.width = state.width + 'px';
+    //if(state.height !== undefined)
+    //  el.style.height = state.height + 'px';
+    //if(state.opacity !== undefined)
+    //  el.style.opacity = state.opacity;
   }
 };
