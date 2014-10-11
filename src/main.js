@@ -13,7 +13,8 @@ function snabbt(arg1, arg2, arg3) {
 
 
   var start = snabbtjs.current_animation_transform(element);
-  start = snabbtjs.state_from_options(start, options, 'from_');
+  if(!start)
+    start = snabbtjs.state_from_options(start, options, 'from_');
   var end = new snabbtjs.State({});
   end = snabbtjs.state_from_options(end, options, '');
 
@@ -122,10 +123,11 @@ snabbtjs.current_animation_transform = function(element) {
       return state;
     }
   }
-  return new snabbtjs.State({});
 };
 
 snabbtjs.state_from_options = function(p, options, prefix) {
+  if(!p)
+    p = new snabbtjs.State({});
 
   if(options[prefix + 'pos']) {
     p.x = options[prefix + 'pos'][0];
