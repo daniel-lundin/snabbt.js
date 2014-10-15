@@ -1,5 +1,6 @@
 (function ( $ ) {
-  $.fn.snabbt = function(options) {
-    return snabbt(this.toArray(), options);
+  $.fn.snabbt = function(arg1, arg2) {
+
+    return snabbt(this.get(), arg1, arg2);
   };
 }( jQuery ));
