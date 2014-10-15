@@ -4,7 +4,7 @@ var snabbtjs = snabbtjs || {};
 function snabbt(arg1, arg2, arg3) {
   if(arg1 == 'scroll')
     return snabbtjs.setup_scroll_animation(arg2);
-  if(arg1 == 'attention')
+  if(arg2 == 'attention')
     return snabbtjs.setup_attention_animation(arg1, arg3);
   if(arg2 == 'stop')
     return snabbtjs.stop_animation(arg1);
