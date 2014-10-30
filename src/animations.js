@@ -11,6 +11,7 @@ snabbtjs.Animation = function(options) {
   this.duration = options.duration || 500;
   this.delay = options.delay || 0;
   this.easing = snabbtjs.create_easer('linear');
+  this.perspective = options.perspective;
   if(options.easing)
     this.easing = snabbtjs.create_easer(options.easing, options);
   this._current_state = this._start_state.clone();
@@ -46,7 +47,8 @@ snabbtjs.Animation.prototype.tick = function(time) {
   if(time - this.start_time > this.delay)
     this.current_time = time - this.delay;
 
-  var curr = Math.min(Math.max(0.001, this.current_time - this.start_time), this.duration);
+  var curr = Math.min(Math.max(0.0, this.current_time - this.start_time), this.duration);
+  //var curr = Math.max(this.current_time - this.start_time, this.duration);
   var max = this.duration;
   this.easing.tick(curr, max);
   this.update_current_transform();
@@ -73,7 +75,7 @@ snabbtjs.Animation.prototype.completed = function() {
 snabbtjs.Animation.prototype.update_element = function(element) {
   var matrix = this._current_state.as_matrix();
   var properties = this._current_state.properties();
-  snabbtjs.update_element_transform(element, matrix);
+  snabbtjs.update_element_transform(element, matrix, this.perspective);
   snabbtjs.update_element_properties(element, properties);
 };
 
@@ -89,6 +91,7 @@ snabbtjs.ValueFeededAnimation = function(options) {
   this.value_feeder = options.value_feeder;
   this.duration = options.duration || 500;
   this.delay = options.delay || 0;
+  this.perspective = options.perspective;
 
   this.easing = snabbtjs.create_easer('linear');
   if(options.easing)
@@ -142,7 +145,7 @@ snabbtjs.ValueFeededAnimation.prototype.completed = function() {
 };
 
 snabbtjs.ValueFeededAnimation.prototype.update_element = function(element) {
-  snabbtjs.update_element_transform(element, this.current_matrix);
+  snabbtjs.update_element_transform(element, this.current_matrix, this.perspective);
 };
 
 // ------------------------------ 

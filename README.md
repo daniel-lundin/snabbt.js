@@ -61,9 +61,17 @@ The following easing function are present:
 
  - 'linear'
  - 'cos'
- - 'cubic'
+ - 'cos'
  - 'atan'
  - 'sinc_wobbler'
+ - 'linear'
+ - 'square'
+ - 'sqrt'
+ - 'cos'
+ - 'exp_cos_bounce'
+ - 'exp_cos'
+ - 'sinc_wobbler'
+
 
 Under the hood
 --------------

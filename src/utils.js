@@ -7,18 +7,22 @@ snabbtjs.option_or_default = function(option, def) {
   return option;
 };
 
-snabbtjs._update_element_transform = function(element, matrix) {
-  element.style.webkitTransform = snabbtjs.mat_to_css(matrix);
-  element.style.transform = snabbtjs.mat_to_css(matrix);
+snabbtjs._update_element_transform = function(element, matrix, perspective) {
+  var css_perspective = '';
+  if(perspective) {
+    css_perspective = 'perspective(' + perspective + 'px) ';
+  }
+  element.style.webkitTransform = css_perspective + snabbtjs.mat_to_css(matrix);
+  element.style.transform = css_perspective + snabbtjs.mat_to_css(matrix);
 };
 
-snabbtjs.update_element_transform = function(element, matrix) {
+snabbtjs.update_element_transform = function(element, matrix, perspective) {
   if(element.hasOwnProperty('length')) {
     for(var i=0;i<element.length;++i) {
-      snabbtjs._update_element_transform(element[i], matrix);
+      snabbtjs._update_element_transform(element[i], matrix, perspective);
     }
   } else {
-    snabbtjs._update_element_transform(element, matrix);
+    snabbtjs._update_element_transform(element, matrix, perspective);
   }
 };
 
