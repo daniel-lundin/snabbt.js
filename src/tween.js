@@ -12,6 +12,8 @@ snabbtjs.TweenStates = function(start, end, result, tween_value) {
   var dbz = (end.bz - start.bz);
   var dsx = (end.sx - start.sx);
   var dsy = (end.sy - start.sy);
+  var dskewx = (end.skew_x - start.skew_x);
+  var dskewy = (end.skew_y - start.skew_y);
   var dwidth = (end.width - start.width);
   var dheight = (end.height - start.height);
   var dopacity = (end.opacity - start.opacity);
@@ -25,8 +27,11 @@ snabbtjs.TweenStates = function(start, end, result, tween_value) {
   result.bx = start.bx + tween_value*dbx;
   result.by = start.by + tween_value*dby;
   result.bz = start.bz + tween_value*dbz;
+  result.skew_x = start.skew_x + tween_value*dskewx;
+  result.skew_y = start.skew_y + tween_value*dskewy;
   result.sx = start.sx + tween_value*dsx;
   result.sy = start.sy + tween_value*dsy;
+
   if(end.width !== undefined)
     result.width = start.width + tween_value*dwidth;
   if(end.height !== undefined)

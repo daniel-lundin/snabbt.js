@@ -139,6 +139,10 @@ snabbtjs.state_from_options = function(p, options, prefix) {
     p.ay =  options[prefix + 'rot'][1];
     p.az =  options[prefix + 'rot'][2];
   }
+  if(options[prefix + 'skew']) {
+    p.skew_x =  options[prefix + 'skew'][0];
+    p.skew_y =  options[prefix + 'skew'][1];
+  }
   if(options[prefix + 'rot_post']) {
     p.bx =  options[prefix + 'rot_post'][0];
     p.by =  options[prefix + 'rot_post'][1];
