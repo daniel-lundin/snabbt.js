@@ -17,7 +17,7 @@ snabbtjs.State = function(config) {
   this.sy = snabbtjs.option_or_default(config.sy, 1);
   this.width = config.width;
   this.height = config.height;
-  this.opacity = config.opacity;
+  this.opacity = snabbtjs.option_or_default(config.opacity, 1);
 };
 
 snabbtjs.State.prototype.clone = function() {

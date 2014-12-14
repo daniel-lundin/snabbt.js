@@ -20,7 +20,14 @@ function snabbt(arg1, arg2, arg3) {
 
   var anim_options = snabbtjs.setup_animation_options(start, end, options);
   var animation = snabbtjs.create_animation(anim_options);
-  snabbtjs.running_animations.push([element, animation]);
+
+  if(element.hasOwnProperty('length')) {
+    for(var i=0;i<element.length;++i) {
+      snabbtjs.running_animations.push([element[i], animation]);
+    }
+  } else {
+    snabbtjs.running_animations.push([element, animation]);
+  }
 
   animation.update_element(element);
   var queue = [];
@@ -117,10 +124,20 @@ snabbtjs.current_animation_transform = function(element) {
   for(var i=0;i<snabbtjs.running_animations.length;++i) {
     var animated_element = snabbtjs.running_animations[i][0];
     var animation = snabbtjs.running_animations[i][1];
-    if(animated_element === element) {
-      var state = animation.current_state();
-      animation.stop();
-      return state;
+    if(element.hasOwnProperty('length')) {
+      for(var j=0;j<element.length;++j) {
+        if(animated_element === element[j]) {
+          var state = animation.current_state();
+          animation.stop();
+          return state;
+        }
+      }
+    } else {
+      if(animated_element === element) {
+        var state = animation.current_state();
+        animation.stop();
+        return state;
+      }
     }
   }
 };
@@ -129,24 +146,24 @@ snabbtjs.state_from_options = function(p, options, prefix) {
   if(!p)
     p = new snabbtjs.State({});
 
-  if(options[prefix + 'pos']) {
-    p.x = options[prefix + 'pos'][0];
-    p.y = options[prefix + 'pos'][1];
-    p.z = options[prefix + 'pos'][2];
+  if(options[prefix + 'position']) {
+    p.x = options[prefix + 'position'][0];
+    p.y = options[prefix + 'position'][1];
+    p.z = options[prefix + 'position'][2];
   }
-  if(options[prefix + 'rot']) {
-    p.ax =  options[prefix + 'rot'][0];
-    p.ay =  options[prefix + 'rot'][1];
-    p.az =  options[prefix + 'rot'][2];
+  if(options[prefix + 'rotation']) {
+    p.ax =  options[prefix + 'rotation'][0];
+    p.ay =  options[prefix + 'rotation'][1];
+    p.az =  options[prefix + 'rotation'][2];
   }
   if(options[prefix + 'skew']) {
     p.skew_x =  options[prefix + 'skew'][0];
     p.skew_y =  options[prefix + 'skew'][1];
   }
-  if(options[prefix + 'rot_post']) {
-    p.bx =  options[prefix + 'rot_post'][0];
-    p.by =  options[prefix + 'rot_post'][1];
-    p.bz =  options[prefix + 'rot_post'][2];
+  if(options[prefix + 'rotation_post']) {
+    p.bx =  options[prefix + 'rotation_post'][0];
+    p.by =  options[prefix + 'rotation_post'][1];
+    p.bz =  options[prefix + 'rotation_post'][2];
   }
   if(options[prefix + 'scale']) {
     p.sx =  options[prefix + 'scale'][0];
