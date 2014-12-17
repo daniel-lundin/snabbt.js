@@ -2,74 +2,225 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title></title>
-  <script src="dist/snabbt.min.js"></script>
-  <script src="demo.js"></script>
-  <style>
-    @font-face {
-      font-family: 'Fira Sans';
-      src: url('FiraSans-Thin.otf') format('opentype');
-    }
-    body {
-      background: #933;
-      font-family: 'Fira Sans';
-      font-size: 4em;
-      font-weight: 200;
-      text-align: center;
-    }
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  
+  <title>snabbt.js</title>
+  <link href='http://fonts.googleapis.com/css?family=Raleway:400,300,600' rel='stylesheet' type='text/css'>
+<link href="http://maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
+  
 
-    #container {
-      position: absolute;
-      top: -1000px;
-      left: -1000px;
-      width: 0px;
-      height: 0px;
-      -webkit-perspective: 2000px;
-      -moz-perspective: 2000px;
-      -webkit-transform-style: preserve-3d;
-      -moz-transform-style: preserve-3d;
-    }
-    .letter {
-      position: absolute;
-      width: 70px;
-      height: 90px;
-      background: #ddd;
-    }
-    #banner {
-      background: #ddd;
-      width: 600px;
-      height: 90px;
-      -webkit-backface-visibility: hidden;
-      -webkit-transform: rotateY(190deg);
-      -moz-backface-visibility: hidden;
-      -moz-transform: rotateY(190deg);
-    }
-    #again {
-      visibility: hidden;
-      position: absolute;
-      top: 200px;
-      background: #ddd;
-      width: 400px;
-      height: 90px;
-      -webkit-transform-style: preserve-3d;
-    }
+  <link rel="stylesheet" href="css/normalize.css">
+  <link rel="stylesheet" href="css/skeleton.css">
+
+  <link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/highlight.js/8.4/styles/solarized_dark.min.css">
+  <script src="http://cdnjs.cloudflare.com/ajax/libs/highlight.js/8.4/highlight.min.js"></script>
+  <script>hljs.initHighlightingOnLoad();</script>
+
+  <link rel="stylesheet" href="css/custom.css">
+  <style>
   </style>
 </head>
-<body onload="init_animation()">
-  <a href="https://github.com/diggidanne/snabbt.js"><img id="ribbon" style="visibility: hidden; position: absolute; top: 0; right: 0; border: 0;" src="https://camo.githubusercontent.com/38ef81f8aca64bb9a64448d0d70f1308ef5341ab/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f6461726b626c75655f3132313632312e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png"></a>
-  <div id="container">
-    <div class="letter">s</div>
-    <div class="letter">n</div>
-    <div class="letter">a</div>
-    <div class="letter">b</div>
-    <div class="letter">b</div>
-    <div class="letter">t</div>
-    <div class="letter">.</div>
-    <div class="letter">j</div>
-    <div class="letter">s</div>
-    <div id="banner">move things fast</div>
-    <div id="again"><a href="#">do it again!</a><div>
+<body>
+
+  <a href="https://github.com/daniel-lundin/snabbt.js"><img style="position: absolute; top: 0; left: 0; border: 0;" src="https://camo.githubusercontent.com/567c3a48d796e2fc06ea80409cc9dd82bf714434/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f6c6566745f6461726b626c75655f3132313632312e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_left_darkblue_121621.png"></a>
+
+  <div id="docked-navbar" class="nav docked hidden">
+    <div class="container"> 
+      <ul>
+        <li><a href="#intro">Introduction</a></li>
+        <li><a href="#usage">Usage</a></li>
+        <li><a href="#easing">Easing</a></li>
+        <li><a href="#advanced">Advanced</a></li>
+      </ul>
+    </div> 
   </div>
+
+  <div class="container" style="margin-top: 10%"> 
+    <div class="hero">
+      <h1><span>s</span><span>n</span><span>a</span><span>b</span><span>b</span><span>t</span><span>.</span><span>j</span><span>s</span></h1>
+      <p>Fast, light and simple animation engine in javascript</p>
+      <div class="row">
+        <div class="four columns">
+          <h3><i class="fa fa-rocket"></i>Fast</h3>
+          <p>60 FPS without micro-optimizations</p>
+        </div>
+        <div class="four columns">
+          <h3><i class="fa fa-paper-plane"></i>Light</h3>
+          <p> &lt; 4kb minified and gzipped</p>
+        </div>
+        <div class="four columns">
+          <h3><i class="fa fa-user"></i>Simple</h3>
+          <p>One single API-endpoint</p>
+        </div>
+      </div>
+      <a href="https://raw.githubusercontent.com/daniel-lundin/snabbt.js/master/dist/snabbt.min.js" class="button button-primary">Download</a>
+    </div>
+    <p class="warning"><span class="label">Warning:</span> snabbt.js is under development, breaking changes could occur. But I would love some feedback</p>
+    <div id="navbar" class="nav">
+      <ul>
+        <li><a href="#intro">Introduction</a></li>
+        <li><a href="#usage">Usage</a></li>
+        <li><a href="#easing">Easing</a></li>
+        <li><a href="#advanced">Advanced</a></li>
+      </ul>
+    </div>
+
+    <section id="intro">
+      <h2>Introduction</h2>
+      <p>snabbt.js is a minimalistic javascript animation library. It focuses on moving things around. It will translate, rotate, scale, skew and resize your elements. By including matrix multiplication operations, transforms can be combined in any way you want. The end result is then set via CSS3 transform matrices.</p>
+
+      <h4>Limitations</h4>
+      <ul>
+        <li>All transforms work on pixels or radians. Any unit conversion has to be done fore-hand</li>
+        <li>No color animations</li>
+        <li>For performance reasons, snabbt.js never queries the DOM. This means that in some cases you need to store end transforms yourself</li>
+      </ul>
+    </section>
+    <section id="usage">
+      <h2>Usage</h2>
+      <div class="row">
+        <div class="six columns">
+          <p>Animations are started with the snabbt-function call. The function takes an element as first parameter and an option-object as second. Example:</p>
+
+
+          <button id="usage-example-execute">Run example</button>
+        </div>
+        <div class="six columns">
+
+          <pre><code>snabbt(element, {
+  position: [100, 0, 0],
+  rotation: [Math.PI, 0, 0],
+  duration: 1000,
+  delay: 100,
+  easing: 'cos'
+});</code></pre>
+      </div>
+    </div>
+
+    <h3>Animation options</h3>
+    <ul>
+      <li><strong>position</strong> - Array pixel offsets [x, y, z], default to [0, 0, 0]</li>
+
+      <li><strong>rotation</strong> - Array of rotations in each direction(in radians), [ax, ay, az], defaults to [0,0,0]</li>
+      <li><strong>scale</strong> - Array of scale in x, y direction [x, y], defaults to [1, 1]</li>
+      <li><strong>rotation_post</strong> - Array of rotations applied after <em>position</em> and <em>rotation</em>. Defaults to [0, 0, 0,]</li>
+      <li><strong>width</strong> - Element width in pixels</li>
+      <li><strong>height</strong> - Element height in pixels</li>
+      <li><strong>duration</strong> - Animation duration in millisecs, defaults to 500.</li>
+      <li><strong>delay</strong> - Delay before the animation is started in milliseconds, defaults to 0.</li>
+      <li><strong>easing</strong> - Easing function to use, defaults to 'linear', see <a href="#easing">easing</a></li>
+      <li><strong>loop</strong> - Repeat animation. Use Infinity for infinite looping.</li>
+      <li><strong>callback</strong> - Function to be called when the animation is completed</li>
+    </ul>
+    <ul>
+    <p>A from-position can be set as well, they work the way you would expect: </p>
+      <li><strong>from_position</strong></li>
+      <li><strong>from_rotation</strong></li>
+      <li><strong>from_scale</strong></li>
+      <li><strong>from_width</strong></li>
+      <li><strong>from_rotation_post</strong></li>
+      <li><strong>from_height</strong></li>
+    </ul>
+
+    <h3>Chaining</h3>
+    <div class="row">
+      <div class="six columns">
+        <p>Animation can be chained by using the `then()`-method on the returned animation object. all from_xxx properties will be set to the end state of the previous animation.</p>
+        <button id="chaining-example-execute">Run example</button>
+      </div>
+      <div class="six columns">
+        <pre><code>snabbt(element, {
+  position: [100, 0, 0],
+  easing: 'cos'
+}).then({
+  from_rotation: [0, 0, -2*Math.PI],
+  easing: 'spring',
+  spring_constant: 0.2,
+  spring_deaccelaration: 0.95,
+});</code></pre>
+      </div>
+
+    </div>
+
+    <h3>jQuery</h3>
+    <p>snabbt.js works with or without jQuery. If jQuery is detected snabbt.js will be loaded as a jQuery-plugin. When using snabbt.js with jQuery, the first parameter is the animation configuration:</p>
+    <div class="row">
+      <div class="six columns">
+        <h5>With jQuery</h5>
+        <pre><code>$element.snabbt({
+  position: [150, 0, 0],
+  rotation: [0, 0, Math.PI],
+});</code></pre>
+      </div>
+      <div class="six columns">
+        <h5>Without jQuery</h5>
+        <pre><code>snabbt(element, {
+  position: [150, 0, 0],
+  rotation: [0, 0, Math.PI],
+});</code></pre>
+      </div>
+
+    </div>
+    </section>
+
+
+   <section id="easing">
+     <h2>Easing</h2>
+     <p>These easing functions are included in snabbt.js:<p>
+     <ul>
+       <li>linear(default)</li>
+       <li>cos</li>
+       <li>sqrt</li>
+       <li>square</li>
+       <li>spring - See section about <a href="#spring">spring easings</a></li>
+     </ul>
+   </section>
+
+     <h3>Spring physics</h3>
+     <p>When using spring physics, the <em>duration</em> parameter is not in effect. Instead the animation will progress until equirilibrum is reached. When easing is set to <em>spring</em> there are four additional parameters that can be set on the animation configuration:</p>
+     <ul>
+       <li><strong>spring_constant</strong> - The stiffness of the spring</li>
+       <li><strong>spring_deaccelaration</strong> - Controls how fast the velocity decreases</li>
+       <li><strong>spring_mass</strong> - The 'weight' of the object</li>
+     </ul>
+   </section>
+   <section id="advanced">
+    <h2>Advanced concepts</h2>
+    <p>This section describes some of the more advanced usages.</p>
+
+    <h3>Value feeding</h3>
+    <p>The animation object is very simple to work with but has it limitations. Sometimes you want to do the transforms in another order. This is where value feeding comes handy. The <em>value_feeder</em> expects a function that takes one parameter which will progress from 0 to 1. Every time it is called you should return a snabbtjs.matrix representing the current transform.</p>
+    <h4>Example:</h4>
+    <pre><code>snabbt(element, {
+  value_feeder: function(i) {
+    var y = 50*Math.sin(i*4*Math.PI);
+    var x = Math.sin(i*Math.PI);
+    return snabbtjs.mult(snabbtjs.scale(1+x, 1+x), snabbtjs.trans(x*400, y, 0));
+  },
+  duration: 1000,
+  easing: 'cos'
+});</code></pre>
+    <button id="value-feed-example" class="button-primary">Run example</button>
+    <h4>Matrix API</h4>
+    The following function represents the Matrix API:
+    <ul>
+      <li><strong>snabbtjs.ident()</strong> - Returns the identity matrix</li>
+      <li><strong>snabbtjs.trans(x, y, z)</strong> - Returns a translation matrix</li>
+      <li><strong>snabbtjs.rotX(radians)</strong> - Returns a rotation around the x-axis</li>
+      <li><strong>snabbtjs.rotY(radians)</strong> - Returns a rotation around the y-axis</li>
+      <li><strong>snabbtjs.rotZ(radians)</strong> - Returns a rotation around the z-axis</li>
+      <li><strong>snabbtjs.scale(x, y)</strong> - Returns a scaling matrix</li>
+      <li><strong>snabbtjs.skew(ax, ay)</strong> - Returns a skew matrix</li>
+      <li><strong>snabbtjs.mult(A, B)</strong> - Returns the matrix multiplication product of A * B</li>
+    </ul>
+  </section>
+  <footer>
+    Made by Daniel Lundin
+  </footer>
+
+  <script src="jquery-2.1.1.min.js"></script>
+  <script src="snabbt.min.js"></script>
+  <script src="docs.js"></script>
+ </div> 
 </body>
 </html>
-

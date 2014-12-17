@@ -1,0 +1,81 @@
+.block {
+  width: 50px;
+  height: 50px;
+  background: red;
+}
+
+.hero {
+  margin: auto;
+  text-align: center;
+}
+.hero h1 {
+  display: inline-block;
+  text-align: center;
+  font-size: 6rem;
+  margin-bottom: 0px;
+}
+.hero h1 span {
+  display: inline-block;
+}
+
+.hero p {
+  text-align: center;
+  font-style: italic;
+}
+.hero h3 i {
+  margin-right: 10px;
+}
+
+.warning {
+  text-align: center;
+  color: red;
+}
+
+.nav.docked {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1;
+  background: white;
+  padding: 0;
+  margin: 0;
+}
+
+.nav.docked ul {
+  margin-left: 14px;
+  margin-bottom: 10px;
+}
+
+.nav {
+  overflow: auto;
+  border-top: 1px solid #aaa;
+  border-bottom: 1px solid #aaa;
+  padding-top: 1rem;
+  padding-left: 10px;
+  margin-top: 5%;
+}
+.nav ul {
+  list-style: none;
+}
+.nav ul li {
+  float: left;
+  margin-right: 20px;
+}
+.nav ul li a {
+  text-decoration: none;
+  text-transform: uppercase;
+  color: black;
+    font-weight: bold;
+}
+.hidden {
+  display: none;
+}
+
+pre {
+  margin: 0;
+}
+
+section {
+  padding-top: 45px;
+}
