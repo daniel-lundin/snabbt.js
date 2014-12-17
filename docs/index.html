@@ -183,15 +183,38 @@
      </ul>
    </section>
    <section id="advanced">
-     <h2>Advanced concepts</h2>
-     <p>This section describes some of the more advanced usages.</p>
+    <h2>Advanced concepts</h2>
+    <p>This section describes some of the more advanced usages.</p>
 
-     <h3>Value feeding</h3>
-     <p>The animation object is very simple to work with but has it limitations. Sometimes you want to do the transforms in an other order.</p>
-   </section>
-   <footer>
-     Made by Daniel Lundin
-   </footer>
+    <h3>Value feeding</h3>
+    <p>The animation object is very simple to work with but has it limitations. Sometimes you want to do the transforms in another order. This is where value feeding comes handy. The <em>value_feeder</em> expects a function that takes one parameter which will progress from 0 to 1. Every time it is called you should return a snabbtjs.matrix representing the current transform.</p>
+    <h4>Example:</h4>
+    <pre><code>snabbt(element, {
+  value_feeder: function(i) {
+    var y = 50*Math.sin(i*4*Math.PI);
+    var x = Math.sin(i*Math.PI);
+    return snabbtjs.mult(snabbtjs.scale(1+x, 1+x), snabbtjs.trans(x*400, y, 0));
+  },
+  duration: 1000,
+  easing: 'cos'
+});</code></pre>
+    <button id="value-feed-example" class="button-primary">Run example</button>
+    <h4>Matrix API</h4>
+    The following function represents the Matrix API:
+    <ul>
+      <li><strong>snabbtjs.ident()</strong> - Returns the identity matrix</li>
+      <li><strong>snabbtjs.trans(x, y, z)</strong> - Returns a translation matrix</li>
+      <li><strong>snabbtjs.rotX(radians)</strong> - Returns a rotation around the x-axis</li>
+      <li><strong>snabbtjs.rotY(radians)</strong> - Returns a rotation around the y-axis</li>
+      <li><strong>snabbtjs.rotZ(radians)</strong> - Returns a rotation around the z-axis</li>
+      <li><strong>snabbtjs.scale(x, y)</strong> - Returns a scaling matrix</li>
+      <li><strong>snabbtjs.skew(ax, ay)</strong> - Returns a skew matrix</li>
+      <li><strong>snabbtjs.mult(A, B)</strong> - Returns the matrix multiplication product of A * B</li>
+    </ul>
+  </section>
+  <footer>
+    Made by Daniel Lundin
+  </footer>
 
   <script src="jquery-2.1.1.min.js"></script>
   <script src="snabbt.min.js"></script>

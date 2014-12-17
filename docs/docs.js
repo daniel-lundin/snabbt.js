@@ -87,6 +87,20 @@ $(function() {
   };
 
 
+  // Value feed example
+  $("#value-feed-example").on('click', function() {
+    $("#value-feed-example").snabbt({
+      value_feeder: function(i) {
+        var y = 50*Math.sin(i*4*Math.PI);
+        var x = Math.sin(i*Math.PI);
+        return snabbtjs.mult(snabbtjs.scale(1+x, 1+x), snabbtjs.trans(x*400, y, 0));
+      },
+      duration: 1000,
+    });
+  });
+
+
+
   // Scroll spy
   var navtop = $("#navbar").offset().top;
   var $docked_navbar = $("#docked-navbar");
