@@ -47,8 +47,8 @@ snabbtjs.SpringEasing = function(options) {
   this.equilibrium_position = snabbtjs.option_or_default(options.equilibrium_position, 1);
   this.velocity = snabbtjs.option_or_default(options.initial_velocity, 0);
   this.spring_constant = snabbtjs.option_or_default(options.spring_constant, 0.8);
-  this.deacceleration = snabbtjs.option_or_default(options.deacceleration, 0.9);
-  this.mass = 10;
+  this.deacceleration = snabbtjs.option_or_default(options.spring_deacceleration, 0.9);
+  this.mass = snabbtjs.option_or_default(options.spring_mass, 10);
 
   this.equilibrium = false;
 };

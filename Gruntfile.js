@@ -7,26 +7,18 @@ module.exports = function(grunt) {
       options: {
         banner: '/*! <%= pkg.name %> <%= grunt.template.today("yyyy-mm-dd") %> */\n'
       },
-      jquery: {
+      dist: {
         src: 'src/*.js',
-        dest: 'dist/jquery.snabbt.min.js'
-      },
-      standalone: {
-        src: ['src/animations.js', 'src/easing.js', 'src/tween.js', 'src/main.js', 'src/mat.js', 'src/state.js', 'src/utils.js'],
         dest: 'dist/snabbt.min.js'
-      }
+      },
     },
     concat: {
       options: {
         separator: ';',
       },
-      jquery: {
-        src: 'src/*.js',
-        dest: 'dist/jquery.snabbt.js',
-      },
       dist: {
-        src: ['src/animations.js', 'src/easing.js', 'src/tween.js', 'src/main.js', 'src/mat.js', 'src/state.js', 'src/utils.js'],
-        dest: 'dist/snabbt.js'
+        src: 'src/*.js',
+        dest: 'dist/snabbt.js',
       },
     },
   });

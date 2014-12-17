@@ -25,9 +25,9 @@
   <div id="docked-navbar" class="nav docked hidden">
     <div class="container"> 
       <ul>
+        <li><a href="#intro">Introduction</a></li>
         <li><a href="#usage">Usage</a></li>
         <li><a href="#easing">Easing</a></li>
-        <li><a href="#forcefeed">Forcefeeding</a></li>
         <li><a href="#advanced">Advanced</a></li>
       </ul>
     </div> 
@@ -35,29 +35,30 @@
 
   <div class="container" style="margin-top: 10%"> 
     <div class="hero">
-      <h1>snabbt.js</h1>
-      <p>Fast, simple and lightweight animation engine in javascript</p>
+      <h1><span>s</span><span>n</span><span>a</span><span>b</span><span>b</span><span>t</span><span>.</span><span>j</span><span>s</span></h1>
+      <p>Fast, light and simple animation engine in javascript</p>
       <div class="row">
         <div class="four columns">
           <h3><i class="fa fa-rocket"></i>Fast</h3>
           <p>60 FPS without micro-optimizations</p>
         </div>
         <div class="four columns">
-          <h3><i class="fa fa-paper-plane"></i>Lightweight</h3>
-          <p>Only 3kb minified and gzipped</p>
+          <h3><i class="fa fa-paper-plane"></i>Light</h3>
+          <p> &lt; 4kb minified and gzipped</p>
         </div>
         <div class="four columns">
           <h3><i class="fa fa-user"></i>Simple</h3>
           <p>One single API-endpoint</p>
         </div>
       </div>
-      <button class="button-primary">Download</button>
+      <a href="https://raw.githubusercontent.com/daniel-lundin/snabbt.js/master/dist/snabbt.min.js" class="button button-primary">Download</a>
     </div>
+    <p class="warning"><span class="label">Warning:</span> snabbt.js is under development, breaking changes could occur. But I would love some feedback</p>
     <div id="navbar" class="nav">
       <ul>
+        <li><a href="#intro">Introduction</a></li>
         <li><a href="#usage">Usage</a></li>
         <li><a href="#easing">Easing</a></li>
-        <li><a href="#forcefeed">Forcefeeding</a></li>
         <li><a href="#advanced">Advanced</a></li>
       </ul>
     </div>
@@ -133,14 +134,14 @@
   from_rotation: [0, 0, -2*Math.PI],
   easing: 'spring',
   spring_constant: 0.2,
-  deaccelaration: 0.95,
+  spring_deaccelaration: 0.95,
 });</code></pre>
       </div>
 
     </div>
 
     <h3>jQuery</h3>
-    <p>snabbt.js works with or without jQuery. If jQuery is loaded snabbt.js can loaded as a jQuery-plugin. When using snabbt.js with jQuery, the first parameter is the animation configuration:</p>
+    <p>snabbt.js works with or without jQuery. If jQuery is detected snabbt.js will be loaded as a jQuery-plugin. When using snabbt.js with jQuery, the first parameter is the animation configuration:</p>
     <div class="row">
       <div class="six columns">
         <h5>With jQuery</h5>
@@ -173,16 +174,27 @@
      </ul>
    </section>
 
-   <section id="spring">
-     <h2>Spring physics</h2>
-     <p>When using spring physics, the <em>duration</em> parameter is not in effect. Instead the animation will progress until equirilibrum is reached.</p>
+     <h3>Spring physics</h3>
+     <p>When using spring physics, the <em>duration</em> parameter is not in effect. Instead the animation will progress until equirilibrum is reached. When easing is set to <em>spring</em> there are four additional parameters that can be set on the animation configuration:</p>
+     <ul>
+       <li><strong>spring_constant</strong> - The stiffness of the spring</li>
+       <li><strong>spring_deaccelaration</strong> - Controls how fast the velocity decreases</li>
+       <li><strong>spring_mass</strong> - The 'weight' of the object</li>
+     </ul>
+   </section>
+   <section id="advanced">
+     <h2>Advanced concepts</h2>
+     <p>This section describes some of the more advanced usages.</p>
+
+     <h3>Value feeding</h3>
+     <p>The animation object is very simple to work with but has it limitations. Sometimes you want to do the transforms in an other order.</p>
    </section>
    <footer>
      Made by Daniel Lundin
    </footer>
 
   <script src="jquery-2.1.1.min.js"></script>
-  <script src="jquery.snabbt.min.js"></script>
+  <script src="snabbt.min.js"></script>
   <script src="docs.js"></script>
  </div> 
 </body>

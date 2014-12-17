@@ -9,16 +9,26 @@
   text-align: center;
 }
 .hero h1 {
+  display: inline-block;
   text-align: center;
   font-size: 6rem;
   margin-bottom: 0px;
 }
+.hero h1 span {
+  display: inline-block;
+}
+
 .hero p {
   text-align: center;
   font-style: italic;
 }
 .hero h3 i {
   margin-right: 10px;
+}
+
+.warning {
+  text-align: center;
+  color: red;
 }
 
 .nav.docked {
@@ -67,5 +77,5 @@ pre {
 }
 
 section {
-  padding-top: 5%;
+  padding-top: 45px;
 }
