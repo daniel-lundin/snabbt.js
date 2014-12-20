@@ -5,10 +5,12 @@
 }
 
 .hero {
+  position: relative;
   margin: auto;
   text-align: center;
 }
 .hero h1 {
+  position: relative;
   display: inline-block;
   text-align: center;
   font-size: 6rem;
@@ -23,7 +25,7 @@
   font-style: italic;
 }
 .hero h3 i {
-  margin-right: 10px;
+  margin-right: 20px;
 }
 
 .warning {
@@ -78,4 +80,28 @@ pre {
 
 section {
   padding-top: 45px;
+}
+
+table {
+  width: 100%;
+}
+table thead td {
+  font-weight: bold;
+}
+
+footer {
+  background: rgb(0, 43, 54);
+  color: white;
+  padding-top: 10px;
+}
+
+/* Some utiliy classes */
+@media screen and (max-width:600px) {
+  .hide-mobile {
+    display: none;
+  }
+}
+
+.extra-top-margin {
+  margin-top: 20px;
 }
