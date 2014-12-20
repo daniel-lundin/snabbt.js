@@ -99,6 +99,25 @@ $(function() {
     });
   });
 
+  // Attention example
+  $("#attention-example-1").on('click', function() {
+    $("#attention-example-1").snabbt("attention", {
+      rotation: [0, 0, Math.PI/2],
+      spring_constant: 1.9,
+      spring_deacceleration: 0.9,
+    });
+  });
+
+  // Attention example
+  $("#attention-example-2").on('click', function() {
+    $("#attention-example-2").snabbt("attention", {
+      position: [50, 0, 0],
+      spring_constant: 2.4,
+      spring_deacceleration: 0.9,
+    });
+  });
+
+
 
 
   // Scroll spy

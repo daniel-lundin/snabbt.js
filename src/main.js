@@ -93,12 +93,13 @@ snabbtjs.setup_scroll_animation = function(options) {
 
 snabbtjs.setup_attention_animation = function(element,  options) {
   var movement = snabbtjs.state_from_options(new snabbtjs.State({}), options, '');
-  var animation = new snabbtjs.AttentionAnimation({
+  options.movement = movement;
+  var animation = new snabbtjs.AttentionAnimation(options); /*{
     movement: movement,
     spring_constant: options.spring_constant,
-    deacceleration: options.deacceleration,
+    deacceleration: options.spring_deacceleration,
     initial_velocity: options.initial_velocity
-  });
+  });*/
   snabbtjs.running_animations.push([element, animation]);
   function tick(time) {
     animation.tick(time);
