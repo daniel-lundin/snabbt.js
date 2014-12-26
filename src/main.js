@@ -115,8 +115,17 @@ snabbtjs.stop_animation = function(element) {
   for(var i=0;i<snabbtjs.running_animations.length;++i) {
     var animated_element = snabbtjs.running_animations[i][0];
     var animation = snabbtjs.running_animations[i][1];
-    if(animated_element === element) {
-      animation.stop();
+    if(element.hasOwnProperty('length')) {
+      for(var j=0;j<element.length;++j) {
+        if(animated_element === element[j]) {
+          animation.stop();
+        }
+      }
+
+    } else {
+      if(animated_element === element) {
+        animation.stop();
+      }
     }
   }
 };
@@ -125,17 +134,18 @@ snabbtjs.current_animation_transform = function(element) {
   for(var i=0;i<snabbtjs.running_animations.length;++i) {
     var animated_element = snabbtjs.running_animations[i][0];
     var animation = snabbtjs.running_animations[i][1];
+    var state;
     if(element.hasOwnProperty('length')) {
       for(var j=0;j<element.length;++j) {
         if(animated_element === element[j]) {
-          var state = animation.current_state();
+          state = animation.current_state();
           animation.stop();
           return state;
         }
       }
     } else {
       if(animated_element === element) {
-        var state = animation.current_state();
+        state = animation.current_state();
         animation.stop();
         return state;
       }
