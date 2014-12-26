@@ -2,10 +2,9 @@
  * House of cards
  */
 
-//var CARD_HEIGHT = 70;
-//var CARD_WIDTH = 50;
-var CARD_HEIGHT = 120;
-var CARD_WIDTH = 80;
+var CARD_HEIGHT = 100;
+var CARD_WIDTH = 60;
+var CARD_COUNT = 40;
 
 var WIDTH = 800;
 var HEIGHT = 600;
@@ -17,22 +16,17 @@ var TILTED_CARD_HEIGHT = Math.sin(PYTH_ANGLE) * CARD_HEIGHT;
 var TILTED_CARD_WIDTH = Math.cos(PYTH_ANGLE) * CARD_HEIGHT;
 var PYRAMID_WIDTH = TILTED_CARD_WIDTH * 2;
 
-var SPADES = '♠';
-var HEARTS = '♥';
-var DIAMONDS = '♦';
-var CLUBS = '♣';
-var suits = [SPADES, CLUBS, HEARTS, DIAMONDS];
-//var colors = ['black', 'black', 'red', 'red'];
-
-var colors = randomColor({count: 52});
+var COLORS = randomColor({count: 40});
 
 var PILE = 1;
 var HOUSE = 2;
-var current_mode = HOUSE;
+var WALL = 3;
+var current_mode = PILE;
 
 var formation_builders = {};
-formation_builders[PILE] = centered_pile_positions;
+formation_builders[PILE] = pile_positions;
 formation_builders[HOUSE] = centered_house_positions;
+formation_builders[WALL] = wall_positions;
 
 function create_card(container, index) {
   var card = document.createElement('div');
@@ -42,13 +36,11 @@ function create_card(container, index) {
 
   var front = document.createElement('div');
   front.className = 'front';
-  var xoffset = index % 4;
-  var yoffset = Math.floor(index / 4);
-  front.style.background = colors[index % colors.length];
+  front.style.background = COLORS[index % COLORS.length];
 
   var back = document.createElement('div');
   back.className = 'back';
-  back.style.background = colors[index % colors.length];
+  back.style.background = COLORS[index % COLORS.length];
 
   card.appendChild(front);
   card.appendChild(back);
@@ -61,7 +53,7 @@ var Deck = (function() {
   this.cards = [];
   this.card_index = [];
 
-  for(var i=0;i<52;++i) {
+  for(var i=0;i<CARD_COUNT;++i) {
     var container = document.getElementById('surface');
     this.cards.push(create_card(container, i));
   }
@@ -91,7 +83,7 @@ function build_formation(positions) {
       position: positions[i].position,
       rotation: positions[i].rotation,
       easing: 'cos',
-      perspective: 2000,
+      //perspective: 2000,
       delay: i * 50
     });
   }
@@ -101,17 +93,15 @@ function set_mode(mode) {
   if(mode == current_mode) {
     return;
   }
-  from_positions = formation_builders[current_mode]();
+
   positions = formation_builders[mode]();
+  from_positions = formation_builders[current_mode]();
+
   for(var i=0;i<positions.length;++i) {
-    if(from_positions[i]) {
-      positions[i].from_position = from_positions[i].position;
-      positions[i].from_rotation = from_positions[i].rotation;
-    } else {
-      positions[i].from_position = positions[i].position;
-      positions[i].from_rotation = positions[i].rotation;
-    }
+    positions[i].from_position = from_positions[i].position;
+    positions[i].from_rotation = from_positions[i].rotation;
   }
+
   build_formation(positions);
   current_mode = mode;
 }
@@ -120,7 +110,8 @@ function rotate_container() {
   var container = document.getElementById('surface');
   snabbt(container, {
     rotation: [0, 2*Math.PI, 0],
-    duration: 4000
+    duration: 10000,
+    loop: Infinity
   });
 }
 
@@ -129,10 +120,10 @@ function pile_positions() {
   Deck.reset();
   var i=0;
   var card=Deck.next_card();
-  var center = (HEIGHT-CARD_WIDTH)/2;
+  var center = (WIDTH - CARD_WIDTH)/2;
   while(card) {
     positions.push({
-      position: [center, BOTTOM + i*0.2, 100],
+      position: [center, BOTTOM - i*0.5, 300],
       rotation: [Math.PI/2, 0, 0],
     });
     ++i;
@@ -146,7 +137,7 @@ function house_positions(floors, x, y, z) {
   var positions = [];
   var i;
   for(i=0;i<floors;++i) {
-    positions = positions.concat(house_row_positions(floors - i, x + i * TILTED_CARD_WIDTH, y - i * CARD_HEIGHT, z));
+    positions = positions.concat(house_row_positions(floors - i, x + i * TILTED_CARD_WIDTH, y - i * TILTED_CARD_HEIGHT, z));
   }
 
   return positions;
@@ -155,6 +146,7 @@ function house_positions(floors, x, y, z) {
 function house_row_positions(count, x, y, z) {
   var positions = [];
   var i;
+  // Tilted cards
   for(i=0;i<count;++i) {
     card_positions = pyramid_postions(x + i*PYRAMID_WIDTH, y, z);
     positions.push({
@@ -166,6 +158,7 @@ function house_row_positions(count, x, y, z) {
       rotation: card_positions[1].rotation,
     });
   }
+  // Bridge cards
   for(i=0;i<count-1;++i) {
     positions.push({
       position: [x + i*PYRAMID_WIDTH + TILTED_CARD_WIDTH, y - TILTED_CARD_HEIGHT/2, z],
@@ -187,6 +180,25 @@ function pyramid_postions(x, y, z) {
   }];
 }
 
+function wall_positions() {
+  var positions = [];
+  var start_x = (WIDTH - 10 * CARD_WIDTH) / 2;
+  var start_y = (HEIGHT - 4 * CARD_HEIGHT) / 2;
+  for(var i=0;i<CARD_COUNT;++i) {
+    var x = (i % 10) * CARD_WIDTH + start_x;
+    var y = (Math.floor(i/10)) * CARD_HEIGHT + start_y;
+    positions.push({
+      position: [x, y, 0],
+      rotation: [0, 0, 0]
+    });
+  }
+  return positions;
+}
+
+function build_wall() {
+  set_mode(WALL);
+}
+
 function build_house() {
   set_mode(HOUSE);
 }
@@ -195,17 +207,32 @@ function build_pile() {
   set_mode(PILE);
 }
 
-function centered_pile_positions() {
-  // TODO: Actually center
-  return pile_positions();
-}
 function centered_house_positions() {
   // TODO: Actually center
   return house_positions(5, 200, BOTTOM, -300);
 }
 
-$(function() {
+function init() {
   Deck.reset();
-  build_pile();
-  //build_house(5, 200, 500);
-});
+  build_wall();
+  rotate_container();
+
+  // Event handlers
+  var buttons = {
+    "pile_button": PILE,
+    "house_button": HOUSE,
+    "wall_button": WALL
+  };
+
+  var click_handler = function(key) {
+    document.getElementById('pile_button').className = '';
+    document.getElementById('house_button').className = '';
+    document.getElementById('wall_button').className = '';
+    document.getElementById(key).className = 'button-primary';
+    set_mode(buttons[key]);
+  };
+
+  for(var key in buttons) {
+    document.getElementById(key).addEventListener('click', click_handler.bind(undefined, key));
+  }
+}
