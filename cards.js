@@ -24,29 +24,32 @@ var COLORS = randomColor({
 var PILE = 1;
 var HOUSE = 2;
 var WALL = 3;
+var CYLINDER = 4;
 var current_mode = PILE;
 
 var formation_builders = {};
 formation_builders[PILE] = pile_positions;
 formation_builders[HOUSE] = centered_house_positions;
 formation_builders[WALL] = wall_positions;
+formation_builders[CYLINDER] = cylinder_positions;
 
 function create_card(container, index) {
   var card = document.createElement('div');
   card.className = 'card';
   card.style.height = CARD_HEIGHT + 'px';
   card.style.width = CARD_WIDTH + 'px';
+  card.style.background = COLORS[index % COLORS.length];
 
-  var front = document.createElement('div');
-  front.className = 'front';
-  front.style.background = COLORS[index % COLORS.length];
+  //var front = document.createElement('div');
+  //front.className = 'front';
+  //front.style.background = COLORS[index % COLORS.length];
 
-  var back = document.createElement('div');
-  back.className = 'back';
-  back.style.background = COLORS[index % COLORS.length];
+  //var back = document.createElement('div');
+  //back.className = 'back';
+  //back.style.background = COLORS[index % COLORS.length];
 
-  card.appendChild(front);
-  card.appendChild(back);
+  //card.appendChild(front);
+  //card.appendChild(back);
   container.appendChild(card);
   return card;
 }
@@ -198,6 +201,24 @@ function wall_positions() {
   return positions;
 }
 
+function cylinder_positions() {
+  var positions = [];
+  var start_x = WIDTH / 2;
+  var start_y = 100;
+  var radius = 100;
+  for(var i=0;i<CARD_COUNT;++i) {
+    var angle = ((i % 10) / 10) * 2 * Math.PI;
+    var x = Math.cos(angle) * radius + start_x;
+    var z = Math.sin(angle) * radius;
+    var y = Math.floor(i / 10) * 1.2 * CARD_HEIGHT + start_y;
+    positions.push({
+      position: [x, y, z],
+      rotation: [0, Math.PI/2 + angle, 0],
+    });
+  }
+  return positions;
+}
+
 function build_wall() {
   set_mode(WALL);
 }
@@ -209,6 +230,7 @@ function build_house() {
 function build_pile() {
   set_mode(PILE);
 }
+
 
 function centered_house_positions() {
   // TODO: Actually center
@@ -224,13 +246,15 @@ function init() {
   var buttons = {
     "pile_button": PILE,
     "house_button": HOUSE,
-    "wall_button": WALL
+    "wall_button": WALL,
+    "cylinder_button": CYLINDER
   };
 
   var click_handler = function(key) {
     document.getElementById('pile_button').className = '';
     document.getElementById('house_button').className = '';
     document.getElementById('wall_button').className = '';
+    document.getElementById('cylinder_button').className = '';
     document.getElementById(key).className = 'button-primary';
     set_mode(buttons[key]);
   };
