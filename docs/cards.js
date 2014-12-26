@@ -16,7 +16,10 @@ var TILTED_CARD_HEIGHT = Math.sin(PYTH_ANGLE) * CARD_HEIGHT;
 var TILTED_CARD_WIDTH = Math.cos(PYTH_ANGLE) * CARD_HEIGHT;
 var PYRAMID_WIDTH = TILTED_CARD_WIDTH * 2;
 
-var COLORS = randomColor({count: 40});
+var COLORS = randomColor({
+  count: 40,
+  luminosity: 'dark',
+});
 
 var PILE = 1;
 var HOUSE = 2;

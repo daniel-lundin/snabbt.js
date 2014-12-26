@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Sticks</title>
+  <link href='http://fonts.googleapis.com/css?family=Raleway:400,300,600' rel='stylesheet' type='text/css'>
+  <link rel="stylesheet" href="css/normalize.css">
+  <link rel="stylesheet" href="css/skeleton.css">
+
+  <style>
+    body {
+      -webkit-perspective: 2000px;
+    }
+    h1 {
+      text-align: center;
+      font-size: 3em;
+    }
+    #c1, #c2 {
+      position: absolute;
+    }
+    .stick {
+      position: absolute;
+      width: 50px;
+      height: 5px;
+      border-radius: 5px;
+    }
+  </style>
+</head>
+<body>
+  <h1 id="heading">200 DOM elements</h1>
+  <div id="c1">
+  </div>
+  <div id="c2">
+  </div>
+
+  <script src="randomColor.js"></script>
+  <script src="fpsmeter.min.js"></script>
+  <script src="snabbt.min.js"></script>
+  <script type="text/javascript" src="sticks.js"></script>
+  <script type="text/javascript">
+    init();
+  </script>
+</body>
+</html>
+
