@@ -12,9 +12,9 @@ var BOTTOM = 400;
 
 var TILT = Math.PI/8;
 var PYTH_ANGLE = Math.PI/2 - TILT;
-var TILTED_CARD_HEIGHT = Math.sin(PYTH_ANGLE) * CARD_HEIGHT;
+var TILTED_CARD_HEIGHT = Math.sin(PYTH_ANGLE) * CARD_HEIGHT + 2;
 var TILTED_CARD_WIDTH = Math.cos(PYTH_ANGLE) * CARD_HEIGHT;
-var PYRAMID_WIDTH = TILTED_CARD_WIDTH * 2;
+var PYRAMID_WIDTH = TILTED_CARD_WIDTH * 2 + 4;
 
 var COLORS = randomColor({
   count: 40,
@@ -40,16 +40,6 @@ function create_card(container, index) {
   card.style.width = CARD_WIDTH + 'px';
   card.style.background = COLORS[index % COLORS.length];
 
-  //var front = document.createElement('div');
-  //front.className = 'front';
-  //front.style.background = COLORS[index % COLORS.length];
-
-  //var back = document.createElement('div');
-  //back.className = 'back';
-  //back.style.background = COLORS[index % COLORS.length];
-
-  //card.appendChild(front);
-  //card.appendChild(back);
   container.appendChild(card);
   return card;
 }
@@ -89,7 +79,6 @@ function build_formation(positions) {
       position: positions[i].position,
       rotation: positions[i].rotation,
       easing: 'cos',
-      //perspective: 2000,
       delay: i * 50
     });
   }
@@ -110,7 +99,7 @@ function set_mode(mode) {
 
   build_formation(positions);
   current_mode = mode;
-}
+};
 
 function rotate_container() {
   var container = document.getElementById('surface');
@@ -175,7 +164,8 @@ function house_row_positions(count, x, y, z) {
 }
 
 function pyramid_postions(x, y, z) {
-  var spacing = TILTED_CARD_WIDTH / 2;
+  // Firefox flickers if elements overlap
+  var spacing = (TILTED_CARD_WIDTH / 2) + 2;
 
   return [{
     position: [x - spacing, y, z],
