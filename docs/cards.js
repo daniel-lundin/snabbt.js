@@ -221,8 +221,8 @@ function wall_positions() {
 function cylinder_positions() {
   var positions = [];
   var start_x = WIDTH / 2;
-  var start_y = HEIGHT * 0.05;
-  var radius = 100;
+  var start_y = HEIGHT * 0.1;
+  var radius = WIDTH*0.2;
   for(var i=0;i<CARD_COUNT;++i) {
     var angle = ((i % 10) / 10) * 2 * Math.PI;
     var x = Math.cos(angle) * radius + start_x;
