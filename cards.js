@@ -1,7 +1,5 @@
-/**
- * House of cards
- */
 
+// Constants
 var CARD_HEIGHT = 100;
 var CARD_WIDTH = 60;
 var CARD_COUNT = 40;
@@ -12,15 +10,33 @@ var BOTTOM = 400;
 
 var TILT = Math.PI/8;
 var PYTH_ANGLE = Math.PI/2 - TILT;
+
 var TILTED_CARD_HEIGHT = Math.sin(PYTH_ANGLE) * CARD_HEIGHT + 2;
 var TILTED_CARD_WIDTH = Math.cos(PYTH_ANGLE) * CARD_HEIGHT;
 var PYRAMID_WIDTH = TILTED_CARD_WIDTH * 2 + 4;
+
+function update_sizes() {
+  var c = document.getElementById('container');
+  WIDTH = c.clientWidth;
+  HEIGHT = c.clientHeight;
+  CARD_WIDTH = WIDTH * 0.05;
+  CARD_HEIGHT = HEIGHT * 0.15;
+  TILTED_CARD_HEIGHT = Math.sin(PYTH_ANGLE) * CARD_HEIGHT + 2;
+  TILTED_CARD_WIDTH = Math.cos(PYTH_ANGLE) * CARD_HEIGHT;
+  PYRAMID_WIDTH = TILTED_CARD_WIDTH * 2 + 4;
+  for(var i=0;i<Deck.cards.length;++i) {
+    Deck.card_at(i).style.height = CARD_HEIGHT + 'px';
+    Deck.card_at(i).style.width = CARD_WIDTH + 'px';
+  }
+}
 
 var COLORS = randomColor({
   count: 40,
   luminosity: 'dark',
 });
 
+
+// Formations
 var PILE = 1;
 var HOUSE = 2;
 var WALL = 3;
@@ -29,15 +45,13 @@ var current_mode = PILE;
 
 var formation_builders = {};
 formation_builders[PILE] = pile_positions;
-formation_builders[HOUSE] = centered_house_positions;
+formation_builders[HOUSE] = house_positions;
 formation_builders[WALL] = wall_positions;
 formation_builders[CYLINDER] = cylinder_positions;
 
 function create_card(container, index) {
   var card = document.createElement('div');
   card.className = 'card';
-  card.style.height = CARD_HEIGHT + 'px';
-  card.style.width = CARD_WIDTH + 'px';
   card.style.background = COLORS[index % COLORS.length];
 
   container.appendChild(card);
@@ -85,6 +99,7 @@ function build_formation(positions) {
 }
 
 function set_mode(mode) {
+  update_sizes();
   if(mode == current_mode) {
     return;
   }
@@ -99,7 +114,7 @@ function set_mode(mode) {
 
   build_formation(positions);
   current_mode = mode;
-};
+}
 
 function rotate_container() {
   var container = document.getElementById('surface');
@@ -111,14 +126,16 @@ function rotate_container() {
 }
 
 function pile_positions() {
-  var positions = [];
   Deck.reset();
+  var positions = [];
+
   var i=0;
   var card=Deck.next_card();
   var center = (WIDTH - CARD_WIDTH)/2;
+  var y = HEIGHT - HEIGHT*0.2;
   while(card) {
     positions.push({
-      position: [center, BOTTOM - i*0.5, 300],
+      position: [center, y - i*0.5, WIDTH*0.1],
       rotation: [Math.PI/2, 0, 0],
     });
     ++i;
@@ -127,12 +144,20 @@ function pile_positions() {
   return positions;
 }
 
-function house_positions(floors, x, y, z) {
+function house_positions() {
   Deck.reset();
+
+  var floors = 5;
+  var y = (floors - 1) * TILTED_CARD_HEIGHT + TILTED_CARD_HEIGHT/2;
+  var z = -WIDTH * 0.2;
+  var x = (WIDTH - PYRAMID_WIDTH * floors) / 2 - TILTED_CARD_WIDTH;
+
   var positions = [];
   var i;
   for(i=0;i<floors;++i) {
-    positions = positions.concat(house_row_positions(floors - i, x + i * TILTED_CARD_WIDTH, y - i * TILTED_CARD_HEIGHT, z));
+    var _x = x + i * TILTED_CARD_WIDTH;
+    var _y = y - i * TILTED_CARD_HEIGHT;
+    positions = positions.concat(house_row_positions(floors - i, _x, _y, z));
   }
 
   return positions;
@@ -178,11 +203,13 @@ function pyramid_postions(x, y, z) {
 
 function wall_positions() {
   var positions = [];
-  var start_x = (WIDTH - 10 * CARD_WIDTH) / 2;
-  var start_y = (HEIGHT - 4 * CARD_HEIGHT) / 2;
+  var w = CARD_WIDTH + 10;
+  var h = CARD_HEIGHT + 10;
+  var start_x = (WIDTH - 10 * w) / 2;
+  var start_y = (HEIGHT - 4 * h) / 2;
   for(var i=0;i<CARD_COUNT;++i) {
-    var x = (i % 10) * CARD_WIDTH + start_x;
-    var y = (Math.floor(i/10)) * CARD_HEIGHT + start_y;
+    var x = (i % 10) * w + start_x;
+    var y = (Math.floor(i/10)) * h + start_y;
     positions.push({
       position: [x, y, 0],
       rotation: [0, 0, 0]
@@ -194,7 +221,7 @@ function wall_positions() {
 function cylinder_positions() {
   var positions = [];
   var start_x = WIDTH / 2;
-  var start_y = 100;
+  var start_y = HEIGHT * 0.05;
   var radius = 100;
   for(var i=0;i<CARD_COUNT;++i) {
     var angle = ((i % 10) / 10) * 2 * Math.PI;
@@ -221,16 +248,14 @@ function build_pile() {
   set_mode(PILE);
 }
 
-
-function centered_house_positions() {
-  // TODO: Actually center
-  return house_positions(5, 200, BOTTOM, -300);
-}
-
 function init() {
+  update_sizes();
   Deck.reset();
   build_wall();
   rotate_container();
+
+  // Initialize fast click
+  FastClick.attach(document.body);
 
   // Event handlers
   var buttons = {
