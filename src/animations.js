@@ -50,7 +50,7 @@ snabbtjs.Animation.prototype.tick = function(time) {
   var curr = Math.min(Math.max(0.0, this.current_time - this.start_time), this.duration);
   //var curr = Math.max(this.current_time - this.start_time, this.duration);
   var max = this.duration;
-  this.easing.tick(curr, max);
+  this.easing.tick(curr/max);
   this.update_current_transform();
 };
 
@@ -124,7 +124,7 @@ snabbtjs.ValueFeededAnimation.prototype.tick = function(time) {
 
   var curr = Math.min(Math.max(0.001, this.current_time - this.start_time), this.duration);
   var max = this.duration;
-  this.easing.tick(curr, max);
+  this.easing.tick(curr/max);
 
   this.update_current_transform();
 };

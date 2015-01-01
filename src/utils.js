@@ -41,3 +41,8 @@ snabbtjs.update_element_properties = function(element, properties) {
     snabbtjs._update_element_properties(element, properties);
   }
 };
+
+snabbtjs.is_function = function(object) {
+  return (typeof object === "function");
+  //return object && getClass.call(object) == '[object Function]';
+};

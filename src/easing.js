@@ -2,44 +2,20 @@
 
 var snabbtjs = snabbtjs || {};
 
-
-snabbtjs.pow2_easing = function(curr, max) {
-  var t = curr/max;
-  return t*t;
+snabbtjs.linear_easing = function(value) {
+  return value;
 };
 
-snabbtjs.linear_easing = function(curr, max) {
-  return curr/max;
+snabbtjs.ease = function(value) {
+  return (Math.cos(value*Math.PI + Math.PI) + 1)/2;
 };
 
-snabbtjs.cos_easing = function(curr, max) {
-  return (Math.cos((curr/max)*Math.PI + Math.PI) + 1)/2;
+snabbtjs.ease_in = function(value) {
+  return -Math.pow(value - 1, 2) + 1;
 };
 
-snabbtjs.sqrt_easing = function(curr, max) {
-  var t = curr/max;
-  return (Math.pow(t, 0.5));
-};
-
-snabbtjs.sinc_wobbler_easing = function (curr, max) {
-  var t = curr/max;
-  var k = 5;
-  return (-Math.sin(k*Math.PI*t)/(k*t) + Math.PI)/Math.PI;
-};
-
-snabbtjs.sinc2 = function(curr, max) {
-  var t = curr/max;
-  return 1 - Math.sin(20*Math.PI*t)/(20*Math.PI*t);
-};
-
-snabbtjs.exp_cos = function(curr, max) {
-  var t = curr/max;
-  return 1 + Math.exp(-5*t) * Math.cos(4*Math.PI*t);
-};
-
-snabbtjs.exp_cos_bounce = function(curr, max) {
-  var t = curr/max;
-  return 1 -  Math.abs(Math.exp(-5*t) * Math.cos(4*Math.PI*t));
+snabbtjs.ease_out = function(value) {
+  return value*value;
 };
 
 snabbtjs.SpringEasing = function(options) {
@@ -53,8 +29,8 @@ snabbtjs.SpringEasing = function(options) {
   this.equilibrium = false;
 };
 
-snabbtjs.SpringEasing.prototype.tick = function(curr, max) {
-  if(curr === 0.0)
+snabbtjs.SpringEasing.prototype.tick = function(value) {
+  if(value === 0.0)
     return;
   if(this.equilibrium)
     return;
@@ -85,12 +61,9 @@ snabbtjs.SpringEasing.prototype.completed = function() {
 
 snabbtjs.EASING_FUNCS = {
   'linear': snabbtjs.linear_easing,
-  'square': snabbtjs.pow2_easing,
-  'sqrt': snabbtjs.sqrt_easing,
-  'cos': snabbtjs.cos_easing,
-  'exp_cos_bounce': snabbtjs.exp_cos_bounce,
-  'exp_cos': snabbtjs.exp_cos,
-  'sinc_wobbler': snabbtjs.sinc_wobbler_easing,
+  'ease': snabbtjs.ease,
+  'ease-in': snabbtjs.ease_in,
+  'ease-out': snabbtjs.ease_out,
 };
 
 snabbtjs.Easer = function(easer) {
@@ -98,9 +71,9 @@ snabbtjs.Easer = function(easer) {
   this._value = 0;
 };
 
-snabbtjs.Easer.prototype.tick = function(curr, max) {
-  this._value = this.easer(curr, max);
-  this.last_value = curr/max;
+snabbtjs.Easer.prototype.tick = function(value) {
+  this._value = this.easer(value);
+  this.last_value = value;
 };
 
 snabbtjs.Easer.prototype.value = function() {
@@ -115,6 +88,11 @@ snabbtjs.create_easer = function(easer_name, options) {
   if(easer_name == 'spring') {
     return new snabbtjs.SpringEasing(options);
   }
-  var ease_func = snabbtjs.EASING_FUNCS[easer_name];
+  var ease_func;
+  if(snabbtjs.is_function(easer_name)) {
+    ease_func = easer_name;
+  } else {
+    ease_func = snabbtjs.EASING_FUNCS[easer_name];
+  }
   return new snabbtjs.Easer(ease_func);
 };

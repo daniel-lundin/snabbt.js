@@ -2,11 +2,11 @@ var snabbtjs = snabbtjs || {};
 
 /* Entry point, only function to be called by user */
 function snabbt(arg1, arg2, arg3) {
-  if(arg1 == 'scroll')
+  if(arg1 === 'scroll')
     return snabbtjs.setup_scroll_animation(arg2);
-  if(arg2 == 'attention')
+  if(arg2 === 'attention')
     return snabbtjs.setup_attention_animation(arg1, arg3);
-  if(arg2 == 'stop')
+  if(arg2 === 'stop')
     return snabbtjs.stop_animation(arg1);
   var element = arg1;
   var options = arg2;
@@ -94,12 +94,8 @@ snabbtjs.setup_scroll_animation = function(options) {
 snabbtjs.setup_attention_animation = function(element,  options) {
   var movement = snabbtjs.state_from_options(new snabbtjs.State({}), options, '');
   options.movement = movement;
-  var animation = new snabbtjs.AttentionAnimation(options); /*{
-    movement: movement,
-    spring_constant: options.spring_constant,
-    deacceleration: options.spring_deacceleration,
-    initial_velocity: options.initial_velocity
-  });*/
+  var animation = new snabbtjs.AttentionAnimation(options);
+
   snabbtjs.running_animations.push([element, animation]);
   function tick(time) {
     animation.tick(time);
@@ -115,6 +111,7 @@ snabbtjs.stop_animation = function(element) {
   for(var i=0;i<snabbtjs.running_animations.length;++i) {
     var animated_element = snabbtjs.running_animations[i][0];
     var animation = snabbtjs.running_animations[i][1];
+
     if(element.hasOwnProperty('length')) {
       for(var j=0;j<element.length;++j) {
         if(animated_element === element[j]) {
@@ -134,6 +131,9 @@ snabbtjs.current_animation_transform = function(element) {
   for(var i=0;i<snabbtjs.running_animations.length;++i) {
     var animated_element = snabbtjs.running_animations[i][0];
     var animation = snabbtjs.running_animations[i][1];
+    if(animation.stopped()) {
+      continue;
+    }
     var state;
     if(element.hasOwnProperty('length')) {
       for(var j=0;j<element.length;++j) {
