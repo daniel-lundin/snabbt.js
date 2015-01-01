@@ -92,7 +92,7 @@ function build_formation(positions) {
       from_rotation: positions[i].from_rotation,
       position: positions[i].position,
       rotation: positions[i].rotation,
-      easing: 'cos',
+      easing: 'ease',
       delay: i * 50
     });
   }

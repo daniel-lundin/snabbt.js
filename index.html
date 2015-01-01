@@ -37,10 +37,11 @@
       <div class="container">
         <ul>
           <li><a href="#intro">Introduction</a></li>
+          <li><a href="#demos">Demos</a></li>
           <li><a href="#usage">Usage</a></li>
           <li><a href="#easing">Easing</a></li>
           <li><a href="#advanced">Advanced</a></li>
-          <li><a href="#demos">Demos</a></li>
+          <li><a href="#api">API</a></li>
         </ul>
       </div>
     </div>
@@ -69,10 +70,11 @@
       <div id="navbar" class="nav">
         <ul>
           <li><a href="#intro">Introduction</a></li>
+          <li><a href="#demos">Demos</a></li>
           <li><a href="#usage">Usage</a></li>
           <li><a href="#easing">Easing</a></li>
           <li><a href="#advanced">Advanced</a></li>
-          <li><a href="#demos">Demos</a></li>
+          <li><a href="#api">API</a></li>
         </ul>
       </div>
 
@@ -80,13 +82,27 @@
         <h2>Introduction</h2>
         <p>snabbt.js is a minimalistic javascript animation library. It focuses on moving things around. It will translate, rotate, scale, skew and resize your elements. By including matrix multiplication operations, transforms can be combined in any way you want. The end result is then set via CSS3 transform matrices.</p>
 
+        <p>snabbt.js is built to be fast. It will only animate things that modern browsers can animate <a href="http://www.html5rocks.com/en/tutorials/speed/high-performance-animations/" target="_blank">cheaply:</a> transforms and opacity. The goal is to make a library that will let the user make smooth animations without needing to know too much about browser rendering.</p>
+
+        <p>Note: For convienience, width and height are animatable to, but be aware of those. They may cause page reflows and slow down your animations.</p>
+
         <h4>Limitations</h4>
         <ul>
-          <li>All transforms work on pixels or radians. Any unit conversion has to be done fore-hand</li>
-          <li>No color animations</li>
-          <li>For performance reasons, snabbt.js never queries the DOM. This means that in some cases you need to store end transforms yourself</li>
+          <li>All transforms work on pixels or radians. Any unit conversion has to be done fore-hand.</li>
+          <li>No abritrary propery animations, e.g. colors, padding, margin or line height animations.</li>
+          <li>For performance reasons, snabbt.js never queries the DOM. This means that in some cases you need to store end transforms yourself.</li>
         </ul>
       </section>
+
+      <section id="demos">
+        <h2>Demos</h2>
+        <p>Check out some of the demos to see the capabilities of snabbt.js:</p>
+        <ul>
+          <li><a href="cards.html">Cards</a></li>
+          <li><a href="sticks.html">Crazy sticks</a></li>
+        </ul>
+      </section>
+
       <section id="usage">
         <h2>Usage</h2>
         <div class="row">
@@ -103,7 +119,7 @@
   rotation: [Math.PI, 0, 0],
   duration: 1000,
   delay: 100,
-  easing: 'cos'
+  easing: 'ease'
 });</code></pre>
           </div>
         </div>
@@ -118,7 +134,7 @@
           <div class="six columns">
             <pre><code>snabbt(element, {
   position: [100, 0, 0],
-  easing: 'cos'
+  easing: 'ease'
 }).then({
   from_rotation: [0, 0, -2*Math.PI],
   easing: 'spring',
@@ -149,9 +165,139 @@
 
         </div>
 
+      </section>
+
+
+      <section id="easing">
+        <h2>Easing</h2>
+        <p>snabbt.js includes four easing functions: linear, ease, ease-in and ease-out. You can also use your own <a href="#custom-easing">easing functions</a> or use the physics based <a href="#spring-easing">spring easing</a><p>
+        <div class="row">
+          <div class="six columns">
+            <h5>Linear(default)</h5>
+            <div class="easing-demo" data-easing-name="linear">
+              <div></div>
+            </div>
+          </div>
+          <div class="six columns">
+            <h5>ease</h5>
+            <div class="easing-demo" data-easing-name="ease">
+              <div></div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="six columns">
+            <h5>ease-in</h5>
+            <div class="easing-demo" data-easing-name="ease-in">
+              <div></div>
+            </div>
+          </div>
+          <div class="six columns">
+            <h5>ease-out</h5>
+            <div class="easing-demo" data-easing-name="ease-out">
+              <div></div>
+            </div>
+          </div>
+        </div>
+
+      </section>
+      <section id="custom-easing">
+        <h3>Custom easing function</h3>
+        <div class="row">
+          <div class="six columns">
+            <p>Instead of easing name, pass in a function that takes one parameter:</p>
+        <button id="custom-easer" class="button-primary">Run example</button>
+          </div>
+          <div class="six columns">
+            <pre><code>snabbt(element, {
+  position: [200, 0, 0],
+  easing: function(value) {
+    return Math.sin(Math.PI * value);
+  }
+});</code></pre>
+          </div>
+        </div>
+      </section>
+
+      <section id="spring-easing">
+        <h3>Spring easing</h3>
+        <p>When using spring easing, the <em>duration</em> parameter is not in effect. Instead the animation will progress until equilibrium is reached. When easing is set to <em>spring</em> there are three additional parameters that can be set on the animation configuration:</p>
+        <ul>
+          <li><strong>spring_constant</strong> - The stiffness of the spring</li>
+          <li><strong>spring_deaccelaration</strong> - Controls how fast the velocity decreases</li>
+          <li><strong>spring_mass</strong> - The 'weight' of the object</li>
+        </ul>
+
+        <p>Example:</p>
+        <pre><code>snabbt(element, {
+  position: [100, 0, 0],
+  rotation: [0, 0, 2*Math.PI],
+  easing: 'spring',
+  spring_constant: 0.3,
+  spring_deacceleration: 0.8,
+}).then({
+  rotation: [0, 0, 2*Math.PI],
+  easing: 'ease'
+});</code></pre>
+        <button id="spring-example" class="button-primary extra-top-margin">Run example</button>
+      </section>
+      <section id="advanced">
+        <h2>Advanced concepts</h2>
+        <p>This section describes some of the more advanced usages.</p>
+
+        <h3>Value feeding</h3>
+        <p>The animation object is very simple to work with but has it limitations. Sometimes you want to do the transforms in another order. This is where value feeding comes handy. The <em>value_feeder</em> parameter expects a function that takes one parameter which will progress from 0 to 1. Every time it is called you should return a snabbtjs.matrix(see <a href="#matrix">Matrix API</a>) representing the current transform.</p>
+        <pre><code>snabbt(element, {
+  value_feeder: function(i) {
+    var x = Math.sin(i*Math.PI);
+    return snabbtjs.mult(snabbtjs.rotZ(Math.sin(6*i*Math.PI)), snabbtjs.trans(x*400, 0, 0));
+  },
+  duration: 1000
+});</code></pre>
+        <button id="value-feed-example" class="button-primary extra-top-margin">Run example</button>
+
+        <h3>Attention animations</h3>
+        <p>snabbt.js has support for attention animations. This can be useful in form validations when you want to draw attention to a form element for example. Attention animation use spring easings.</p>
+        <div class="row">
+          <div class="six columns">
+            <pre><code>snabbt(element, 'attention', {
+  rotation: [0, 0, Math.PI/2],
+  spring_constant: 1.9,
+  spring_deacceleration: 0.9,
+});</code></pre>
+
+            <button id="attention-example-1" class="button-primary extra-top-margin">Run example</button>
+          </div>
+          <div class="six columns">
+            <pre><code>snabbt(element, 'attention', {
+  position: [50, 0, 0],
+  spring_constant: 2.4,
+  spring_deacceleration: 0.9,
+});</code></pre>
+
+            <button id="attention-example-2" class="button-primary extra-top-margin">Run example</button>
+          </div>
+        </div>
+      </section>
+      <section id="matrix">
+        <h2>Matrix API</h2>
+        <p>The following functions represents the Matrix API:</p>
+        <ul>
+          <li><strong>snabbtjs.ident()</strong> - Returns the identity matrix</li>
+          <li><strong>snabbtjs.trans(x, y, z)</strong> - Returns a translation matrix</li>
+          <li><strong>snabbtjs.rotX(radians)</strong> - Returns a rotation around the x-axis</li>
+          <li><strong>snabbtjs.rotY(radians)</strong> - Returns a rotation around the y-axis</li>
+          <li><strong>snabbtjs.rotZ(radians)</strong> - Returns a rotation around the z-axis</li>
+          <li><strong>snabbtjs.scale(x, y)</strong> - Returns a scaling matrix</li>
+          <li><strong>snabbtjs.skew(ax, ay)</strong> - Returns a skew matrix</li>
+          <li><strong>snabbtjs.mult(A, B)</strong> - Returns the matrix multiplication product of A * B</li>
+        </ul>
+      </section>
+
+      <section id="api">
         <h3>Animation configuration</h3>
         <p>The following parameters can on the configuration object:</p>
-        <table>
+        <table class="hide-mobile">
           <thead>
             <tr>
               <td>Parameter</td>
@@ -229,9 +375,22 @@
             </tr>
           </tbody>
         </table>
+        <ul class="hide-desktop">
+          <li><strong>position</strong> - Pixel offsets in each x-, y- and z-direction</li>
+          <li><strong>rotation</strong> - Rotation in radians in x-, y- and z-direction</li>
+          <li><strong>scale</strong> - Scale in x- and y-direction</li>
+          <li><strong>rotation_post</strong> - Rotation applied after <em>position</em> and <em>rotation</em></li>
+          <li><strong>width</strong> - Element width in pixels</li>
+          <li><strong>height</strong> - Element height in pixels</li>
+          <li><strong>opacity</strong> - Element opacity(0 - 1)</li>
+          <li><strong>duration</strong> - Animation duration in milliseconds</li>
+          <li><strong>delay</strong> - Delay before the animation is started in milliseconds</li>
+          <li><strong>loop</strong> - Number of times to repeat the animation</li>
+          <li><strong>callback</strong> - Function to be called when animation is completed</li>
+        </ul>
 
         <p>A from_xxx can be set on most properties: </p>
-        <table>
+        <table class="hide-mobile">
           <thead>
             <tr>
               <td>Parameter</td>
@@ -278,93 +437,14 @@
           </tbody>
         </table>
 
-      </section>
-
-
-      <section id="easing">
-        <h2>Easing</h2>
-        <p>These easing functions are included in snabbt.js: (TODO: add graphs)<p>
-        <ul>
-          <li><strong>linear</strong>(default)</li>
-          <li><strong>cos</strong></li>
-          <li><strong>sqrt</strong></li>
-          <li><strong>square</strong></li>
-          <li><strong>spring</strong> - See section about <a href="#spring">spring easings</a></li>
+        <ul class="hide-desktop">
+          <li><strong>from_position</strong> - set to [0, 0, 0] or previous end state</li>
+          <li><strong>from_scale</strong> - set to [0, 0, 0] or previous end state</li>
+          <li><strong>from_width</strong></li>
+          <li><strong>from_height</strong></li>
+          <li><strong>from_opacity</strong></li>
         </ul>
       </section>
-
-      <section id="spring">
-      <h3>Spring easing</h3>
-      <p>When using spring easing, the <em>duration</em> parameter is not in effect. Instead the animation will progress until equilibrium is reached. When easing is set to <em>spring</em> there are three additional parameters that can be set on the animation configuration:</p>
-      <ul>
-        <li><strong>spring_constant</strong> - The stiffness of the spring</li>
-        <li><strong>spring_deaccelaration</strong> - Controls how fast the velocity decreases</li>
-        <li><strong>spring_mass</strong> - The 'weight' of the object</li>
-      </ul>
-      </section>
-      <section id="advanced">
-        <h2>Advanced concepts</h2>
-        <p>This section describes some of the more advanced usages.</p>
-
-        <h3>Value feeding</h3>
-        <p>The animation object is very simple to work with but has it limitations. Sometimes you want to do the transforms in another order. This is where value feeding comes handy. The <em>value_feeder</em> expects a function that takes one parameter which will progress from 0 to 1. Every time it is called you should return a snabbtjs.matrix(see <a href="#matrix">Matrix API</a>) representing the current transform.</p>
-        <pre><code>snabbt(element, {
-  value_feeder: function(i) {
-    var y = 50*Math.sin(i*4*Math.PI);
-    var x = Math.sin(i*Math.PI);
-    return snabbtjs.mult(snabbtjs.scale(1+x, 1+x), snabbtjs.trans(x*400, y, 0));
-  },
-  duration: 1000,
-  easing: 'cos'
-});</code></pre>
-        <button id="value-feed-example" class="button-primary extra-top-margin">Run example</button>
-
-        <h3>Attention animations</h3>
-        <p>snabbt.js has support for attention animations. This can be useful in form validations when you want to draw attention to a form element for example. Attention animation use spring easings.</p>
-        <div class="row">
-          <div class="six columns">
-            <pre><code>snabbt(element, 'attention', {
-  rotation: [0, 0, Math.PI/2],
-  spring_constant: 1.9,
-  spring_deacceleration: 0.9,
-});</code></pre>
-
-            <button id="attention-example-1" class="button-primary extra-top-margin">Run example</button>
-          </div>
-          <div class="six columns">
-            <pre><code>snabbt(element, 'attention', {
-  position: [50, 0, 0],
-  spring_constant: 2.4,
-  spring_deacceleration: 0.9,
-});</code></pre>
-
-            <button id="attention-example-2" class="button-primary extra-top-margin">Run example</button>
-          </div>
-        </div>
-      </section>
-      <section id="matrix">
-        <h2>Matrix API</h2>
-        <p>The following functions represents the Matrix API:</p>
-        <ul>
-          <li><strong>snabbtjs.ident()</strong> - Returns the identity matrix</li>
-          <li><strong>snabbtjs.trans(x, y, z)</strong> - Returns a translation matrix</li>
-          <li><strong>snabbtjs.rotX(radians)</strong> - Returns a rotation around the x-axis</li>
-          <li><strong>snabbtjs.rotY(radians)</strong> - Returns a rotation around the y-axis</li>
-          <li><strong>snabbtjs.rotZ(radians)</strong> - Returns a rotation around the z-axis</li>
-          <li><strong>snabbtjs.scale(x, y)</strong> - Returns a scaling matrix</li>
-          <li><strong>snabbtjs.skew(ax, ay)</strong> - Returns a skew matrix</li>
-          <li><strong>snabbtjs.mult(A, B)</strong> - Returns the matrix multiplication product of A * B</li>
-        </ul>
-      </section>
-      <section id="demos">
-        <h2>Demos</h2>
-        <p>Check out some of the demos to see the capabilities of snabbt.js:</p>
-        <ul>
-          <li><a href="cards.html">Cards</a></li>
-          <li><a href="sticks.html">Crazy sticks</a></li>
-        </ul>
-      </section>
-
     </div>
     <footer>
       <div class="container">

@@ -100,9 +100,29 @@ footer {
   padding-top: 10px;
 }
 
+.easing-demo {
+  position: relative;
+  height: 20px;
+  border: 1px solid grey;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+.easing-demo div {
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  border-radius: 4px;
+  background: rgb(30, 174, 219);
+}
 /* Some utiliy classes */
 @media screen and (max-width:600px) {
   .hide-mobile {
+    display: none;
+  }
+}
+
+@media screen and (min-width:600px) {
+  .hide-desktop {
     display: none;
   }
 }

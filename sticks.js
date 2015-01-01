@@ -28,12 +28,12 @@ function animate(prefix, index) {
       from_position: [0, -(STICK_COUNT/2) * 5 + 5*i, 0],
       position: [200, 0, 0],
       duration: 500,
-      easing: 'cos',
+      easing: 'ease',
     }).then({
       position: [200, 0, 0],
       rotation_post: [0, 0, (i/STICK_COUNT)*2*Math.PI],
       duration: 1000,
-      easing: 'cos',
+      easing: 'ease',
     }).then({
       from_position: [
         200*Math.cos((i/STICK_COUNT)*2*Math.PI),
@@ -51,14 +51,14 @@ function animate(prefix, index) {
       rotation_post: [0, 0, 0],
       delay: i*10,
       duration: 1000,
-      easing: 'cos',
+      easing: 'ease',
     }).then({
       from_position: [100, 0, 0],
       position: [0, -(STICK_COUNT/2) * 5 + 5*i, 0],
       from_rotation: [0, 0, 0],
       from_rotation_post: [0, 0, (i/STICK_COUNT)*2*Math.PI],// + Math.PI],
       rotation_post: [0, 0, 0],
-      easing: 'cos',
+      easing: 'ease',
       delay: STICK_COUNT*10 + i*10,
       duration: 1000,
       callback: (function(j) { return function() { animate(prefix, j) } })(i),
