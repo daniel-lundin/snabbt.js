@@ -1,17 +1,17 @@
 {
   "name": "snabbt.js",
-  "version": "0.0.0",
-  "description": "Move things fast",
-  "main": "main.js",
+  "version": "0.1.0",
+  "description": "Fast animations with javascript and CSS-transforms",
+  "main": "snabbt.min.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
-    "url": "git@bitbucket.org:diggidanne/snabbt.js.git"
+    "url": "git@github.com:daniel-lundin/snabbt.js.git"
   },
-  "author": "",
-  "license": "ISC",
+  "author": "Daniel Lundin",
+  "license": "MIT",
   "devDependencies": {
     "grunt-contrib-uglify": "^0.4.0",
     "grunt-contrib-concat": "^0.5.0"
