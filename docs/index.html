@@ -84,11 +84,11 @@
 
         <p>snabbt.js is built to be fast. It will only animate things that modern browsers can animate <a href="http://www.html5rocks.com/en/tutorials/speed/high-performance-animations/" target="_blank">cheaply:</a> transforms and opacity. The goal is to make a library that will let the user make smooth animations without needing to know too much about browser rendering.</p>
 
-        <p>Note: For convienience, width and height are animatable to, but be aware of those. They may cause page reflows and slow down your animations.</p>
+        <p>Note: For convenience, width and height are animatable too, but beware since they may cause page reflows and slow down your animations.</p>
 
         <h4>Limitations</h4>
         <ul>
-          <li>All transforms work on pixels or radians. Any unit conversion has to be done fore-hand.</li>
+          <li>All transforms work on pixels or radians. Any unit conversion has to be done beforehand.</li>
           <li>No abritrary propery animations, e.g. colors, padding, margin or line height animations.</li>
           <li>For performance reasons, snabbt.js never queries the DOM. This means that in some cases you need to store end transforms yourself.</li>
         </ul>
