@@ -21,7 +21,7 @@ The initial release is out. Would love some feedback on things that can be impro
  - Improve documentation
  - bower/npm package
  - require.js support
- - Optimize memory usage by reusing matrix
+ - Optimize memory usage by reusing matrices
 
 [MIT License](LICENSE.md) © Daniel Lundin (http://twitter.com/danielundin).  
 
