@@ -13,7 +13,8 @@ var PYTH_ANGLE = Math.PI/2 - TILT;
 
 var TILTED_CARD_HEIGHT = Math.sin(PYTH_ANGLE) * CARD_HEIGHT + 2;
 var TILTED_CARD_WIDTH = Math.cos(PYTH_ANGLE) * CARD_HEIGHT;
-var PYRAMID_WIDTH = TILTED_CARD_WIDTH * 2 + 4;
+var CARD_SPACING = 2;
+var PYRAMID_WIDTH = TILTED_CARD_WIDTH * 2 + CARD_SPACING * 2;
 
 function update_sizes() {
   var c = document.getElementById('container');
@@ -23,7 +24,7 @@ function update_sizes() {
   CARD_HEIGHT = HEIGHT * 0.15;
   TILTED_CARD_HEIGHT = Math.sin(PYTH_ANGLE) * CARD_HEIGHT + 2;
   TILTED_CARD_WIDTH = Math.cos(PYTH_ANGLE) * CARD_HEIGHT;
-  PYRAMID_WIDTH = TILTED_CARD_WIDTH * 2 + 4;
+  PYRAMID_WIDTH = TILTED_CARD_WIDTH * 2 + CARD_SPACING * 2;
   for(var i=0;i<Deck.cards.length;++i) {
     Deck.card_at(i).style.height = CARD_HEIGHT + 'px';
     Deck.card_at(i).style.width = CARD_WIDTH + 'px';
@@ -155,8 +156,8 @@ function house_positions() {
   var positions = [];
   var i;
   for(i=0;i<floors;++i) {
-    var _x = x + i * TILTED_CARD_WIDTH;
-    var _y = y - i * TILTED_CARD_HEIGHT;
+    var _x = x + i * TILTED_CARD_WIDTH + i * CARD_SPACING;
+    var _y = y - i * TILTED_CARD_HEIGHT - i * CARD_SPACING;
     positions = positions.concat(house_row_positions(floors - i, _x, _y, z));
   }
 
@@ -181,7 +182,7 @@ function house_row_positions(count, x, y, z) {
   // Bridge cards
   for(i=0;i<count-1;++i) {
     positions.push({
-      position: [x + i*PYRAMID_WIDTH + TILTED_CARD_WIDTH, y - TILTED_CARD_HEIGHT/2, z],
+      position: [x + i*PYRAMID_WIDTH + TILTED_CARD_WIDTH, y - TILTED_CARD_HEIGHT/2 - CARD_SPACING/2, z],
       rotation: [Math.PI/2, Math.PI/2, 0],
     });
   }
@@ -190,7 +191,7 @@ function house_row_positions(count, x, y, z) {
 
 function pyramid_postions(x, y, z) {
   // Firefox flickers if elements overlap
-  var spacing = (TILTED_CARD_WIDTH / 2) + 2;
+  var spacing = (TILTED_CARD_WIDTH / 2) + CARD_SPACING/2;
 
   return [{
     position: [x - spacing, y, z],

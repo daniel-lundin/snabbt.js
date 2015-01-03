@@ -1,8 +1,3 @@
-.container {
-  transform: translateZ(1000px);
-  -webkit-transform: translateZ(1000px);
-}
-
 .block {
   width: 50px;
   height: 50px;
@@ -13,6 +8,7 @@
   position: relative;
   margin: auto;
   text-align: center;
+  -webkit-transform: translateZ(1000px);
 }
 .hero h1 {
   position: relative;
@@ -47,6 +43,8 @@
   background: white;
   padding: 0;
   margin: 0;
+  /* Safari z-index issues */
+  -webkit-transform: translateZ(2000px);
 }
 
 .nav.docked ul {
