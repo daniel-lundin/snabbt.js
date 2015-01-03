@@ -23,5 +23,4 @@ The initial release is out. Would love some feedback on things that can be impro
  - require.js support
  - Optimize memory usage by reusing matrices
 
-[MIT License](LICENSE.txt) © Daniel Lundin (http://twitter.com/danielundin).  
-
+[MIT License](LICENSE.txt) © 2015 Daniel Lundin (http://twitter.com/danielundin).
