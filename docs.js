@@ -129,6 +129,8 @@ $(function() {
 
   // Custom easing
   $("#custom-easer").on('click', function() {
+    console.log('custom easing clicked');
+    console.log('custom easing');
     $("#custom-easer").snabbt({
       position: [200, 0, 0],
       easing: function(value) {
@@ -183,4 +185,5 @@ $(function() {
     }
   });
 
+  FastClick.attach(document.body);
 }());
