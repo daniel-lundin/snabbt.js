@@ -11,11 +11,11 @@ snabbtjs.ease = function(value) {
 };
 
 snabbtjs.ease_in = function(value) {
-  return -Math.pow(value - 1, 2) + 1;
+  return value*value;
 };
 
 snabbtjs.ease_out = function(value) {
-  return value*value;
+  return -Math.pow(value - 1, 2) + 1;
 };
 
 snabbtjs.SpringEasing = function(options) {
