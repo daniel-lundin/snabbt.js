@@ -1,7 +1,7 @@
 var snabbtjs = snabbtjs || {};
 
 /* Entry point, only function to be called by user */
-function snabbt(arg1, arg2, arg3) {
+snabbtjs.snabbt = function(arg1, arg2, arg3) {
   if(arg1 === 'scroll')
     return snabbtjs.setup_scroll_animation(arg2);
   if(arg2 === 'attention')
@@ -76,7 +76,7 @@ function snabbt(arg1, arg2, arg3) {
 
   snabbtjs.requestAnimationFrame(tick);
   return chainer;
-}
+};
 
 snabbtjs.setup_scroll_animation = function(options) {
   var animation = new snabbtjs.ScrollAnimation(options);
