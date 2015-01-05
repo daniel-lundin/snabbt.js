@@ -15,7 +15,8 @@ module.exports = function(grunt) {
     },
     concat: {
       options: {
-        separator: ';',
+        banner: '/*! <%= pkg.name %> v<%= pkg.version %> built: <%= grunt.template.today("yyyy-mm-dd") %> */\n',
+        separator: ';'
       },
       dist: {
         src: ['src/module_pre.js', 'src/animations.js', 'src/easing.js', 'src/jquery.snabbt.js', 'src/main.js', 'src/mat.js', 'src/state.js', 'src/tween.js', 'src/utils.js', 'src/module_post.js'],

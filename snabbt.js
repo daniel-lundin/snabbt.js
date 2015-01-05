@@ -1,3 +1,4 @@
+/*! snabbt.js v0.2.0 built: 2015-01-05 */
 (function (root, factory) {
   if (typeof exports === 'object') {
     // CommonJS
