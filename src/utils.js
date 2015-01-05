@@ -17,13 +17,7 @@ snabbtjs._update_element_transform = function(element, matrix, perspective) {
 };
 
 snabbtjs.update_element_transform = function(element, matrix, perspective) {
-  if(element.hasOwnProperty('length')) {
-    for(var i=0;i<element.length;++i) {
-      snabbtjs._update_element_transform(element[i], matrix, perspective);
-    }
-  } else {
-    snabbtjs._update_element_transform(element, matrix, perspective);
-  }
+  snabbtjs._update_element_transform(element, matrix, perspective);
 };
 
 snabbtjs._update_element_properties = function(element, properties) {
@@ -33,13 +27,7 @@ snabbtjs._update_element_properties = function(element, properties) {
 };
 
 snabbtjs.update_element_properties = function(element, properties) {
-  if(element.hasOwnProperty('length')) {
-    for(var i=0;i<element.length;++i) {
-      snabbtjs._update_element_properties(element[i], properties);
-    }
-  } else {
-    snabbtjs._update_element_properties(element, properties);
-  }
+  snabbtjs._update_element_properties(element, properties);
 };
 
 snabbtjs.is_function = function(object) {

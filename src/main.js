@@ -4,6 +4,30 @@ var snabbtjs = snabbtjs || {};
 snabbtjs.snabbt = function(arg1, arg2, arg3) {
   if(arg1 === 'scroll')
     return snabbtjs.setup_scroll_animation(arg2);
+
+  var elements = arg1;
+  if(elements.hasOwnProperty('length')) {
+    var queue = [];
+    var aggregate_chainer = {
+      chainers: [],
+      then: function(opts) {
+        for(var j=0;j<this.chainers.length;++j) {
+          this.chainers[j].then(opts);
+        }
+        return aggregate_chainer;
+      }
+    };
+
+    for(var i=0;i<elements.length;++i) {
+      aggregate_chainer.chainers.push(snabbtjs._snabbt(elements[i], arg2, arg3));
+    }
+    return aggregate_chainer;
+  } else {
+    return snabbtjs._snabbt(elements, arg2, arg3);
+  }
+};
+
+snabbtjs._snabbt = function(arg1, arg2, arg3) {
   if(arg2 === 'attention')
     return snabbtjs.setup_attention_animation(arg1, arg3);
   if(arg2 === 'stop')
@@ -11,7 +35,10 @@ snabbtjs.snabbt = function(arg1, arg2, arg3) {
   var element = arg1;
   var options = arg2;
 
+  // Remove orphaned end states
+  snabbtjs.clear_ophaned_end_states();
 
+  // If there is a running or past completed animation with element, use that end state
   var start = snabbtjs.current_animation_transform(element);
   if(!start)
     start = snabbtjs.state_from_options(start, options, 'from_');
@@ -21,13 +48,7 @@ snabbtjs.snabbt = function(arg1, arg2, arg3) {
   var anim_options = snabbtjs.setup_animation_options(start, end, options);
   var animation = snabbtjs.create_animation(anim_options);
 
-  if(element.hasOwnProperty('length')) {
-    for(var i=0;i<element.length;++i) {
-      snabbtjs.running_animations.push([element[i], animation]);
-    }
-  } else {
-    snabbtjs.running_animations.push([element, animation]);
-  }
+  snabbtjs.running_animations.push([element, animation]);
 
   animation.update_element(element);
   var queue = [];
@@ -112,45 +133,32 @@ snabbtjs.stop_animation = function(element) {
     var animated_element = snabbtjs.running_animations[i][0];
     var animation = snabbtjs.running_animations[i][1];
 
-    if(element.hasOwnProperty('length')) {
-      for(var j=0;j<element.length;++j) {
-        if(animated_element === element[j]) {
-          animation.stop();
-        }
-      }
+    if(animated_element === element) {
+      animation.stop();
+    }
+  }
+};
 
-    } else {
-      if(animated_element === element) {
-        animation.stop();
-      }
+snabbtjs._current_animation_transform = function(animation_list, element) {
+  for(var i=0;i<animation_list.length;++i) {
+    var animated_element = animation_list[i][0];
+    var animation = animation_list[i][1];
+
+    if(animated_element === element) {
+      state = animation.current_state();
+      animation.stop();
+      return state;
     }
   }
 };
 
 snabbtjs.current_animation_transform = function(element) {
-  for(var i=0;i<snabbtjs.running_animations.length;++i) {
-    var animated_element = snabbtjs.running_animations[i][0];
-    var animation = snabbtjs.running_animations[i][1];
-    if(animation.stopped()) {
-      continue;
-    }
-    var state;
-    if(element.hasOwnProperty('length')) {
-      for(var j=0;j<element.length;++j) {
-        if(animated_element === element[j]) {
-          state = animation.current_state();
-          animation.stop();
-          return state;
-        }
-      }
-    } else {
-      if(animated_element === element) {
-        state = animation.current_state();
-        animation.stop();
-        return state;
-      }
-    }
-  }
+  var state = snabbtjs._current_animation_transform(snabbtjs.running_animations, element);
+  if(state)
+    return state;
+
+  // Check if a completed animation is stored for this element
+  state = snabbtjs._current_animation_transform(snabbtjs.completed_animations, element);
 };
 
 snabbtjs.state_from_options = function(p, options, prefix) {
@@ -200,6 +208,7 @@ snabbtjs.setup_animation_options = function(start, end, options) {
 
 snabbtjs.tick_requests = [];
 snabbtjs.running_animations = [];
+snabbtjs.completed_animations = [];
 
 snabbtjs.requestAnimationFrame = function(func) {
   snabbtjs.tick_requests.push(func);
@@ -212,9 +221,40 @@ snabbtjs.tick_animations = function(time) {
   }
   snabbtjs.tick_requests.splice(0, len);
   window.requestAnimationFrame(snabbtjs.tick_animations);
-  snabbtjs.running_animations = snabbtjs.running_animations.filter(function(a) {
-    return !a[1].completed();
+
+  var completed_animations = snabbtjs.running_animations.filter(function(animation) {
+    return animation[1].completed();
   });
+
+  // See if there are any previously completed animations on the same element, if so, remove it before merging
+  snabbtjs.completed_animations = snabbtjs.completed_animations.filter(function(animation) {
+    for(var i=0;i<completed_animations.length;++i) {
+      if(animation[0] === completed_animations[i][0]) {
+        return false;
+      }
+    }
+    return true;
+  });
+
+  snabbtjs.completed_animations = snabbtjs.completed_animations.concat(completed_animations);
+
+  snabbtjs.running_animations = snabbtjs.running_animations.filter(function(animation) {
+    return !animation[1].completed();
+  });
+};
+
+snabbtjs.clear_ophaned_end_states = function() {
+  snabbtjs.completed_animations = snabbtjs.completed_animations.filter(function(animation) {
+    return (snabbtjs.find_ultimate_ancestor(animation[0]).body);
+  });
+};
+
+snabbtjs.find_ultimate_ancestor = function(node) {
+   var ancestor = node;
+   while(ancestor.parentNode) {
+      ancestor = ancestor.parentNode;
+   }
+   return ancestor;
 };
 
 window.requestAnimationFrame(snabbtjs.tick_animations);
