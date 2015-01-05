@@ -631,15 +631,15 @@ snabbtjs.assigned_matrix_multiplication = function(a, b, res) {
 };
 
 snabbtjs.mat_to_css = function(matrix) {
-  var css = ['matrix3d('];
+  var css = 'matrix3d(';
   for(var i=0;i<matrix.length-1;++i) {
     if(Math.abs(matrix[i]) < 0.01)
-      css.push('0,');
+      css += '0,';
     else
-      css.push(matrix[i].toFixed(10) + '0,');
+      css += matrix[i].toFixed(10) + '0,';
   }
-  css.push(matrix[15].toFixed(10) + ')');
-  return css.join("");
+  css += matrix[15].toFixed(10) + ')';
+  return css;
 };
 
 snabbtjs.mat_to_css2 = function(matrix) {
