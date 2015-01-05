@@ -1,6 +1,6 @@
 {
   "name": "snabbt.js",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Fast animations with javascript and CSS-transforms",
   "main": "snabbt.min.js",
   "scripts": {
