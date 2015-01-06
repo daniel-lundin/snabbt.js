@@ -41,6 +41,7 @@
           <li><a href="#usage">Usage</a></li>
           <li><a href="#easing">Easing</a></li>
           <li><a href="#advanced">Advanced</a></li>
+          <li><a href="#module-loaders">Module loaders</a></li>
           <li><a href="#api">API</a></li>
         </ul>
       </div>
@@ -74,6 +75,7 @@
           <li><a href="#usage">Usage</a></li>
           <li><a href="#easing">Easing</a></li>
           <li><a href="#advanced">Advanced</a></li>
+          <li><a href="#module-loaders">Module loaders</a></li>
           <li><a href="#api">API</a></li>
         </ul>
       </div>
@@ -107,7 +109,7 @@
         <h2>Usage</h2>
         <div class="row">
           <div class="six columns">
-            <p>Animations are started with the snabbt-function call. The function takes an element as first parameter and a configuration-object as second. Example:</p>
+            <p>Animations are started with the snabbt-function call. The function takes an element as first parameter and a configutation-object as second. Example:</p>
 
 
             <button id="usage-example-execute">Run example</button>
@@ -128,7 +130,7 @@
         <h3>Chaining</h3>
         <div class="row">
           <div class="six columns">
-            <p>Animation can be chained by using the `then()`-method on the returned animation object. all from_xxx properties will be set to the end state of the previous animation.</p>
+            <p>Animation can be chained by using the `then()`-method on the returned animation object. All from_xxx properties will be set to the end state of the previous animation.</p>
             <button id="chaining-example-execute">Run example</button>
           </div>
           <div class="six columns">
@@ -142,9 +144,12 @@
   spring_deaccelaration: 0.95,
 });</code></pre>
           </div>
-
         </div>
 
+        <h3>Make it stop</h3>
+        <p>Animation can be stopped at any time by replacing the animation configuration with the string literal 'stop':</p>
+        <pre><code>snabbt(element, 'stop');</code></pre>
+        <p class="extra-top-margin">If a new animation is started with the same element it will start from the stopped position unless the 'from_'-properties are used. </p>
         <h3>jQuery</h3>
         <p>snabbt.js works with or without jQuery. If jQuery is detected snabbt.js will be loaded as a jQuery-plugin. When using snabbt.js with jQuery, the first parameter is the animation configuration:</p>
         <div class="row">
@@ -279,6 +284,25 @@
           </div>
         </div>
       </section>
+      <section id="module-loaders">
+        <h2>Module loaders</h2>
+        <p>snabbt.js is wrapped in a UMD boilerplate which means it will work with both RequireJS and browserify.</p>
+        <strong>CommonJS:</strong>
+        <pre><code>var snabbtjs = require('snabbt.js');
+
+snabbtjs.snabbt(element, {
+  position: [200, 0, 0]
+});
+</pre></code>
+
+        <strong>AMD:</strong>
+        <pre><code>require(["snabbt.js"], function(snabbtjs) {
+  snabbtjs.snabbt(element, {
+    rotation: [2*Math.PI, 0, 0]
+  });
+});
+</pre></code>
+      </section>
       <section id="matrix">
         <h2>Matrix API</h2>
         <p>The following functions represents the Matrix API:</p>
@@ -296,7 +320,7 @@
 
       <section id="api">
         <h3>Animation configuration</h3>
-        <p>The following parameters can be set on the configuration object:</p>
+        <p>The following parameters can on the configuration object:</p>
         <table class="hide-mobile">
           <thead>
             <tr>
@@ -389,7 +413,7 @@
           <li><strong>callback</strong> - Function to be called when animation is completed</li>
         </ul>
 
-        <p>A from_xxx can be set on most properties: </p>
+        <p>A 'from_'-property can be set on most properties. Note that 'from_' has precedance over the previous end state.</p>
         <table class="hide-mobile">
           <thead>
             <tr>

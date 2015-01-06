@@ -104,6 +104,7 @@ $(function() {
       var element_width = element.offsetWidth;
       snabbt(element, 'stop');
       snabbt(element, {
+        from_position: [0, 0, 0],
         position: [container_width - element_width, 0, 0],
         easing: easing_name.value,
         duration: 500
@@ -166,9 +167,6 @@ $(function() {
     });
   });
 
-
-
-
   // Scroll spy
   var navtop = $("#navbar").offset().top;
   var $docked_navbar = $("#docked-navbar");
@@ -184,4 +182,5 @@ $(function() {
   });
 
   FastClick.attach(document.body);
+
 }());
