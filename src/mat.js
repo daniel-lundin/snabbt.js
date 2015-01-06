@@ -25,7 +25,7 @@ snabbtjs.assigned_matrix_multiplication = function(a, b, res) {
   return res;
 };
 
-snabbtjs.mat_to_css = function(matrix) {
+snabbtjs.matrix_to_css = function(matrix) {
   var css = 'matrix3d(';
   for(var i=0;i<matrix.length-1;++i) {
     if(Math.abs(matrix[i]) < 0.01)
@@ -34,27 +34,6 @@ snabbtjs.mat_to_css = function(matrix) {
       css += matrix[i].toFixed(10) + '0,';
   }
   css += matrix[15].toFixed(10) + ')';
-  return css;
-};
-
-snabbtjs.mat_to_css2 = function(matrix) {
-  var css = 'matrix3d(' +
-            matrix[0].toFixed(10) + ', ' +
-            matrix[1].toFixed(10) + ', ' +
-            matrix[2].toFixed(10) + ', ' +
-            matrix[3].toFixed(10) + ', ' +
-            matrix[4].toFixed(10) + ', ' +
-            matrix[5].toFixed(10) + ', ' +
-            matrix[6].toFixed(10) + ', ' +
-            matrix[7].toFixed(10) + ', ' +
-            matrix[8].toFixed(10) + ', ' +
-            matrix[9].toFixed(10) + ', ' +
-            matrix[10].toFixed(10) + ', ' +
-            matrix[11].toFixed(10) + ', ' +
-            matrix[12].toFixed(10) + ', ' +
-            matrix[13].toFixed(10) + ', ' +
-            matrix[14].toFixed(10) + ', ' +
-            matrix[15].toFixed(10) + ')';
   return css;
 };
 
@@ -129,13 +108,6 @@ snabbtjs.ident = function() {
 };
 
 snabbtjs.set_css = function(el, matrix) {
-  if(el.hasOwnProperty('length')) {
-    for(var i=0;i<el.length;++i) {
-      el[i].style.webkitTransform = snabbtjs.mat_to_css(matrix);
-      el[i].style.transform = snabbtjs.mat_to_css(matrix);
-    }
-  } else {
-    el.style.webkitTransform = snabbtjs.mat_to_css(matrix);
-    el.style.transform = snabbtjs.mat_to_css(matrix);
-  }
+  el.style.webkitTransform = snabbtjs.matrix_to_css(matrix);
+  el.style.transform = snabbtjs.matrix_to_css(matrix);
 };

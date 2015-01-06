@@ -2,10 +2,10 @@ var snabbtjs = snabbtjs || {};
 
 /* Entry point, only function to be called by user */
 snabbtjs.snabbt = function(arg1, arg2, arg3) {
-  if(arg1 === 'scroll')
-    return snabbtjs.setup_scroll_animation(arg2);
 
   var elements = arg1;
+
+  // If argument is an array, loop through and start one animation for each element.
   if(elements.hasOwnProperty('length')) {
     var queue = [];
     var aggregate_chainer = {
@@ -19,15 +19,15 @@ snabbtjs.snabbt = function(arg1, arg2, arg3) {
     };
 
     for(var i=0;i<elements.length;++i) {
-      aggregate_chainer.chainers.push(snabbtjs._snabbt(elements[i], arg2, arg3));
+      aggregate_chainer.chainers.push(snabbtjs.snabbt_single_element(elements[i], arg2, arg3));
     }
     return aggregate_chainer;
   } else {
-    return snabbtjs._snabbt(elements, arg2, arg3);
+    return snabbtjs.snabbt_single_element(elements, arg2, arg3);
   }
 };
 
-snabbtjs._snabbt = function(arg1, arg2, arg3) {
+snabbtjs.snabbt_single_element = function(arg1, arg2, arg3) {
   if(arg2 === 'attention')
     return snabbtjs.setup_attention_animation(arg1, arg3);
   if(arg2 === 'stop')
@@ -38,10 +38,10 @@ snabbtjs._snabbt = function(arg1, arg2, arg3) {
   // Remove orphaned end states
   snabbtjs.clear_ophaned_end_states();
 
-  // If there is a running or past completed animation with element, use that end state
-  var start = snabbtjs.current_animation_transform(element);
-  if(!start)
-    start = snabbtjs.state_from_options(start, options, 'from_');
+  // If there is a running or past completed animation with element, use that end state as start state
+  var start = snabbtjs.current_animation_state(element);
+  // from_ has precendance over current animation state
+  start = snabbtjs.state_from_options(start, options, 'from_');
   var end = new snabbtjs.State({});
   end = snabbtjs.state_from_options(end, options, '');
 
@@ -99,19 +99,6 @@ snabbtjs._snabbt = function(arg1, arg2, arg3) {
   return chainer;
 };
 
-snabbtjs.setup_scroll_animation = function(options) {
-  var animation = new snabbtjs.ScrollAnimation(options);
-  snabbtjs.running_animations.push([undefined, animation]);
-
-  function tick(time) {
-    animation.tick(time);
-    if(!animation.completed()) {
-      snabbtjs.requestAnimationFrame(tick);
-    }
-  }
-  snabbtjs.requestAnimationFrame(tick);
-};
-
 snabbtjs.setup_attention_animation = function(element,  options) {
   var movement = snabbtjs.state_from_options(new snabbtjs.State({}), options, '');
   options.movement = movement;
@@ -139,7 +126,7 @@ snabbtjs.stop_animation = function(element) {
   }
 };
 
-snabbtjs._current_animation_transform = function(animation_list, element) {
+snabbtjs.find_animation_state = function(animation_list, element) {
   for(var i=0;i<animation_list.length;++i) {
     var animated_element = animation_list[i][0];
     var animation = animation_list[i][1];
@@ -152,15 +139,23 @@ snabbtjs._current_animation_transform = function(animation_list, element) {
   }
 };
 
-snabbtjs.current_animation_transform = function(element) {
-  var state = snabbtjs._current_animation_transform(snabbtjs.running_animations, element);
+/**
+ * Returns the current state of element if there is an ongoing or previously finished
+ * animation releated to it. Will also call stop on the animation.
+ * TODO: The stopping of the animation is better put somewhere else
+ */
+snabbtjs.current_animation_state = function(element) {
+  var state = snabbtjs.find_animation_state(snabbtjs.running_animations, element);
   if(state)
     return state;
 
   // Check if a completed animation is stored for this element
-  state = snabbtjs._current_animation_transform(snabbtjs.completed_animations, element);
+  return snabbtjs.find_animation_state(snabbtjs.completed_animations, element);
 };
 
+/**
+ * Parses an animation configuration object and returns a snabbtjs.State instance
+ */
 snabbtjs.state_from_options = function(p, options, prefix) {
   if(!p)
     p = new snabbtjs.State({});
