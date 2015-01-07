@@ -337,8 +337,7 @@ snabbtjs.create_easer = function(easer_name, options) {
 ;if(window.jQuery) {
   (function ( $ ) {
     $.fn.snabbt = function(arg1, arg2) {
-
-      return snabbt(this.get(), arg1, arg2);
+      return snabbtjs.snabbt(this.get(), arg1, arg2);
     };
   }( jQuery ));
 }
@@ -860,8 +859,8 @@ snabbtjs._update_element_transform = function(element, matrix, perspective) {
   if(perspective) {
     css_perspective = 'perspective(' + perspective + 'px) ';
   }
-  element.style.webkitTransform = css_perspective + snabbtjs.mat_to_css(matrix);
-  element.style.transform = css_perspective + snabbtjs.mat_to_css(matrix);
+  element.style.webkitTransform = css_perspective + snabbtjs.matrix_to_css(matrix);
+  element.style.transform = css_perspective + snabbtjs.matrix_to_css(matrix);
 };
 
 snabbtjs.update_element_transform = function(element, matrix, perspective) {

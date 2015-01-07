@@ -12,8 +12,8 @@ snabbtjs._update_element_transform = function(element, matrix, perspective) {
   if(perspective) {
     css_perspective = 'perspective(' + perspective + 'px) ';
   }
-  element.style.webkitTransform = css_perspective + snabbtjs.mat_to_css(matrix);
-  element.style.transform = css_perspective + snabbtjs.mat_to_css(matrix);
+  element.style.webkitTransform = css_perspective + snabbtjs.matrix_to_css(matrix);
+  element.style.transform = css_perspective + snabbtjs.matrix_to_css(matrix);
 };
 
 snabbtjs.update_element_transform = function(element, matrix, perspective) {
