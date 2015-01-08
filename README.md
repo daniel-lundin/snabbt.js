@@ -14,8 +14,9 @@ Fast animations with Javascript and CSS transforms(Work in progress)
 ## Relases
 The initial release is out. Would love some feedback on things that can be improved. The release(and future ones) can be found in the release section
 
-- **0.1.0** - Initial beta release
+- **0.3.0** - Memory optimizations, improved Matrix API, better UMD wrappers
 - **0.2.0** - Added support for RequireJS and browserify. Published to npm and bower
+- **0.1.0** - Initial beta release
 
 ## Browser Support
 
@@ -44,6 +45,5 @@ Note: IE does not support the transform-style: preserve-3d property. This preven
 ## TODOS
 
  - Improve documentation
- - Optimize memory usage by reusing matrices
 
 [MIT License](LICENSE.txt) © 2015 Daniel Lundin (http://twitter.com/danielundin).
