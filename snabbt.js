@@ -16,9 +16,9 @@
 
 ;var snabbtjs = snabbtjs || {};
 
-// ------------------------------ 
+// ------------------------------
 // Time animation
-// ------------------------------ 
+// ------------------------------
 
 snabbtjs.Animation = function(options) {
   this._startState = options.startState;
@@ -58,7 +58,7 @@ snabbtjs.Animation.prototype.tick = function(time) {
     return;
 
   // If first tick, set start_time
-  if(!this.startTime) 
+  if(!this.startTime)
     this.startTime = time;
   if(time - this.startTime > this.delay)
     this.currentTime = time - this.delay;
@@ -95,13 +95,13 @@ snabbtjs.Animation.prototype.updateElement = function(element) {
   snabbtjs.updateElementProperties(element, properties);
 };
 
-// ------------------------------ 
+// ------------------------------
 // End Time animation
-// ------------------------------ 
+// ------------------------------
 
-// ------------------------------ 
+// ------------------------------
 // Value feeded animation
-// ------------------------------ 
+// ------------------------------
 
 snabbtjs.ValueFeededAnimation = function(options) {
   this.valueFeeder = options.valueFeeder;
@@ -133,7 +133,7 @@ snabbtjs.ValueFeededAnimation.prototype.tick = function(time) {
     return;
 
   // If first tick, set start_time
-  if(!this.startTime) 
+  if(!this.startTime)
     this.startTime = time;
   if(time - this.startTime > this.delay)
     this.currentTime = time - this.delay;
@@ -165,9 +165,9 @@ snabbtjs.ValueFeededAnimation.prototype.updateElement = function(element) {
   snabbtjs.updateElementTransform(element, this.currentMatrix.data, this.perspective);
 };
 
-// ------------------------------ 
+// ------------------------------
 // End value feeded animation
-// ------------------------------ 
+// ------------------------------
 
 // ------------------------
 // -- AttentionAnimation --
