@@ -89,8 +89,6 @@ function build_formation(positions) {
   Deck.reset();
   for(i=0;i<positions.length;++i) {
     snabbt(Deck.next_card(), {
-      from_position: positions[i].from_position,
-      from_rotation: positions[i].from_rotation,
       position: positions[i].position,
       rotation: positions[i].rotation,
       easing: 'ease',
@@ -106,14 +104,8 @@ function set_mode(mode) {
   }
 
   positions = formation_builders[mode]();
-  from_positions = formation_builders[current_mode]();
-
-  for(var i=0;i<positions.length;++i) {
-    positions[i].from_position = from_positions[i].position;
-    positions[i].from_rotation = from_positions[i].rotation;
-  }
-
   build_formation(positions);
+
   current_mode = mode;
 }
 
@@ -122,6 +114,7 @@ function rotate_container() {
   snabbt(container, {
     rotation: [0, 2*Math.PI, 0],
     duration: 10000,
+    perspective: 2000,
     loop: Infinity
   });
 }
