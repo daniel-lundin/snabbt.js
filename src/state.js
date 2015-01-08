@@ -1,23 +1,23 @@
 snabbtjs.State = function(config) {
-  this.ax = snabbtjs.option_or_default(config.ax, 0);
-  this.ay = snabbtjs.option_or_default(config.ay, 0);
-  this.az = snabbtjs.option_or_default(config.az, 0);
-  this.x = snabbtjs.option_or_default(config.x, 0);
-  this.y = snabbtjs.option_or_default(config.y, 0);
-  this.z = snabbtjs.option_or_default(config.z, 0);
-  this.bx = snabbtjs.option_or_default(config.bx, 0);
-  this.by = snabbtjs.option_or_default(config.by, 0);
-  this.bz = snabbtjs.option_or_default(config.bz, 0);
-  this.skew_x = snabbtjs.option_or_default(config.skew_x, 0);
-  this.skew_y = snabbtjs.option_or_default(config.skew_y, 0);
-  this.offset_x = snabbtjs.option_or_default(config.offset_x, 0);
-  this.offset_y = snabbtjs.option_or_default(config.offset_y, 0);
-  this.offset_z = snabbtjs.option_or_default(config.offset_z, 0);
-  this.sx = snabbtjs.option_or_default(config.sx, 1);
-  this.sy = snabbtjs.option_or_default(config.sy, 1);
+  this.ax = snabbtjs.optionOrDefault(config.ax, 0);
+  this.ay = snabbtjs.optionOrDefault(config.ay, 0);
+  this.az = snabbtjs.optionOrDefault(config.az, 0);
+  this.x = snabbtjs.optionOrDefault(config.x, 0);
+  this.y = snabbtjs.optionOrDefault(config.y, 0);
+  this.z = snabbtjs.optionOrDefault(config.z, 0);
+  this.bx = snabbtjs.optionOrDefault(config.bx, 0);
+  this.by = snabbtjs.optionOrDefault(config.by, 0);
+  this.bz = snabbtjs.optionOrDefault(config.bz, 0);
+  this.skewX = snabbtjs.optionOrDefault(config.skewX, 0);
+  this.skewY = snabbtjs.optionOrDefault(config.skewY, 0);
+  this.offsetX = snabbtjs.optionOrDefault(config.offsetX, 0);
+  this.offsetY = snabbtjs.optionOrDefault(config.offsetY, 0);
+  this.offsetZ = snabbtjs.optionOrDefault(config.offsetZ, 0);
+  this.sx = snabbtjs.optionOrDefault(config.sx, 1);
+  this.sy = snabbtjs.optionOrDefault(config.sy, 1);
   this.width = config.width;
   this.height = config.height;
-  this.opacity = snabbtjs.option_or_default(config.opacity, 1);
+  this.opacity = snabbtjs.optionOrDefault(config.opacity, 1);
 };
 
 snabbtjs.State.prototype.clone = function() {
@@ -31,8 +31,8 @@ snabbtjs.State.prototype.clone = function() {
     bx: this.bx,
     by: this.by,
     bz: this.bz,
-    skew_x: this.skew_x,
-    skew_y: this.skew_y,
+    skewX: this.skewX,
+    skewY: this.skewY,
     sx: this.sx,
     sy: this.sy,
     height: this.height,
@@ -52,8 +52,8 @@ snabbtjs.State.prototype.assign = function(p) {
   this.bx = p.bx;
   this.by = p.by;
   this.bz = p.bz;
-  this.skew_x = p.skew_x;
-  this.skew_y = p.skew_y;
+  this.skewX = p.skewX;
+  this.skewY = p.skewY;
   this.sx = p.sx;
   this.sy = p.sy;
   this.opacity = p.opacity;
@@ -61,13 +61,13 @@ snabbtjs.State.prototype.assign = function(p) {
   this.width = this.width;
 };
 
-snabbtjs.State.prototype.as_matrix = function() {
+snabbtjs.State.prototype.asMatrix = function() {
   var m = new snabbtjs.Matrix();
 
-  m.translate(this.offset_x, this.offset_y, this.offset_z);
+  m.translate(this.offsetX, this.offsetY, this.offsetZ);
 
   m.scale(this.sx, this.sy);
-  m.skew(this.skew_x, this.skew_y);
+  m.skew(this.skewX, this.skewY);
   m.rotateX(this.ax);
   m.rotateY(this.ay);
   m.rotateZ(this.az);

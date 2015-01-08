@@ -1,6 +1,6 @@
 var snabbtjs = snabbtjs || {};
 
-snabbtjs.assign_translate = function(matrix, x, y, z) {
+snabbtjs.assignTranslate = function(matrix, x, y, z) {
   matrix[0] = 1;
   matrix[1] = 0;
   matrix[2] = 0;
@@ -19,7 +19,7 @@ snabbtjs.assign_translate = function(matrix, x, y, z) {
   matrix[15] = 1;
 };
 
-snabbtjs.assign_rotateX = function(matrix, rad) {
+snabbtjs.assignRotateX = function(matrix, rad) {
   matrix[0] = 1;
   matrix[1] = 0;
   matrix[2] = 0;
@@ -39,7 +39,7 @@ snabbtjs.assign_rotateX = function(matrix, rad) {
 };
 
 
-snabbtjs.assign_rotateY = function(matrix, rad) {
+snabbtjs.assignRotateY = function(matrix, rad) {
   matrix[0] = Math.cos(rad);
   matrix[1] = 0;
   matrix[2] = Math.sin(rad);
@@ -58,7 +58,7 @@ snabbtjs.assign_rotateY = function(matrix, rad) {
   matrix[15] = 1;
 };
 
-snabbtjs.assign_rotateZ = function(matrix, rad) {
+snabbtjs.assignRotateZ = function(matrix, rad) {
   matrix[0] = Math.cos(rad);
   matrix[1] = -Math.sin(rad);
   matrix[2] = 0;
@@ -77,7 +77,7 @@ snabbtjs.assign_rotateZ = function(matrix, rad) {
   matrix[15] = 1;
 };
 
-snabbtjs.assign_skew = function(matrix, ax, ay) {
+snabbtjs.assignSkew = function(matrix, ax, ay) {
   matrix[0] = 1;
   matrix[1] = Math.tan(ax);
   matrix[2] = 0;
@@ -97,7 +97,7 @@ snabbtjs.assign_skew = function(matrix, ax, ay) {
 };
 
 
-snabbtjs.assign_scale = function(matrix, x, y) {
+snabbtjs.assignScale = function(matrix, x, y) {
   matrix[0] = x;
   matrix[1] = 0;
   matrix[2] = 0;
@@ -116,7 +116,7 @@ snabbtjs.assign_scale = function(matrix, x, y) {
   matrix[15] = 1;
 };
 
-snabbtjs.assign_identity = function(matrix) {
+snabbtjs.assignIdentity = function(matrix) {
   matrix[0] = 1;
   matrix[1] = 0;
   matrix[2] = 0;
@@ -135,7 +135,7 @@ snabbtjs.assign_identity = function(matrix) {
   matrix[15] = 1;
 };
 
-snabbtjs.copy_array = function(a, b) {
+snabbtjs.copyArray = function(a, b) {
   b[0] = a[0];
   b[1] = a[1];
   b[2] = a[2];
@@ -158,59 +158,56 @@ snabbtjs.Matrix = function() {
   this.data = new Float32Array(16);
   this.a = new Float32Array(16);
   this.b = new Float32Array(16);
-  snabbtjs.assign_identity(this.data);
+  snabbtjs.assignIdentity(this.data);
 };
 
 snabbtjs.Matrix.prototype.clear = function() {
-  snabbtjs.assign_identity(this.data);
+  snabbtjs.assignIdentity(this.data);
 };
 
 snabbtjs.Matrix.prototype.translate = function(x, y, z) {
-  snabbtjs.copy_array(this.data, this.a);
-  snabbtjs.assign_translate(this.b, x, y, z);
-  snabbtjs.assigned_matrix_multiplication(this.a, this.b, this.data);
+  snabbtjs.copyArray(this.data, this.a);
+  snabbtjs.assignTranslate(this.b, x, y, z);
+  snabbtjs.assignedMatrixMultiplication(this.a, this.b, this.data);
   return this;
 };
 
 snabbtjs.Matrix.prototype.rotateX = function(radians) {
-  snabbtjs.copy_array(this.data, this.a);
-  snabbtjs.assign_rotateX(this.b, radians);
-  snabbtjs.assigned_matrix_multiplication(this.a, this.b, this.data);
+  snabbtjs.copyArray(this.data, this.a);
+  snabbtjs.assignRotateX(this.b, radians);
+  snabbtjs.assignedMatrixMultiplication(this.a, this.b, this.data);
   return this;
 };
 
 snabbtjs.Matrix.prototype.rotateY = function(radians) {
-  snabbtjs.copy_array(this.data, this.a);
-  snabbtjs.assign_rotateY(this.b, radians);
-  snabbtjs.assigned_matrix_multiplication(this.a, this.b, this.data);
+  snabbtjs.copyArray(this.data, this.a);
+  snabbtjs.assignRotateY(this.b, radians);
+  snabbtjs.assignedMatrixMultiplication(this.a, this.b, this.data);
   return this;
 };
 
 snabbtjs.Matrix.prototype.rotateZ = function(radians) {
-  snabbtjs.copy_array(this.data, this.a);
-  snabbtjs.assign_rotateZ(this.b, radians);
-  snabbtjs.assigned_matrix_multiplication(this.a, this.b, this.data);
+  snabbtjs.copyArray(this.data, this.a);
+  snabbtjs.assignRotateZ(this.b, radians);
+  snabbtjs.assignedMatrixMultiplication(this.a, this.b, this.data);
   return this;
 };
 
 snabbtjs.Matrix.prototype.scale = function(x, y) {
-  snabbtjs.copy_array(this.data, this.a);
-  snabbtjs.assign_scale(this.b, x, y);
-  snabbtjs.assigned_matrix_multiplication(this.a, this.b, this.data);
+  snabbtjs.copyArray(this.data, this.a);
+  snabbtjs.assignScale(this.b, x, y);
+  snabbtjs.assignedMatrixMultiplication(this.a, this.b, this.data);
   return this;
 };
 
 snabbtjs.Matrix.prototype.skew = function(ax, ay) {
-  snabbtjs.copy_array(this.data, this.a);
-  snabbtjs.assign_skew(this.b, ax, ay);
-  snabbtjs.assigned_matrix_multiplication(this.a, this.b, this.data);
+  snabbtjs.copyArray(this.data, this.a);
+  snabbtjs.assignSkew(this.b, ax, ay);
+  snabbtjs.assignedMatrixMultiplication(this.a, this.b, this.data);
   return this;
 };
 
-
-
-
-snabbtjs.assigned_matrix_multiplication = function(a, b, res) {
+snabbtjs.assignedMatrixMultiplication = function(a, b, res) {
   // Unrolled loop
   res[0] = a[0] * b[0] + a[1] * b[4] + a[2] * b[8] + a[3] * b[12];
   res[1] = a[0] * b[1] + a[1] * b[5] + a[2] * b[9] + a[3] * b[13];
@@ -235,7 +232,7 @@ snabbtjs.assigned_matrix_multiplication = function(a, b, res) {
   return res;
 };
 
-snabbtjs.matrix_to_css = function(matrix) {
+snabbtjs.matrixToCSS = function(matrix) {
   var css = 'matrix3d(';
   for(var i=0;i<matrix.length-1;++i) {
     if(Math.abs(matrix[i]) < 0.01)
@@ -247,7 +244,7 @@ snabbtjs.matrix_to_css = function(matrix) {
   return css;
 };
 
-snabbtjs.set_css = function(el, matrix) {
-  el.style.webkitTransform = snabbtjs.matrix_to_css(matrix);
-  el.style.transform = snabbtjs.matrix_to_css(matrix);
+snabbtjs.setCSS = function(el, matrix) {
+  el.style.webkitTransform = snabbtjs.matrixToCSS(matrix);
+  el.style.transform = snabbtjs.matrixTCSS(matrix);
 };

@@ -130,7 +130,7 @@
         <h3>Chaining</h3>
         <div class="row">
           <div class="six columns">
-            <p>Animation can be chained by using the `then()`-method on the returned animation object. All from_xxx properties will be set to the end state of the previous animation.</p>
+            <p>Animation can be chained by using the `then()`-method on the returned animation object. All fromXxx properties will be set to the end state of the previous animation.</p>
             <button id="chaining-example-execute">Run example</button>
           </div>
           <div class="six columns">
@@ -138,10 +138,10 @@
   position: [100, 0, 0],
   easing: 'ease'
 }).then({
-  from_rotation: [0, 0, -2*Math.PI],
+  fromRotation: [0, 0, -2*Math.PI],
   easing: 'spring',
-  spring_constant: 0.2,
-  spring_deaccelaration: 0.95,
+  springConstant: 0.2,
+  springDeaccelaration: 0.95,
 });</code></pre>
           </div>
         </div>
@@ -149,7 +149,7 @@
         <h3>Make it stop</h3>
         <p>Animation can be stopped at any time by replacing the animation configuration with the string literal 'stop':</p>
         <pre><code>snabbt(element, 'stop');</code></pre>
-        <p class="extra-top-margin">If a new animation is started with the same element it will start from the stopped position unless the 'from_'-properties are used. </p>
+        <p class="extra-top-margin">If a new animation is started with the same element it will start from the stopped position unless the 'from'-properties are used. </p>
         <h3>jQuery</h3>
         <p>snabbt.js works with or without jQuery. If jQuery is detected snabbt.js will be loaded as a jQuery-plugin. When using snabbt.js with jQuery, the first parameter is the animation configuration:</p>
         <div class="row">
@@ -175,7 +175,7 @@
 
       <section id="easing">
         <h2>Easing</h2>
-        <p>snabbt.js includes four easing functions: linear, ease, ease-in and ease-out. You can also use your own <a href="#custom-easing">easing functions</a> or use the physics based <a href="#spring-easing">spring easing</a><p>
+        <p>snabbt.js includes four easing functions: linear, ease, easeIn and easeOut. You can also use your own <a href="#custom-easing">easing functions</a> or use the physics based <a href="#spring-easing">spring easing</a><p>
         <div class="row">
           <div class="six columns">
             <h5>Linear(default)</h5>
@@ -192,14 +192,14 @@
         </div>
         <div class="row">
           <div class="six columns">
-            <h5>ease-in</h5>
-            <div class="easing-demo" data-easing-name="ease-in">
+            <h5>easeIn</h5>
+            <div class="easing-demo" data-easing-name="easeIn">
               <div></div>
             </div>
           </div>
           <div class="six columns">
-            <h5>ease-out</h5>
-            <div class="easing-demo" data-easing-name="ease-out">
+            <h5>easeOut</h5>
+            <div class="easing-demo" data-easing-name="easeOut">
               <div></div>
             </div>
           </div>
@@ -228,9 +228,9 @@
         <h3>Spring easing</h3>
         <p>When using spring easing, the <em>duration</em> parameter is not in effect. Instead the animation will progress until equilibrium is reached. When easing is set to <em>spring</em> there are three additional parameters that can be set on the animation configuration:</p>
         <ul>
-          <li><strong>spring_constant</strong> - The stiffness of the spring</li>
-          <li><strong>spring_deaccelaration</strong> - Controls how fast the velocity decreases</li>
-          <li><strong>spring_mass</strong> - The 'weight' of the object</li>
+          <li><strong>springConstant</strong> - The stiffness of the spring</li>
+          <li><strong>springDeaccelaration</strong> - Controls how fast the velocity decreases</li>
+          <li><strong>springMass</strong> - The 'weight' of the object</li>
         </ul>
 
         <p>Example:</p>
@@ -238,8 +238,8 @@
   position: [100, 0, 0],
   rotation: [0, 0, 2*Math.PI],
   easing: 'spring',
-  spring_constant: 0.3,
-  spring_deacceleration: 0.8,
+  springConstant: 0.3,
+  springDeacceleration: 0.8,
 }).then({
   rotation: [0, 0, 2*Math.PI],
   easing: 'ease'
@@ -251,9 +251,9 @@
         <p>This section describes some of the more advanced usages.</p>
 
         <h3>Value feeding</h3>
-        <p>The animation object is very simple to work with but has it limitations. Sometimes you want to do the transforms in another order. This is where value feeding comes handy. The <em>value_feeder</em> parameter expects a function that takes one parameter which will progress from 0 to 1 and a identity mtarix. Every time it is called you should return a matrix(see <a href="#matrix">Matrix API</a>) representing the current transform.</p>
+        <p>The animation object is very simple to work with but has it limitations. Sometimes you want to do the transforms in another order. This is where value feeding comes handy. The <em>valueFeeder</em> parameter expects a function that takes one parameter which will progress from 0 to 1 and a identity mtarix. Every time it is called you should return a matrix(see <a href="#matrix">Matrix API</a>) representing the current transform.</p>
         <pre><code>snabbt(element, {
-  value_feeder: function(i, matrix) {
+  valueFeeder: function(i, matrix) {
     var x = Math.sin(i*Math.PI);
     return matrix.rotateZ(Math.sin(6*i*Math.PI)).translate(x*200, 0, 0);
   },
@@ -267,8 +267,8 @@
           <div class="six columns">
             <pre><code>snabbt(element, 'attention', {
   rotation: [0, 0, Math.PI/2],
-  spring_constant: 1.9,
-  spring_deacceleration: 0.9,
+  springConstant: 1.9,
+  springDeacceleration: 0.9,
 });</code></pre>
 
             <button id="attention-example-1" class="button-primary extra-top-margin">Run example</button>
@@ -276,8 +276,8 @@
           <div class="six columns">
             <pre><code>snabbt(element, 'attention', {
   position: [50, 0, 0],
-  spring_constant: 2.4,
-  spring_deacceleration: 0.9,
+  springConstant: 2.4,
+  springDeacceleration: 0.9,
 });</code></pre>
 
             <button id="attention-example-2" class="button-primary extra-top-margin">Run example</button>
@@ -350,7 +350,7 @@ snabbt(element, {
               <td>Scale in x- and y-direction</td>
             </tr>
             <tr>
-              <td>rotation_post</td>
+              <td>rotationPost</td>
               <td>Array(3)</td>
               <td>[0, 0, 0]</td>
               <td>Rotation applied after <em>position</em> and <em>rotation</em></td>
@@ -403,7 +403,7 @@ snabbt(element, {
           <li><strong>position</strong> - Pixel offsets in each x-, y- and z-direction</li>
           <li><strong>rotation</strong> - Rotation in radians in x-, y- and z-direction</li>
           <li><strong>scale</strong> - Scale in x- and y-direction</li>
-          <li><strong>rotation_post</strong> - Rotation applied after <em>position</em> and <em>rotation</em></li>
+          <li><strong>rotationPost</strong> - Rotation applied after <em>position</em> and <em>rotation</em></li>
           <li><strong>width</strong> - Element width in pixels</li>
           <li><strong>height</strong> - Element height in pixels</li>
           <li><strong>opacity</strong> - Element opacity(0 - 1)</li>
@@ -413,7 +413,7 @@ snabbt(element, {
           <li><strong>callback</strong> - Function to be called when animation is completed</li>
         </ul>
 
-        <p>A 'from_'-property can be set on most properties. Note that 'from_' has precedance over the previous end state.</p>
+        <p>A 'from'-property can be set on most properties. Note that 'from' has precedance over the previous end state.</p>
         <table class="hide-mobile">
           <thead>
             <tr>
@@ -424,37 +424,37 @@ snabbt(element, {
           </thead>
           <tbody>
             <tr>
-              <td>from_position</td>
+              <td>fromPosition</td>
               <td>Array(3)</td>
               <td>[0, 0, 0] or previous end state</td>
             </tr>
             <tr>
-              <td>from_rotation</td>
+              <td>fromRotation</td>
               <td>Array(3)</td>
               <td>[0, 0, 0] or previous end state</td>
             </tr>
             <tr>
-              <td>from_scale</td>
+              <td>fromScale</td>
               <td>Array(2)</td>
               <td>[1, 1] or previous end state</td>
             </tr>
             <tr>
-              <td>from_rotation_post</td>
+              <td>fromRotationPost</td>
               <td>Array(3)</td>
               <td>[0, 0, 0] or previous end state</td>
             </tr>
             <tr>
-              <td>from_width</td>
+              <td>fromWidth</td>
               <td>Scalar</td>
               <td>Previous end state width</td>
             </tr>
             <tr>
-              <td>from_height</td>
+              <td>fromHeight</td>
               <td>Scalar</td>
               <td>Previous end state height</td>
             </tr>
             <tr>
-              <td>from_opacity</td>
+              <td>fromOpacity</td>
               <td>Scalar</td>
               <td>Previous end state opacity</td>
             </tr>
@@ -462,11 +462,11 @@ snabbt(element, {
         </table>
 
         <ul class="hide-desktop">
-          <li><strong>from_position</strong> - set to [0, 0, 0] or previous end state</li>
-          <li><strong>from_scale</strong> - set to [0, 0, 0] or previous end state</li>
-          <li><strong>from_width</strong></li>
-          <li><strong>from_height</strong></li>
-          <li><strong>from_opacity</strong></li>
+          <li><strong>fromPosition</strong> - set to [0, 0, 0] or previous end state</li>
+          <li><strong>fromScale</strong> - set to [0, 0, 0] or previous end state</li>
+          <li><strong>fromWidth</strong></li>
+          <li><strong>fromHeight</strong></li>
+          <li><strong>fromOpacity</strong></li>
         </ul>
       </section>
     </div>

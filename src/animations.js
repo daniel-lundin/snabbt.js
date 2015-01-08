@@ -1,31 +1,31 @@
 var snabbtjs = snabbtjs || {};
 
-// ------------------------------ 
+// ------------------------------
 // Time animation
-// ------------------------------ 
+// ------------------------------
 
 snabbtjs.Animation = function(options) {
-  this._start_state = options.start_state;
-  this._end_state = options.end_state;
+  this._startState = options.startState;
+  this._endState = options.endState;
   this.offset = options.offset;
   this.duration = options.duration || 500;
   this.delay = options.delay || 0;
-  this.easing = snabbtjs.create_easer('linear');
+  this.easing = snabbtjs.createEaser('linear');
   this.perspective = options.perspective;
   if(options.easing)
-    this.easing = snabbtjs.create_easer(options.easing, options);
-  this._current_state = this._start_state.clone();
+    this.easing = snabbtjs.createEaser(options.easing, options);
+  this._currentState = this._startState.clone();
   if(options.offset) {
-    this._current_state.offset_x = this.offset[0];
-    this._current_state.offset_y = this.offset[1];
-    this._current_state.offset_z = this.offset[2];
-    this._end_state.offset_x = this.offset[0];
-    this._end_state.offset_y = this.offset[1];
-    this._end_state.offset_z = this.offset[2];
+    this._currentState.offsetX = this.offset[0];
+    this._currentState.offsetY = this.offset[1];
+    this._currentState.offsetZ = this.offset[2];
+    this._endState.offsetX = this.offset[0];
+    this._endState.offsetY = this.offset[1];
+    this._endState.offsetZ = this.offset[2];
   }
 
-  this.start_time = 0;
-  this.current_time = 0;
+  this.startTime = 0;
+  this.currentTime = 0;
   this._stopped = false;
 };
 
@@ -42,65 +42,65 @@ snabbtjs.Animation.prototype.tick = function(time) {
     return;
 
   // If first tick, set start_time
-  if(!this.start_time) 
-    this.start_time = time;
-  if(time - this.start_time > this.delay)
-    this.current_time = time - this.delay;
+  if(!this.startTime)
+    this.startTime = time;
+  if(time - this.startTime > this.delay)
+    this.currentTime = time - this.delay;
 
-  var curr = Math.min(Math.max(0.0, this.current_time - this.start_time), this.duration);
+  var curr = Math.min(Math.max(0.0, this.currentTime - this.startTime), this.duration);
   var max = this.duration;
 
   this.easing.tick(curr/max);
-  this.update_current_transform();
+  this.updateCurrentTransform();
 };
 
-snabbtjs.Animation.prototype.current_state = function() {
-  return this._current_state;
+snabbtjs.Animation.prototype.currentState = function() {
+  return this._currentState;
 };
 
-snabbtjs.Animation.prototype.update_current_transform = function() {
-  var tween_value = this.easing.value();
-  snabbtjs.TweenStates(this._start_state, this._end_state, this._current_state, tween_value);
+snabbtjs.Animation.prototype.updateCurrentTransform = function() {
+  var tweenValue = this.easing.value();
+  snabbtjs.TweenStates(this._startState, this._endState, this._currentState, tweenValue);
 };
 
 snabbtjs.Animation.prototype.completed = function() {
   if(this._stopped)
     return true;
-  if(this.start_time === 0) {
+  if(this.startTime === 0) {
     return false;
   }
   return this.easing.completed();
 };
 
-snabbtjs.Animation.prototype.update_element = function(element) {
-  var matrix = this._current_state.as_matrix();
-  var properties = this._current_state.properties();
-  snabbtjs.update_element_transform(element, matrix, this.perspective);
-  snabbtjs.update_element_properties(element, properties);
+snabbtjs.Animation.prototype.updateElement = function(element) {
+  var matrix = this._currentState.asMatrix();
+  var properties = this._currentState.properties();
+  snabbtjs.updateElementTransform(element, matrix, this.perspective);
+  snabbtjs.updateElementProperties(element, properties);
 };
 
-// ------------------------------ 
+// ------------------------------
 // End Time animation
-// ------------------------------ 
+// ------------------------------
 
-// ------------------------------ 
+// ------------------------------
 // Value feeded animation
-// ------------------------------ 
+// ------------------------------
 
 snabbtjs.ValueFeededAnimation = function(options) {
-  this.value_feeder = options.value_feeder;
+  this.valueFeeder = options.valueFeeder;
   this.duration = options.duration || 500;
   this.delay = options.delay || 0;
   this.perspective = options.perspective;
 
-  this.easing = snabbtjs.create_easer('linear');
+  this.easing = snabbtjs.createEaser('linear');
   if(options.easing)
-    this.easing = snabbtjs.create_easer(options.easing, options);
-  this._current_state = new snabbtjs.State({});
-  this.current_matrix = this.value_feeder(0, new snabbtjs.Matrix());
+    this.easing = snabbtjs.createEaser(options.easing, options);
+  this._currentState = new snabbtjs.State({});
+  this.currentMatrix = this.valueFeeder(0, new snabbtjs.Matrix());
 
-  this.start_time = 0;
-  this.current_time = 0;
+  this.startTime = 0;
+  this.currentTime = 0;
   this._stopped = false;
 };
 
@@ -117,26 +117,26 @@ snabbtjs.ValueFeededAnimation.prototype.tick = function(time) {
     return;
 
   // If first tick, set start_time
-  if(!this.start_time) 
-    this.start_time = time;
-  if(time - this.start_time > this.delay)
-    this.current_time = time - this.delay;
+  if(!this.startTime)
+    this.startTime = time;
+  if(time - this.startTime > this.delay)
+    this.currentTime = time - this.delay;
 
-  var curr = Math.min(Math.max(0.001, this.current_time - this.start_time), this.duration);
+  var curr = Math.min(Math.max(0.001, this.currentTime - this.startTime), this.duration);
   var max = this.duration;
   this.easing.tick(curr/max);
 
-  this.update_current_transform();
+  this.updateCurrentTransform();
 };
 
-snabbtjs.ValueFeededAnimation.prototype.current_state = function() {
-  return this._current_state;
+snabbtjs.ValueFeededAnimation.prototype.currentState = function() {
+  return this._currentState;
 };
 
-snabbtjs.ValueFeededAnimation.prototype.update_current_transform = function() {
-  var tween_value = this.easing.value();
-  this.current_matrix.clear();
-  this.current_matrix = this.value_feeder(tween_value, this.current_matrix);
+snabbtjs.ValueFeededAnimation.prototype.updateCurrentTransform = function() {
+  var tweenValue = this.easing.value();
+  this.currentMatrix.clear();
+  this.currentMatrix = this.valueFeeder(tweenValue, this.currentMatrix);
 };
 
 snabbtjs.ValueFeededAnimation.prototype.completed = function() {
@@ -145,13 +145,13 @@ snabbtjs.ValueFeededAnimation.prototype.completed = function() {
   return this.easing.completed();
 };
 
-snabbtjs.ValueFeededAnimation.prototype.update_element = function(element) {
-  snabbtjs.update_element_transform(element, this.current_matrix.data, this.perspective);
+snabbtjs.ValueFeededAnimation.prototype.updateElement = function(element) {
+  snabbtjs.updateElementTransform(element, this.currentMatrix.data, this.perspective);
 };
 
-// ------------------------------ 
+// ------------------------------
 // End value feeded animation
-// ------------------------------ 
+// ------------------------------
 
 // ------------------------
 // -- AttentionAnimation --
@@ -159,9 +159,9 @@ snabbtjs.ValueFeededAnimation.prototype.update_element = function(element) {
 
 snabbtjs.AttentionAnimation = function(options) {
   this.movement = options.movement;
-  this.current_movement = new snabbtjs.State({});
-  options.initial_velocity = 0.1;
-  options.equilibrium_position = 0;
+  this.currentMovement = new snabbtjs.State({});
+  options.initialVelocity = 0.1;
+  options.equilibriumPosition = 0;
   this.spring = new snabbtjs.SpringEasing(options);
   this._stopped = false;
 };
@@ -181,30 +181,30 @@ snabbtjs.AttentionAnimation.prototype.tick = function(time) {
     return;
   this.spring.tick();
 
-  this.update_movement();
+  this.updateMovement();
 };
 
-snabbtjs.AttentionAnimation.prototype.update_movement = function() {
-  this.current_movement.x = this.movement.x * this.spring.position;
-  this.current_movement.y = this.movement.y * this.spring.position;
-  this.current_movement.z = this.movement.z * this.spring.position;
-  this.current_movement.ax = this.movement.ax * this.spring.position;
-  this.current_movement.ay = this.movement.ay * this.spring.position;
-  this.current_movement.az = this.movement.az * this.spring.position;
-  this.current_movement.bx = this.movement.bx * this.spring.position;
-  this.current_movement.by = this.movement.by * this.spring.position;
-  this.current_movement.bz = this.movement.bz * this.spring.position;
+snabbtjs.AttentionAnimation.prototype.updateMovement = function() {
+  this.currentMovement.x = this.movement.x * this.spring.position;
+  this.currentMovement.y = this.movement.y * this.spring.position;
+  this.currentMovement.z = this.movement.z * this.spring.position;
+  this.currentMovement.ax = this.movement.ax * this.spring.position;
+  this.currentMovement.ay = this.movement.ay * this.spring.position;
+  this.currentMovement.az = this.movement.az * this.spring.position;
+  this.currentMovement.bx = this.movement.bx * this.spring.position;
+  this.currentMovement.by = this.movement.by * this.spring.position;
+  this.currentMovement.bz = this.movement.bz * this.spring.position;
 };
 
-snabbtjs.AttentionAnimation.prototype.update_element = function(element) {
-  var matrix = this.current_movement.as_matrix();
-  var properties = this.current_movement.properties();
-  snabbtjs.update_element_transform(element, matrix);
-  snabbtjs.update_element_properties(element, properties);
+snabbtjs.AttentionAnimation.prototype.updateElement = function(element) {
+  var matrix = this.currentMovement.asMatrix();
+  var properties = this.currentMovement.properties();
+  snabbtjs.updateElementTransform(element, matrix);
+  snabbtjs.updateElementProperties(element, properties);
 };
 
-snabbtjs.AttentionAnimation.prototype.current_state = function() {
-  return this.current_movement;
+snabbtjs.AttentionAnimation.prototype.currentState = function() {
+  return this.currentMovement;
 };
 
 snabbtjs.AttentionAnimation.prototype.completed = function() {
@@ -213,8 +213,8 @@ snabbtjs.AttentionAnimation.prototype.completed = function() {
 
 
 // Returns animation constructors based on options
-snabbtjs.create_animation = function(options) {
-  if(options.value_feeder)
+snabbtjs.createAnimation = function(options) {
+  if(options.valueFeeder)
     return new snabbtjs.ValueFeededAnimation(options);
   return new snabbtjs.Animation(options);
 };
