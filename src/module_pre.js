@@ -1,19 +1,16 @@
 (function (root, factory) {
   if (typeof exports === 'object') {
     // CommonJS
-    module.exports = factory();
+    module.exports = factory().snabbt;
   } else if (typeof define === 'function' && define.amd) {
     // AMD
     define([], function () {
-      return (root.returnExportsGlobal = factory());
+      return (root.returnExportsGlobal = factory().snabbt);
     });
   } else {
     // Global Variables
 
-    var snabbtjs = factory();
-    root.snabbtjs = snabbtjs;
-    root.snabbt = snabbtjs.snabbt;
-    //root.returnExportsGlobal = factory();
+    root.snabbt = factory().snabbt;
   }
 }(this, function () {
 
