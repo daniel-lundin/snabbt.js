@@ -18,7 +18,7 @@ module.exports = function(grunt) {
         separator: ';',
       },
       dist: {
-        src: ['src/module_pre.js', 'src/animations.js', 'src/easing.js', 'src/jquery.snabbt.js', 'src/main.js', 'src/mat.js', 'src/state.js', 'src/tween.js', 'src/utils.js', 'src/module_post.js'],
+        src: ['src/module_pre.js', 'src/animations.js', 'src/easing.js', 'src/jquery.snabbt.js', 'src/main.js', 'src/matrix.js', 'src/state.js', 'src/tween.js', 'src/utils.js', 'src/module_post.js'],
         dest: 'snabbt.js',
       },
     }

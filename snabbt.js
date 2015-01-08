@@ -67,8 +67,8 @@ snabbtjs.Animation.prototype.tick = function(time) {
     this.current_time = time - this.delay;
 
   var curr = Math.min(Math.max(0.0, this.current_time - this.start_time), this.duration);
-  //var curr = Math.max(this.current_time - this.start_time, this.duration);
   var max = this.duration;
+
   this.easing.tick(curr/max);
   this.update_current_transform();
 };
@@ -116,7 +116,7 @@ snabbtjs.ValueFeededAnimation = function(options) {
   if(options.easing)
     this.easing = snabbtjs.create_easer(options.easing, options);
   this._current_state = new snabbtjs.State({});
-  this.current_matrix = this.value_feeder(0);
+  this.current_matrix = this.value_feeder(0, new snabbtjs.Matrix());
 
   this.start_time = 0;
   this.current_time = 0;
@@ -154,7 +154,8 @@ snabbtjs.ValueFeededAnimation.prototype.current_state = function() {
 
 snabbtjs.ValueFeededAnimation.prototype.update_current_transform = function() {
   var tween_value = this.easing.value();
-  this.current_matrix = this.value_feeder(tween_value);
+  this.current_matrix.clear();
+  this.current_matrix = this.value_feeder(tween_value, this.current_matrix);
 };
 
 snabbtjs.ValueFeededAnimation.prototype.completed = function() {
@@ -164,7 +165,7 @@ snabbtjs.ValueFeededAnimation.prototype.completed = function() {
 };
 
 snabbtjs.ValueFeededAnimation.prototype.update_element = function(element) {
-  snabbtjs.update_element_transform(element, this.current_matrix, this.perspective);
+  snabbtjs.update_element_transform(element, this.current_matrix.data, this.perspective);
 };
 
 // ------------------------------ 
@@ -598,6 +599,216 @@ snabbtjs.find_ultimate_ancestor = function(node) {
 window.requestAnimationFrame(snabbtjs.tick_animations);
 ;var snabbtjs = snabbtjs || {};
 
+snabbtjs.assign_translate = function(matrix, x, y, z) {
+  matrix[0] = 1;
+  matrix[1] = 0;
+  matrix[2] = 0;
+  matrix[3] = 0;
+  matrix[4] = 0;
+  matrix[5] = 1;
+  matrix[6] = 0;
+  matrix[7] = 0;
+  matrix[8] = 0;
+  matrix[9] = 0;
+  matrix[10] = 1;
+  matrix[11] = 0;
+  matrix[12] = x;
+  matrix[13] = y;
+  matrix[14] = z;
+  matrix[15] = 1;
+};
+
+snabbtjs.assign_rotateX = function(matrix, rad) {
+  matrix[0] = 1;
+  matrix[1] = 0;
+  matrix[2] = 0;
+  matrix[3] = 0;
+  matrix[4] = 0;
+  matrix[5] = Math.cos(rad);
+  matrix[6] = -Math.sin(rad);
+  matrix[7] = 0;
+  matrix[8] = 0;
+  matrix[9] = Math.sin(rad);
+  matrix[10] = Math.cos(rad);
+  matrix[11] = 0;
+  matrix[12] = 0;
+  matrix[13] = 0;
+  matrix[14] = 0;
+  matrix[15] = 1;
+};
+
+
+snabbtjs.assign_rotateY = function(matrix, rad) {
+  matrix[0] = Math.cos(rad);
+  matrix[1] = 0;
+  matrix[2] = Math.sin(rad);
+  matrix[3] = 0;
+  matrix[4] = 0;
+  matrix[5] = 1;
+  matrix[6] = 0;
+  matrix[7] = 0;
+  matrix[8] = -Math.sin(rad);
+  matrix[9] = 0;
+  matrix[10] = Math.cos(rad);
+  matrix[11] = 0;
+  matrix[12] = 0;
+  matrix[13] = 0;
+  matrix[14] = 0;
+  matrix[15] = 1;
+};
+
+snabbtjs.assign_rotateZ = function(matrix, rad) {
+  matrix[0] = Math.cos(rad);
+  matrix[1] = -Math.sin(rad);
+  matrix[2] = 0;
+  matrix[3] = 0;
+  matrix[4] = Math.sin(rad);
+  matrix[5] = Math.cos(rad);
+  matrix[6] = 0;
+  matrix[7] = 0;
+  matrix[8] = 0;
+  matrix[9] = 0;
+  matrix[10] = 1;
+  matrix[11] = 0;
+  matrix[12] = 0;
+  matrix[13] = 0;
+  matrix[14] = 0;
+  matrix[15] = 1;
+};
+
+snabbtjs.assign_skew = function(matrix, ax, ay) {
+  matrix[0] = 1;
+  matrix[1] = Math.tan(ax);
+  matrix[2] = 0;
+  matrix[3] = 0;
+  matrix[4] = Math.tan(ay);
+  matrix[5] = 1;
+  matrix[6] = 0;
+  matrix[7] = 0;
+  matrix[8] = 0;
+  matrix[9] = 0;
+  matrix[10] = 1;
+  matrix[11] = 0;
+  matrix[12] = 0;
+  matrix[13] = 0;
+  matrix[14] = 0;
+  matrix[15] = 1;
+};
+
+
+snabbtjs.assign_scale = function(matrix, x, y) {
+  matrix[0] = x;
+  matrix[1] = 0;
+  matrix[2] = 0;
+  matrix[3] = 0;
+  matrix[4] = 0;
+  matrix[5] = y;
+  matrix[6] = 0;
+  matrix[7] = 0;
+  matrix[8] = 0;
+  matrix[9] = 0;
+  matrix[10] = 1;
+  matrix[11] = 0;
+  matrix[12] = 0;
+  matrix[13] = 0;
+  matrix[14] = 0;
+  matrix[15] = 1;
+};
+
+snabbtjs.assign_identity = function(matrix) {
+  matrix[0] = 1;
+  matrix[1] = 0;
+  matrix[2] = 0;
+  matrix[3] = 0;
+  matrix[4] = 0;
+  matrix[5] = 1;
+  matrix[6] = 0;
+  matrix[7] = 0;
+  matrix[8] = 0;
+  matrix[9] = 0;
+  matrix[10] = 1;
+  matrix[11] = 0;
+  matrix[12] = 0;
+  matrix[13] = 0;
+  matrix[14] = 0;
+  matrix[15] = 1;
+};
+
+snabbtjs.copy_array = function(a, b) {
+  b[0] = a[0];
+  b[1] = a[1];
+  b[2] = a[2];
+  b[3] = a[3];
+  b[4] = a[4];
+  b[5] = a[5];
+  b[6] = a[6];
+  b[7] = a[7];
+  b[8] = a[8];
+  b[9] = a[9];
+  b[10] = a[10];
+  b[11] = a[11];
+  b[12] = a[12];
+  b[13] = a[13];
+  b[14] = a[14];
+  b[15] = a[15];
+};
+
+snabbtjs.Matrix = function() {
+  this.data = new Float32Array(16);
+  this.a = new Float32Array(16);
+  this.b = new Float32Array(16);
+  snabbtjs.assign_identity(this.data);
+};
+
+snabbtjs.Matrix.prototype.clear = function() {
+  snabbtjs.assign_identity(this.data);
+};
+
+snabbtjs.Matrix.prototype.translate = function(x, y, z) {
+  snabbtjs.copy_array(this.data, this.a);
+  snabbtjs.assign_translate(this.b, x, y, z);
+  snabbtjs.assigned_matrix_multiplication(this.a, this.b, this.data);
+  return this;
+};
+
+snabbtjs.Matrix.prototype.rotateX = function(radians) {
+  snabbtjs.copy_array(this.data, this.a);
+  snabbtjs.assign_rotateX(this.b, radians);
+  snabbtjs.assigned_matrix_multiplication(this.a, this.b, this.data);
+  return this;
+};
+
+snabbtjs.Matrix.prototype.rotateY = function(radians) {
+  snabbtjs.copy_array(this.data, this.a);
+  snabbtjs.assign_rotateY(this.b, radians);
+  snabbtjs.assigned_matrix_multiplication(this.a, this.b, this.data);
+  return this;
+};
+
+snabbtjs.Matrix.prototype.rotateZ = function(radians) {
+  snabbtjs.copy_array(this.data, this.a);
+  snabbtjs.assign_rotateZ(this.b, radians);
+  snabbtjs.assigned_matrix_multiplication(this.a, this.b, this.data);
+  return this;
+};
+
+snabbtjs.Matrix.prototype.scale = function(x, y) {
+  snabbtjs.copy_array(this.data, this.a);
+  snabbtjs.assign_scale(this.b, x, y);
+  snabbtjs.assigned_matrix_multiplication(this.a, this.b, this.data);
+  return this;
+};
+
+snabbtjs.Matrix.prototype.skew = function(ax, ay) {
+  snabbtjs.copy_array(this.data, this.a);
+  snabbtjs.assign_skew(this.b, ax, ay);
+  snabbtjs.assigned_matrix_multiplication(this.a, this.b, this.data);
+  return this;
+};
+
+
+
+
 snabbtjs.assigned_matrix_multiplication = function(a, b, res) {
   // Unrolled loop
   res[0] = a[0] * b[0] + a[1] * b[4] + a[2] * b[8] + a[3] * b[12];
@@ -633,76 +844,6 @@ snabbtjs.matrix_to_css = function(matrix) {
   }
   css += matrix[15].toFixed(10) + ')';
   return css;
-};
-
-snabbtjs.mult = function(a, b) {
-  var m = new Float32Array(16);
-  snabbtjs.assigned_matrix_multiplication(a, b, m);
-  return m;
-};
-
-snabbtjs.trans = function(x, y, z) {
-  return new Float32Array([
-    1, 0, 0, 0,
-    0, 1, 0, 0,
-    0, 0, 1, 0,
-    x, y, z, 1
-  ]);
-};
-
-snabbtjs.rotX = function(rad) {
-  return new Float32Array([
-    1, 0,             0,              0,
-    0, Math.cos(rad), -Math.sin(rad), 0,
-    0, Math.sin(rad), Math.cos(rad),  0,
-    0, 0,             0,              1
-  ]);
-};
-
-snabbtjs.rotY = function(rad) {
-  return new Float32Array([
-    Math.cos(rad),  0, Math.sin(rad), 0,
-    0,              1, 0,             0,
-    -Math.sin(rad), 0, Math.cos(rad), 0,
-    0,              0, 0,             1
-  ]);
-};
-
-snabbtjs.rotZ = function(rad) {
-  return new Float32Array([
-    Math.cos(rad), -Math.sin(rad), 0, 0,
-    Math.sin(rad), Math.cos(rad),  0, 0,
-    0,             0,              1, 0,
-    0,             0,              0, 1
-  ]);
-};
-
-snabbtjs.skew = function(ax, ay) {
-  return new Float32Array([
-    1,            Math.tan(ax), 0, 0,
-    Math.tan(ay), 1,            0, 0,
-    0,            0,            1, 0,
-    0,            0,            0, 1,
-  ]);
-};
-
-
-snabbtjs.scale = function(x, y) {
-  return new Float32Array([
-     x, 0, 0, 0,
-     0, y, 0, 0,
-     0, 0, 1, 0,
-     0, 0, 0, 1
-  ]);
-};
-
-snabbtjs.ident = function() {
-  return new Float32Array([
-     1, 0, 0, 0,
-     0, 1, 0, 0,
-     0, 0, 1, 0,
-     0, 0, 0, 1
-  ]);
 };
 
 snabbtjs.set_css = function(el, matrix) {
@@ -773,28 +914,20 @@ snabbtjs.State.prototype.assign = function(p) {
 };
 
 snabbtjs.State.prototype.as_matrix = function() {
-  // Scale
-  var m = snabbtjs.scale(this.sx, this.sy);
+  var m = new snabbtjs.Matrix();
 
-  // Skew
-  m = snabbtjs.mult(m, snabbtjs.skew(this.skew_x, this.skew_y));
+  m.translate(this.offset_x, this.offset_y, this.offset_z);
 
-  // Pre-rotation
-  m = snabbtjs.mult(m, snabbtjs.rotX(this.ax));
-  m = snabbtjs.mult(m, snabbtjs.rotY(this.ay));
-  m = snabbtjs.mult(m, snabbtjs.rotZ(this.az));
-
-  // Translation
-  m = snabbtjs.mult(m, snabbtjs.trans(this.x, this.y, this.z));
-
-  // Post-rotation
-  m = snabbtjs.mult(m, snabbtjs.rotX(this.bx));
-  m = snabbtjs.mult(m, snabbtjs.rotY(this.by));
-  m = snabbtjs.mult(m, snabbtjs.rotZ(this.bz));
-
-  // Final offset
-  m = snabbtjs.mult(snabbtjs.trans(this.offset_x, this.offset_y, this.offset_z), m);
-  return m;
+  m.scale(this.sx, this.sy);
+  m.skew(this.skew_x, this.skew_y);
+  m.rotateX(this.ax);
+  m.rotateY(this.ay);
+  m.rotateZ(this.az);
+  m.translate(this.x, this.y, this.z);
+  m.rotateX(this.bx);
+  m.rotateY(this.by);
+  m.rotateZ(this.bz);
+  return m.data;
 };
 
 snabbtjs.State.prototype.properties = function() {

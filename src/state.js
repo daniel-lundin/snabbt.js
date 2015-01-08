@@ -62,28 +62,20 @@ snabbtjs.State.prototype.assign = function(p) {
 };
 
 snabbtjs.State.prototype.as_matrix = function() {
-  // Scale
-  var m = snabbtjs.scale(this.sx, this.sy);
+  var m = new snabbtjs.Matrix();
 
-  // Skew
-  m = snabbtjs.mult(m, snabbtjs.skew(this.skew_x, this.skew_y));
+  m.translate(this.offset_x, this.offset_y, this.offset_z);
 
-  // Pre-rotation
-  m = snabbtjs.mult(m, snabbtjs.rotX(this.ax));
-  m = snabbtjs.mult(m, snabbtjs.rotY(this.ay));
-  m = snabbtjs.mult(m, snabbtjs.rotZ(this.az));
-
-  // Translation
-  m = snabbtjs.mult(m, snabbtjs.trans(this.x, this.y, this.z));
-
-  // Post-rotation
-  m = snabbtjs.mult(m, snabbtjs.rotX(this.bx));
-  m = snabbtjs.mult(m, snabbtjs.rotY(this.by));
-  m = snabbtjs.mult(m, snabbtjs.rotZ(this.bz));
-
-  // Final offset
-  m = snabbtjs.mult(snabbtjs.trans(this.offset_x, this.offset_y, this.offset_z), m);
-  return m;
+  m.scale(this.sx, this.sy);
+  m.skew(this.skew_x, this.skew_y);
+  m.rotateX(this.ax);
+  m.rotateY(this.ay);
+  m.rotateZ(this.az);
+  m.translate(this.x, this.y, this.z);
+  m.rotateX(this.bx);
+  m.rotateY(this.by);
+  m.rotateZ(this.bz);
+  return m.data;
 };
 
 snabbtjs.State.prototype.properties = function() {

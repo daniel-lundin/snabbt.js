@@ -141,9 +141,9 @@ $(function() {
   // Value feed example
   $("#value-feed-example").on('click', function() {
     $("#value-feed-example").snabbt({
-      value_feeder: function(i) {
+      value_feeder: function(i, matrix) {
         var x = Math.sin(i*Math.PI);
-        return snabbtjs.mult(snabbtjs.rotZ(Math.sin(6*i*Math.PI)), snabbtjs.trans(x*200, 0, 0));
+        return matrix.rotateZ(Math.sin(6*i*Math.PI)).translate(x*200, 0, 0);
       },
       duration: 1000,
     });

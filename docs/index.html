@@ -251,11 +251,11 @@
         <p>This section describes some of the more advanced usages.</p>
 
         <h3>Value feeding</h3>
-        <p>The animation object is very simple to work with but has it limitations. Sometimes you want to do the transforms in another order. This is where value feeding comes handy. The <em>value_feeder</em> parameter expects a function that takes one parameter which will progress from 0 to 1. Every time it is called you should return a snabbtjs.matrix(see <a href="#matrix">Matrix API</a>) representing the current transform.</p>
+        <p>The animation object is very simple to work with but has it limitations. Sometimes you want to do the transforms in another order. This is where value feeding comes handy. The <em>value_feeder</em> parameter expects a function that takes one parameter which will progress from 0 to 1 and a identity mtarix. Every time it is called you should return a matrix(see <a href="#matrix">Matrix API</a>) representing the current transform.</p>
         <pre><code>snabbt(element, {
-  value_feeder: function(i) {
+  value_feeder: function(i, matrix) {
     var x = Math.sin(i*Math.PI);
-    return snabbtjs.mult(snabbtjs.rotZ(Math.sin(6*i*Math.PI)), snabbtjs.trans(x*400, 0, 0));
+    return matrix.rotateZ(Math.sin(6*i*Math.PI)).translate(x*200, 0, 0);
   },
   duration: 1000
 });</code></pre>
@@ -288,16 +288,16 @@
         <h2>Module loaders</h2>
         <p>snabbt.js is wrapped in a UMD boilerplate which means it will work with both RequireJS and browserify.</p>
         <strong>CommonJS:</strong>
-        <pre><code>var snabbtjs = require('snabbt.js');
+        <pre><code>var snabbt = require('snabbt.js');
 
-snabbtjs.snabbt(element, {
+snabbt(element, {
   position: [200, 0, 0]
 });
 </pre></code>
 
         <strong>AMD:</strong>
-        <pre><code>require(["snabbt.js"], function(snabbtjs) {
-  snabbtjs.snabbt(element, {
+        <pre><code>require(["snabbt.js"], function(snabbt) {
+  snabbt(element, {
     rotation: [2*Math.PI, 0, 0]
   });
 });
@@ -305,17 +305,17 @@ snabbtjs.snabbt(element, {
       </section>
       <section id="matrix">
         <h2>Matrix API</h2>
-        <p>The following functions represents the Matrix API:</p>
+        <p>Matrix operations are performed using the Matrix class. The class has the following methods:</p>
         <ul>
-          <li><strong>snabbtjs.ident()</strong> - Returns the identity matrix</li>
-          <li><strong>snabbtjs.trans(x, y, z)</strong> - Returns a translation matrix</li>
-          <li><strong>snabbtjs.rotX(radians)</strong> - Returns a rotation around the x-axis</li>
-          <li><strong>snabbtjs.rotY(radians)</strong> - Returns a rotation around the y-axis</li>
-          <li><strong>snabbtjs.rotZ(radians)</strong> - Returns a rotation around the z-axis</li>
-          <li><strong>snabbtjs.scale(x, y)</strong> - Returns a scaling matrix</li>
-          <li><strong>snabbtjs.skew(ax, ay)</strong> - Returns a skew matrix</li>
-          <li><strong>snabbtjs.mult(A, B)</strong> - Returns the matrix multiplication product of A * B</li>
+          <li><strong>Matrix.translate(x, y, z)</strong> - Multiplies with a translation matrix</li>
+          <li><strong>Matrix.rotateX(radians)</strong> - Multiplies with a rotation around the x-axis</li>
+          <li><strong>Matrix.rotateY(radians)</strong> - Multiplies with a rotation around the y-axis</li>
+          <li><strong>Matrix.rotateZ(radians)</strong> - Multiplies with a rotation around the z-axis</li>
+          <li><strong>Matrix.scale(x, y)</strong> - Multiplies with a scaling matrix</li>
+          <li><strong>Matrix.skew(ax, ay)</strong> - Multiplies with a skew matrix</li>
         </ul>
+        <p>All operations are chainable to make writing matrix multiplications concise, e.g.:</p>
+        <pre><code>matrix.translate(100, 0, 0).rotateX(Math.PI);</code></pre>
       </section>
 
       <section id="api">
