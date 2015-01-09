@@ -1,6 +1,6 @@
 var snabbtjs = snabbtjs || {};
 
-snabbtjs.TweenStates = function(start, end, result, tween_value) {
+snabbtjs.TweenStates = function(start, end, result, tweenValue) {
   var dx = (end.x - start.x);
   var dy = (end.y - start.y);
   var dz = (end.z - start.z);
@@ -12,30 +12,30 @@ snabbtjs.TweenStates = function(start, end, result, tween_value) {
   var dbz = (end.bz - start.bz);
   var dsx = (end.sx - start.sx);
   var dsy = (end.sy - start.sy);
-  var dskewx = (end.skew_x - start.skew_x);
-  var dskewy = (end.skew_y - start.skew_y);
+  var dskewx = (end.skewX - start.skewX);
+  var dskewy = (end.skewY - start.skewY);
   var dwidth = (end.width - start.width);
   var dheight = (end.height - start.height);
   var dopacity = (end.opacity - start.opacity);
 
-  result.ax = start.ax + tween_value*dax;
-  result.ay = start.ay + tween_value*day;
-  result.az = start.az + tween_value*daz;
-  result.x = start.x + tween_value*dx;
-  result.y = start.y + tween_value*dy;
-  result.z = start.z + tween_value*dz;
-  result.bx = start.bx + tween_value*dbx;
-  result.by = start.by + tween_value*dby;
-  result.bz = start.bz + tween_value*dbz;
-  result.skew_x = start.skew_x + tween_value*dskewx;
-  result.skew_y = start.skew_y + tween_value*dskewy;
-  result.sx = start.sx + tween_value*dsx;
-  result.sy = start.sy + tween_value*dsy;
+  result.ax = start.ax + tweenValue*dax;
+  result.ay = start.ay + tweenValue*day;
+  result.az = start.az + tweenValue*daz;
+  result.x = start.x + tweenValue*dx;
+  result.y = start.y + tweenValue*dy;
+  result.z = start.z + tweenValue*dz;
+  result.bx = start.bx + tweenValue*dbx;
+  result.by = start.by + tweenValue*dby;
+  result.bz = start.bz + tweenValue*dbz;
+  result.skewX = start.skewX + tweenValue*dskewx;
+  result.skewY = start.skewY + tweenValue*dskewy;
+  result.sx = start.sx + tweenValue*dsx;
+  result.sy = start.sy + tweenValue*dsy;
 
   if(end.width !== undefined)
-    result.width = start.width + tween_value*dwidth;
+    result.width = start.width + tweenValue*dwidth;
   if(end.height !== undefined)
-    result.height = start.height + tween_value*dheight;
+    result.height = start.height + tweenValue*dheight;
   if(end.opacity !== undefined)
-    result.opacity = start.opacity + tween_value*dopacity;
+    result.opacity = start.opacity + tweenValue*dopacity;
 };

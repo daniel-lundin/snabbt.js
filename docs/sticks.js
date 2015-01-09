@@ -1,21 +1,18 @@
 STICK_COUNT = 100;
-function setup_fps_meters() {
+
+function setupFpsMeters() {
   var heading = document.getElementById('heading');
   var meter = new FPSMeter(heading, {
-      heat: true,
-      theme: 'colorful',
-      graph: true
+    heat: true,
+    theme: 'colorful',
+    graph: true
   });
 
-  // Tap into snabbt.js tick
-  var _snabbtjs_tick = snabbtjs.tick_animations;
-
-  master_tick = function(time) {
-    _snabbtjs_tick(time);
+  function tick() {
     meter.tick();
-  };
-
-  snabbtjs.tick_animations = master_tick;
+    window.requestAnimationFrame(tick);
+  }
+  window.requestAnimationFrame(tick);
 }
 
 function animate(prefix, index) {
@@ -25,17 +22,17 @@ function animate(prefix, index) {
   for(var i=0;i<STICK_COUNT;++i) {
     var stick = document.getElementById(prefix + i);
     snabbt(stick, {
-      from_position: [0, -(STICK_COUNT/2) * 5 + 5*i, 0],
+      fromPosition: [0, -(STICK_COUNT/2) * 5 + 5*i, 0],
       position: [200, 0, 0],
       duration: 500,
       easing: 'ease',
     }).then({
       position: [200, 0, 0],
-      rotation_post: [0, 0, (i/STICK_COUNT)*2*Math.PI],
+      rotationPost: [0, 0, (i/STICK_COUNT)*2*Math.PI],
       duration: 1000,
       easing: 'ease',
     }).then({
-      from_position: [
+      fromPosition: [
         200*Math.cos((i/STICK_COUNT)*2*Math.PI),
         -200*Math.sin((i/STICK_COUNT)*2*Math.PI),
         0
@@ -45,19 +42,19 @@ function animate(prefix, index) {
         -100*Math.sin((i/STICK_COUNT)*2*Math.PI),
         0
       ],
-      from_rotation: [0, 0, (i/STICK_COUNT)*2*Math.PI - 2*Math.PI],
+      fromRotation: [0, 0, (i/STICK_COUNT)*2*Math.PI - 2*Math.PI],
       rotation: [0, 0, (i/STICK_COUNT)*2*Math.PI - 2*Math.PI],
-      from_rotation_post: [-2*Math.PI, 0, 0],
-      rotation_post: [0, 0, 0],
+      fromRotationPost: [-2*Math.PI, 0, 0],
+      rotationPost: [0, 0, 0],
       delay: i*10,
       duration: 1000,
       easing: 'ease',
     }).then({
-      from_position: [100, 0, 0],
+      fromPosition: [100, 0, 0],
       position: [0, -(STICK_COUNT/2) * 5 + 5*i, 0],
-      from_rotation: [0, 0, 0],
-      from_rotation_post: [0, 0, (i/STICK_COUNT)*2*Math.PI],// + Math.PI],
-      rotation_post: [0, 0, 0],
+      fromRotation: [0, 0, 0],
+      fromRotationPost: [0, 0, (i/STICK_COUNT)*2*Math.PI],// + Math.PI],
+      rotationPost: [0, 0, 0],
       easing: 'ease',
       delay: STICK_COUNT*10 + i*10,
       duration: 1000,
@@ -68,7 +65,7 @@ function animate(prefix, index) {
 
 
 function init() {
-  setup_fps_meters();
+  setupFpsMeters();
   var colors = randomColor({
     count: 7,
     luminosity: 'dark',
@@ -82,7 +79,7 @@ function init() {
   c2.style.top = window.innerHeight/2 + 'px';
   c2.style.left = ((window.innerWidth/4) - 25) + 'px';
 
-  function setup_sticks(root, prefix) {
+  function setupSticks(root, prefix) {
     for(var i=0;i<STICK_COUNT;++i) {
       var stick = document.createElement('div');
       stick.className = 'stick';
@@ -91,9 +88,9 @@ function init() {
       root.appendChild(stick);
     }
   }
-  setup_sticks(c1, 'r');
+  setupSticks(c1, 'r');
   animate('r', STICK_COUNT - 1);
-  setup_sticks(c2, 'l');
+  setupSticks(c2, 'l');
   animate('l', STICK_COUNT - 1);
 
 }
