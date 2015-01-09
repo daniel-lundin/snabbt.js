@@ -21,6 +21,8 @@
 // ------------------------------
 
 snabbtjs.Animation = function(options) {
+  var currentState = this._currentState;
+  var endState = this._endState;
   this._startState = options.startState;
   this._endState = options.endState;
   this.offset = options.offset;
@@ -32,12 +34,12 @@ snabbtjs.Animation = function(options) {
     this.easing = snabbtjs.createEaser(options.easing, options);
   this._currentState = this._startState.clone();
   if(options.offset) {
-    this._currentState.offsetX = this.offset[0];
-    this._currentState.offsetY = this.offset[1];
-    this._currentState.offsetZ = this.offset[2];
-    this._endState.offsetX = this.offset[0];
-    this._endState.offsetY = this.offset[1];
-    this._endState.offsetZ = this.offset[2];
+    currentState.offsetX = this.offset[0];
+    currentState.offsetY = this.offset[1];
+    currentState.offsetZ = this.offset[2];
+    endState.offsetX = this.offset[0];
+    endState.offsetY = this.offset[1];
+    endState.offsetZ = this.offset[2];
   }
 
   this.startTime = 0;
@@ -54,19 +56,22 @@ snabbtjs.Animation.prototype.stopped = function() {
 };
 
 snabbtjs.Animation.prototype.tick = function(time) {
+  var startTime = this.startTime;
+  var currentTime = this.currentTime;
+  var delay = this.delay;
+  var duration = this.duration;
   if(this._stopped)
     return;
 
   // If first tick, set start_time
-  if(!this.startTime)
-    this.startTime = time;
-  if(time - this.startTime > this.delay)
-    this.currentTime = time - this.delay;
+  if(!startTime)
+    this.startTime = startTime = time;
+  if(time - startTime > delay)
+    this.currentTime = currentTime = time - delay;
 
-  var curr = Math.min(Math.max(0.0, this.currentTime - this.startTime), this.duration);
-  var max = this.duration;
+  var curr = Math.min(Math.max(0.0, currentTime - startTime), duration);
 
-  this.easing.tick(curr/max);
+  this.easing.tick(curr/duration);
   this.updateCurrentTransform();
 };
 
@@ -129,18 +134,21 @@ snabbtjs.ValueFeededAnimation.prototype.stopped = function() {
 };
 
 snabbtjs.ValueFeededAnimation.prototype.tick = function(time) {
+  var startTime = this.startTime;
+  var currentTime = this.currentTime;
+  var delay = this.delay;
+  var duration = this.duration;
   if(this._stopped)
     return;
 
   // If first tick, set start_time
-  if(!this.startTime)
-    this.startTime = time;
-  if(time - this.startTime > this.delay)
-    this.currentTime = time - this.delay;
+  if(!startTime)
+    this.startTime = startTime = time;
+  if(time - startTime > delay)
+    this.currentTime = currentTime - delay;
 
-  var curr = Math.min(Math.max(0.001, this.currentTime - this.startTime), this.duration);
-  var max = this.duration;
-  this.easing.tick(curr/max);
+  var curr = Math.min(Math.max(0.001, currentTime - startTime), duration);
+  this.easing.tick(curr/duration);
 
   this.updateCurrentTransform();
 };
@@ -151,8 +159,9 @@ snabbtjs.ValueFeededAnimation.prototype.currentState = function() {
 
 snabbtjs.ValueFeededAnimation.prototype.updateCurrentTransform = function() {
   var tweenValue = this.easing.value();
-  this.currentMatrix.clear();
-  this.currentMatrix = this.valueFeeder(tweenValue, this.currentMatrix);
+  var currentMatrix = this.currentMatrix;
+  currentMatrix.clear();
+  this.currentMatrix = this.valueFeeder(tweenValue, currentMatrix);
 };
 
 snabbtjs.ValueFeededAnimation.prototype.completed = function() {
@@ -191,30 +200,35 @@ snabbtjs.AttentionAnimation.prototype.stopped = function(time) {
 };
 
 snabbtjs.AttentionAnimation.prototype.tick = function(time) {
+  var spring = this.spring;
   if(this._stopped)
     return;
-  if(this.spring.equilibrium)
+  if(spring.equilibrium)
     return;
-  this.spring.tick();
+  spring.tick();
 
   this.updateMovement();
 };
 
 snabbtjs.AttentionAnimation.prototype.updateMovement = function() {
-  this.currentMovement.x = this.movement.x * this.spring.position;
-  this.currentMovement.y = this.movement.y * this.spring.position;
-  this.currentMovement.z = this.movement.z * this.spring.position;
-  this.currentMovement.ax = this.movement.ax * this.spring.position;
-  this.currentMovement.ay = this.movement.ay * this.spring.position;
-  this.currentMovement.az = this.movement.az * this.spring.position;
-  this.currentMovement.bx = this.movement.bx * this.spring.position;
-  this.currentMovement.by = this.movement.by * this.spring.position;
-  this.currentMovement.bz = this.movement.bz * this.spring.position;
+  var currentMovement = this.currentMovement;
+  var movement = this.movement;
+  var position = this.spring.position;
+  currentMovement.x = movement.x * position;
+  currentMovement.y = movement.y * position;
+  currentMovement.z = movement.z * position;
+  currentMovement.ax = movement.ax * position;
+  currentMovement.ay = movement.ay * position;
+  currentMovement.az = movement.az * position;
+  currentMovement.bx = movement.bx * position;
+  currentMovement.by = movement.by * position;
+  currentMovement.bz = movement.bz * position;
 };
 
 snabbtjs.AttentionAnimation.prototype.updateElement = function(element) {
-  var matrix = this.currentMovement.asMatrix();
-  var properties = this.currentMovement.properties();
+  var currentMovement = this.currentMovement;
+  var matrix = currentMovement.asMatrix();
+  var properties = currentMovement.properties();
   snabbtjs.updateElementTransform(element, matrix);
   snabbtjs.updateElementProperties(element, properties);
 };
@@ -255,12 +269,13 @@ snabbtjs.easeOut = function(value) {
 };
 
 snabbtjs.SpringEasing = function(options) {
-  this.position = snabbtjs.optionOrDefault(options.startPosition, 0);
-  this.equilibriumPosition = snabbtjs.optionOrDefault(options.equilibriumPosition, 1);
-  this.velocity = snabbtjs.optionOrDefault(options.initialVelocity, 0);
-  this.springConstant = snabbtjs.optionOrDefault(options.springConstant, 0.8);
-  this.deacceleration = snabbtjs.optionOrDefault(options.springDeacceleration, 0.9);
-  this.mass = snabbtjs.optionOrDefault(options.springMass, 10);
+  var optionOrDefault = snabbtjs.optionOrDefault;
+  this.position = optionOrDefault(options.startPosition, 0);
+  this.equilibriumPosition = optionOrDefault(options.equilibriumPosition, 1);
+  this.velocity = optionOrDefault(options.initialVelocity, 0);
+  this.springConstant = optionOrDefault(options.springConstant, 0.8);
+  this.deacceleration = optionOrDefault(options.springDeacceleration, 0.9);
+  this.mass = optionOrDefault(options.springMass, 10);
 
   this.equilibrium = false;
 };
@@ -347,19 +362,20 @@ snabbtjs.snabbt = function(arg1, arg2, arg3) {
   var elements = arg1;
 
   // If argument is an array, loop through and start one animation for each element.
-  if(elements.hasOwnProperty('length')) {
-    var queue = [];
+  if(Array.isArray(elements)) {
     var aggregateChainer = {
       chainers: [],
       then: function(opts) {
-        for(var j=0;j<this.chainers.length;++j) {
-          this.chainers[j].then(opts);
+        var chainers = this.chainers;
+        var len = this.chainers.length;
+        for(var j=0;j<len;++j) {
+          chainers[j].then(opts);
         }
         return aggregateChainer;
       }
     };
 
-    for(var i=0;i<elements.length;++i) {
+    for(var i=0, len=elements.length;i<len;++i) {
       aggregateChainer.chainers.push(snabbtjs.snabbtSingleElement(elements[i], arg2, arg3));
     }
     return aggregateChainer;
@@ -457,9 +473,11 @@ snabbtjs.setupAttentionAnimation = function(element,  options) {
 };
 
 snabbtjs.stopAnimation = function(element) {
-  for(var i=0;i<snabbtjs.runningAnimations.length;++i) {
-    var animatedElement = snabbtjs.runningAnimations[i][0];
-    var animation = snabbtjs.runningAnimations[i][1];
+  var runningAnimations = snabbtjs.runningAnimations;
+  for(var i= 0,len=runningAnimations.length;i<len;++i) {
+    var currentAnimation = runningAnimations[i];
+    var animatedElement = currentAnimation[0];
+    var animation = currentAnimation[1];
 
     if(animatedElement === element) {
       animation.stop();
@@ -468,12 +486,13 @@ snabbtjs.stopAnimation = function(element) {
 };
 
 snabbtjs.findAnimationState = function(animationList, element) {
-  for(var i=0;i<animationList.length;++i) {
-    var animatedElement = animationList[i][0];
-    var animation = animationList[i][1];
+  for(var i= 0,len=animationList.length;i<len;++i) {
+    var currentAnimation = animationList[i];
+    var animatedElement = currentAnimation[0];
+    var animation = currentAnimation[1];
 
     if(animatedElement === element) {
-      state = animation.currentState();
+      var state = animation.currentState();
       animation.stop();
       return state;
     }
@@ -486,10 +505,6 @@ snabbtjs.findAnimationState = function(animationList, element) {
  * TODO: The stopping of the animation is better put somewhere else
  */
 snabbtjs.currentAnimationState = function(element) {
-  var state = snabbtjs.findAnimationState(snabbtjs.runningAnimations, element);
-  if(state)
-    return state;
-
   // Check if a completed animation is stored for this element
   return snabbtjs.findAnimationState(snabbtjs.completedAnimations, element);
 };
@@ -500,77 +515,93 @@ snabbtjs.currentAnimationState = function(element) {
 snabbtjs.stateFromOptions = function(p, options) {
   if(!p)
     p = new snabbtjs.State({});
+  var position = options.position;
+  var rotation = options.rotation;
+  var skew = options.skew;
+  var rotationPost = options.rotationPost;
+  var scale = options.scale;
+  var width = options.width;
+  var height = options.height;
+  var opacity = options.opacity;
 
-  if(options.position) {
-    p.x = options.position[0];
-    p.y = options.position[1];
-    p.z = options.position[2];
+  if(position) {
+    p.x = position[0];
+    p.y = position[1];
+    p.z = position[2];
   }
-  if(options.rotation) {
-    p.ax =  options.rotation[0];
-    p.ay =  options.rotation[1];
-    p.az =  options.rotation[2];
+  if(rotation) {
+    p.ax = rotation[0];
+    p.ay = rotation[1];
+    p.az = rotation[2];
   }
-  if(options.skew) {
-    p.skewX =  options.skew[0];
-    p.skewY =  options.skew[1];
+  if(skew) {
+    p.skewX = skew[0];
+    p.skewY = skew[1];
   }
-  if(options.rotationPost) {
-    p.bx =  options.rotationPost[0];
-    p.by =  options.rotationPost[1];
-    p.bz =  options.rotationPost[2];
+  if(rotationPost) {
+    p.bx = rotationPost[0];
+    p.by = rotationPost[1];
+    p.bz = rotationPost[2];
   }
-  if(options.scale) {
-    p.sx =  options.scale[0];
-    p.sy =  options.scale[1];
+  if(scale) {
+    p.sx = scale[0];
+    p.sy = scale[1];
   }
-  if(options.width !== undefined) {
-    p.width =  options.width;
+  if(width !== undefined) {
+    p.width = width;
   }
-  if(options.height !== undefined) {
-    p.height =  options.height;
+  if(height !== undefined) {
+    p.height = height;
   }
-  if(options.opacity !== undefined) {
-    p.opacity =  options.opacity;
+  if(opacity !== undefined) {
+    p.opacity = opacity;
   }
   return p;
 };
 
 snabbtjs.stateFromFromOptions = function(p, options) {
+  var fromPosition = options.fromPosition;
+  var fromRotation = options.fromRotation;
+  var fromSkew = options.fromSkew;
+  var fromRotationPost = options.fromRotationPost;
+  var fromScale = options.fromScale;
+  var fromWidth = options.fromWidth;
+  var fromHeight = options.fromHeight;
+  var fromOpacity = options.fromOpacity;
   if(!p)
     p = new snabbtjs.State({});
 
-  if(options.fromPosition) {
-    p.x = options.fromPosition[0];
-    p.y = options.fromPosition[1];
-    p.z = options.fromPosition[2];
+  if(fromPosition) {
+    p.x = fromPosition[0];
+    p.y = fromPosition[1];
+    p.z = fromPosition[2];
   }
-  if(options.fromRotation) {
-    p.ax =  options.fromRotation[0];
-    p.ay =  options.fromRotation[1];
-    p.az =  options.fromRotation[2];
+  if(fromRotation) {
+    p.ax =  fromRotation[0];
+    p.ay =  fromRotation[1];
+    p.az =  fromRotation[2];
   }
-  if(options.fromSkew) {
-    p.skewX =  options.fromSkew[0];
-    p.skewY =  options.fromSkew[1];
+  if(fromSkew) {
+    p.skewX =  fromSkew[0];
+    p.skewY =  fromSkew[1];
   }
-  if(options.fromRotationPost) {
-    p.bx =  options.fromRotationPost[0];
-    p.by =  options.fromRotationPost[1];
-    p.bz =  options.fromRotationPost[2];
+  if(fromRotationPost) {
+    p.bx =  fromRotationPost[0];
+    p.by =  fromRotationPost[1];
+    p.bz =  fromRotationPost[2];
   }
-  if(options.fromScale) {
-    p.sx =  options.fromScale[0];
-    p.sy =  options.fromScale[1];
+  if(fromScale) {
+    p.sx =  fromScale[0];
+    p.sy =  fromScale[1];
   }
-  if(options.fromWidth !== undefined) {
-    p.width =  options.fromWidth;
+  if(fromWidth !== undefined) {
+    p.width =  fromWidth;
   }
-  if(options.fromHeight !== undefined) {
-    p.height =  options.fromHeight;
+  if(fromHeight !== undefined) {
+    p.height =  fromHeight;
   }
-  if(options.fromOpacity !== undefined) {
-    p.opacity =  options.fromOpacity;
+  if(fromOpacity !== undefined) {
+    p.opacity =  fromOpacity;
   }
   return p;
 };
@@ -590,11 +621,12 @@ snabbtjs.requestAnimationFrame = function(func) {
 };
 
 snabbtjs.tickAnimations = function(time) {
-  var len = snabbtjs.tickRequests.length;
+  var tickRequests = snabbtjs.tickRequests;
+  var len = tickRequests.length;
   for(var i=0;i<len;++i) {
-    snabbtjs.tickRequests[i](time);
+    tickRequests[i](time);
   }
-  snabbtjs.tickRequests.splice(0, len);
+  tickRequests.splice(0, len);
   window.requestAnimationFrame(snabbtjs.tickAnimations);
 
   var completedAnimations = snabbtjs.runningAnimations.filter(function(animation) {
@@ -603,7 +635,7 @@ snabbtjs.tickAnimations = function(time) {
 
   // See if there are any previously completed animations on the same element, if so, remove it before merging
   snabbtjs.completedAnimations = snabbtjs.completedAnimations.filter(function(animation) {
-    for(var i=0;i<completedAnimations.length;++i) {
+    for(var i=0,len=completedAnimations.length;i<len;++i) {
       if(animation[0] === completedAnimations[i][0]) {
         return false;
       }
@@ -884,25 +916,26 @@ snabbtjs.setCSS = function(el, matrix) {
   el.style.transform = snabbtjs.matrixTCSS(matrix);
 };
 ;snabbtjs.State = function(config) {
-  this.ax = snabbtjs.optionOrDefault(config.ax, 0);
-  this.ay = snabbtjs.optionOrDefault(config.ay, 0);
-  this.az = snabbtjs.optionOrDefault(config.az, 0);
-  this.x = snabbtjs.optionOrDefault(config.x, 0);
-  this.y = snabbtjs.optionOrDefault(config.y, 0);
-  this.z = snabbtjs.optionOrDefault(config.z, 0);
-  this.bx = snabbtjs.optionOrDefault(config.bx, 0);
-  this.by = snabbtjs.optionOrDefault(config.by, 0);
-  this.bz = snabbtjs.optionOrDefault(config.bz, 0);
-  this.skewX = snabbtjs.optionOrDefault(config.skewX, 0);
-  this.skewY = snabbtjs.optionOrDefault(config.skewY, 0);
-  this.offsetX = snabbtjs.optionOrDefault(config.offsetX, 0);
-  this.offsetY = snabbtjs.optionOrDefault(config.offsetY, 0);
-  this.offsetZ = snabbtjs.optionOrDefault(config.offsetZ, 0);
-  this.sx = snabbtjs.optionOrDefault(config.sx, 1);
-  this.sy = snabbtjs.optionOrDefault(config.sy, 1);
+  var optionOrDefault = snabbtjs.optionOrDefault;
+  this.ax = optionOrDefault(config.ax, 0);
+  this.ay = optionOrDefault(config.ay, 0);
+  this.az = optionOrDefault(config.az, 0);
+  this.x = optionOrDefault(config.x, 0);
+  this.y = optionOrDefault(config.y, 0);
+  this.z = optionOrDefault(config.z, 0);
+  this.bx = optionOrDefault(config.bx, 0);
+  this.by = optionOrDefault(config.by, 0);
+  this.bz = optionOrDefault(config.bz, 0);
+  this.skewX = optionOrDefault(config.skewX, 0);
+  this.skewY = optionOrDefault(config.skewY, 0);
+  this.offsetX = optionOrDefault(config.offsetX, 0);
+  this.offsetY = optionOrDefault(config.offsetY, 0);
+  this.offsetZ = optionOrDefault(config.offsetZ, 0);
+  this.sx = optionOrDefault(config.sx, 1);
+  this.sy = optionOrDefault(config.sy, 1);
   this.width = config.width;
   this.height = config.height;
-  this.opacity = snabbtjs.optionOrDefault(config.opacity, 1);
+  this.opacity = optionOrDefault(config.opacity, 1);
 };
 
 snabbtjs.State.prototype.clone = function() {
@@ -942,8 +975,6 @@ snabbtjs.State.prototype.assign = function(p) {
   this.sx = p.sx;
   this.sy = p.sy;
   this.opacity = p.opacity;
-  this.height = this.height;
-  this.width = this.width;
 };
 
 snabbtjs.State.prototype.asMatrix = function() {

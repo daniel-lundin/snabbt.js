@@ -5,6 +5,8 @@ var snabbtjs = snabbtjs || {};
 // ------------------------------
 
 snabbtjs.Animation = function(options) {
+  var currentState = this._currentState;
+  var endState = this._endState;
   this._startState = options.startState;
   this._endState = options.endState;
   this.offset = options.offset;
@@ -16,12 +18,12 @@ snabbtjs.Animation = function(options) {
     this.easing = snabbtjs.createEaser(options.easing, options);
   this._currentState = this._startState.clone();
   if(options.offset) {
-    this._currentState.offsetX = this.offset[0];
-    this._currentState.offsetY = this.offset[1];
-    this._currentState.offsetZ = this.offset[2];
-    this._endState.offsetX = this.offset[0];
-    this._endState.offsetY = this.offset[1];
-    this._endState.offsetZ = this.offset[2];
+    currentState.offsetX = this.offset[0];
+    currentState.offsetY = this.offset[1];
+    currentState.offsetZ = this.offset[2];
+    endState.offsetX = this.offset[0];
+    endState.offsetY = this.offset[1];
+    endState.offsetZ = this.offset[2];
   }
 
   this.startTime = 0;
@@ -38,19 +40,22 @@ snabbtjs.Animation.prototype.stopped = function() {
 };
 
 snabbtjs.Animation.prototype.tick = function(time) {
+  var startTime = this.startTime;
+  var currentTime = this.currentTime;
+  var delay = this.delay;
+  var duration = this.duration;
   if(this._stopped)
     return;
 
   // If first tick, set start_time
-  if(!this.startTime)
-    this.startTime = time;
-  if(time - this.startTime > this.delay)
-    this.currentTime = time - this.delay;
+  if(!startTime)
+    this.startTime = startTime = time;
+  if(time - startTime > delay)
+    this.currentTime = currentTime = time - delay;
 
-  var curr = Math.min(Math.max(0.0, this.currentTime - this.startTime), this.duration);
-  var max = this.duration;
+  var curr = Math.min(Math.max(0.0, currentTime - startTime), duration);
 
-  this.easing.tick(curr/max);
+  this.easing.tick(curr/duration);
   this.updateCurrentTransform();
 };
 
@@ -113,18 +118,21 @@ snabbtjs.ValueFeededAnimation.prototype.stopped = function() {
 };
 
 snabbtjs.ValueFeededAnimation.prototype.tick = function(time) {
+  var startTime = this.startTime;
+  var currentTime = this.currentTime;
+  var delay = this.delay;
+  var duration = this.duration;
   if(this._stopped)
     return;
 
   // If first tick, set start_time
-  if(!this.startTime)
-    this.startTime = time;
-  if(time - this.startTime > this.delay)
-    this.currentTime = time - this.delay;
+  if(!startTime)
+    this.startTime = startTime = time;
+  if(time - startTime > delay)
+    this.currentTime = currentTime - delay;
 
-  var curr = Math.min(Math.max(0.001, this.currentTime - this.startTime), this.duration);
-  var max = this.duration;
-  this.easing.tick(curr/max);
+  var curr = Math.min(Math.max(0.001, currentTime - startTime), duration);
+  this.easing.tick(curr/duration);
 
   this.updateCurrentTransform();
 };
@@ -135,8 +143,9 @@ snabbtjs.ValueFeededAnimation.prototype.currentState = function() {
 
 snabbtjs.ValueFeededAnimation.prototype.updateCurrentTransform = function() {
   var tweenValue = this.easing.value();
-  this.currentMatrix.clear();
-  this.currentMatrix = this.valueFeeder(tweenValue, this.currentMatrix);
+  var currentMatrix = this.currentMatrix;
+  currentMatrix.clear();
+  this.currentMatrix = this.valueFeeder(tweenValue, currentMatrix);
 };
 
 snabbtjs.ValueFeededAnimation.prototype.completed = function() {
@@ -175,30 +184,35 @@ snabbtjs.AttentionAnimation.prototype.stopped = function(time) {
 };
 
 snabbtjs.AttentionAnimation.prototype.tick = function(time) {
+  var spring = this.spring;
   if(this._stopped)
     return;
-  if(this.spring.equilibrium)
+  if(spring.equilibrium)
     return;
-  this.spring.tick();
+  spring.tick();
 
   this.updateMovement();
 };
 
 snabbtjs.AttentionAnimation.prototype.updateMovement = function() {
-  this.currentMovement.x = this.movement.x * this.spring.position;
-  this.currentMovement.y = this.movement.y * this.spring.position;
-  this.currentMovement.z = this.movement.z * this.spring.position;
-  this.currentMovement.ax = this.movement.ax * this.spring.position;
-  this.currentMovement.ay = this.movement.ay * this.spring.position;
-  this.currentMovement.az = this.movement.az * this.spring.position;
-  this.currentMovement.bx = this.movement.bx * this.spring.position;
-  this.currentMovement.by = this.movement.by * this.spring.position;
-  this.currentMovement.bz = this.movement.bz * this.spring.position;
+  var currentMovement = this.currentMovement;
+  var movement = this.movement;
+  var position = this.spring.position;
+  currentMovement.x = movement.x * position;
+  currentMovement.y = movement.y * position;
+  currentMovement.z = movement.z * position;
+  currentMovement.ax = movement.ax * position;
+  currentMovement.ay = movement.ay * position;
+  currentMovement.az = movement.az * position;
+  currentMovement.bx = movement.bx * position;
+  currentMovement.by = movement.by * position;
+  currentMovement.bz = movement.bz * position;
 };
 
 snabbtjs.AttentionAnimation.prototype.updateElement = function(element) {
-  var matrix = this.currentMovement.asMatrix();
-  var properties = this.currentMovement.properties();
+  var currentMovement = this.currentMovement;
+  var matrix = currentMovement.asMatrix();
+  var properties = currentMovement.properties();
   snabbtjs.updateElementTransform(element, matrix);
   snabbtjs.updateElementProperties(element, properties);
 };
