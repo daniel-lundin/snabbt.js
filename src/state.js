@@ -1,23 +1,24 @@
 snabbtjs.State = function(config) {
-  this.ax = snabbtjs.optionOrDefault(config.ax, 0);
-  this.ay = snabbtjs.optionOrDefault(config.ay, 0);
-  this.az = snabbtjs.optionOrDefault(config.az, 0);
-  this.x = snabbtjs.optionOrDefault(config.x, 0);
-  this.y = snabbtjs.optionOrDefault(config.y, 0);
-  this.z = snabbtjs.optionOrDefault(config.z, 0);
-  this.bx = snabbtjs.optionOrDefault(config.bx, 0);
-  this.by = snabbtjs.optionOrDefault(config.by, 0);
-  this.bz = snabbtjs.optionOrDefault(config.bz, 0);
-  this.skewX = snabbtjs.optionOrDefault(config.skewX, 0);
-  this.skewY = snabbtjs.optionOrDefault(config.skewY, 0);
-  this.offsetX = snabbtjs.optionOrDefault(config.offsetX, 0);
-  this.offsetY = snabbtjs.optionOrDefault(config.offsetY, 0);
-  this.offsetZ = snabbtjs.optionOrDefault(config.offsetZ, 0);
-  this.sx = snabbtjs.optionOrDefault(config.sx, 1);
-  this.sy = snabbtjs.optionOrDefault(config.sy, 1);
+  var optionOrDefault = snabbtjs.optionOrDefault;
+  this.ax = optionOrDefault(config.ax, 0);
+  this.ay = optionOrDefault(config.ay, 0);
+  this.az = optionOrDefault(config.az, 0);
+  this.x = optionOrDefault(config.x, 0);
+  this.y = optionOrDefault(config.y, 0);
+  this.z = optionOrDefault(config.z, 0);
+  this.bx = optionOrDefault(config.bx, 0);
+  this.by = optionOrDefault(config.by, 0);
+  this.bz = optionOrDefault(config.bz, 0);
+  this.skewX = optionOrDefault(config.skewX, 0);
+  this.skewY = optionOrDefault(config.skewY, 0);
+  this.offsetX = optionOrDefault(config.offsetX, 0);
+  this.offsetY = optionOrDefault(config.offsetY, 0);
+  this.offsetZ = optionOrDefault(config.offsetZ, 0);
+  this.sx = optionOrDefault(config.sx, 1);
+  this.sy = optionOrDefault(config.sy, 1);
   this.width = config.width;
   this.height = config.height;
-  this.opacity = snabbtjs.optionOrDefault(config.opacity, 1);
+  this.opacity = optionOrDefault(config.opacity, 1);
 };
 
 snabbtjs.State.prototype.clone = function() {
@@ -57,8 +58,6 @@ snabbtjs.State.prototype.assign = function(p) {
   this.sx = p.sx;
   this.sy = p.sy;
   this.opacity = p.opacity;
-  this.height = this.height;
-  this.width = this.width;
 };
 
 snabbtjs.State.prototype.asMatrix = function() {
