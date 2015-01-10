@@ -18,6 +18,21 @@ The initial release is out. Would love some feedback on things that can be impro
 - **0.2.0** - Added support for RequireJS and browserify. Published to npm and bower
 - **0.1.0** - Initial beta release
 
+## Get it
+snabbt is available with AMD-support, CommonJS-support and as a global module.
+
+### Package managers
+```
+bower install snabbt.js
+npm install snabbt.js
+```
+
+### CDNs
+
+```
+https//cdnjs.com/libraries/snabbt.js
+https://www.jsdelivr.com/#!snabbt
+```
 ## Browser Support
 
 <table>
