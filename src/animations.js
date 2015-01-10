@@ -73,8 +73,8 @@ snabbtjs.Animation.prototype.completed = function() {
 };
 
 snabbtjs.Animation.prototype.updateElement = function(element) {
-  var matrix = this._currentState.asMatrix();
-  var properties = this._currentState.properties();
+  var matrix = this._currentState.asMatrix(),
+      properties = this._currentState.properties();
   snabbtjs.updateElementTransform(element, matrix, this.perspective);
   snabbtjs.updateElementProperties(element, properties);
 };
@@ -197,8 +197,8 @@ snabbtjs.AttentionAnimation.prototype.updateMovement = function() {
 };
 
 snabbtjs.AttentionAnimation.prototype.updateElement = function(element) {
-  var matrix = this.currentMovement.asMatrix();
-  var properties = this.currentMovement.properties();
+  var matrix = this.currentMovement.asMatrix(),
+      properties = this.currentMovement.properties();
   snabbtjs.updateElementTransform(element, matrix);
   snabbtjs.updateElementProperties(element, properties);
 };

@@ -7,18 +7,17 @@ snabbtjs.snabbt = function(arg1, arg2, arg3) {
 
   // If argument is an array, loop through and start one animation for each element.
   if(elements.hasOwnProperty('length')) {
-    var queue = [];
     var aggregateChainer = {
       chainers: [],
       then: function(opts) {
-        for(var j=0;j<this.chainers.length;++j) {
+        for(var j= 0,len = this.chainers.length;j<len;++j) {
           this.chainers[j].then(opts);
         }
         return aggregateChainer;
       }
     };
 
-    for(var i=0;i<elements.length;++i) {
+    for(var i= 0, len = elements.length;i<len;++i) {
       aggregateChainer.chainers.push(snabbtjs.snabbtSingleElement(elements[i], arg2, arg3));
     }
     return aggregateChainer;
@@ -32,8 +31,8 @@ snabbtjs.snabbtSingleElement = function(arg1, arg2, arg3) {
     return snabbtjs.setupAttentionAnimation(arg1, arg3);
   if(arg2 === 'stop')
     return snabbtjs.stopAnimation(arg1);
-  var element = arg1;
-  var options = arg2;
+  var element = arg1,
+      options = arg2;
 
   // Remove orphaned end states
   snabbtjs.clearOphanedEndStates();
@@ -116,9 +115,16 @@ snabbtjs.setupAttentionAnimation = function(element,  options) {
 };
 
 snabbtjs.stopAnimation = function(element) {
-  for(var i=0;i<snabbtjs.runningAnimations.length;++i) {
-    var animatedElement = snabbtjs.runningAnimations[i][0];
-    var animation = snabbtjs.runningAnimations[i][1];
+  var i=0,
+      runningAnimations = snabbtjs.runningAnimations,
+      len = runningAnimations.length,
+      obj,
+      animatedElement,
+      animation;
+  for(;i<len;++i) {
+      obj = runningAnimations[i];
+      animatedElement = obj[0];
+      animation = obj[1];
 
     if(animatedElement === element) {
       animation.stop();
@@ -127,9 +133,16 @@ snabbtjs.stopAnimation = function(element) {
 };
 
 snabbtjs.findAnimationState = function(animationList, element) {
-  for(var i=0;i<animationList.length;++i) {
-    var animatedElement = animationList[i][0];
-    var animation = animationList[i][1];
+  var i=0,
+      len = animationList.length,
+      animatedElement,
+      animation,
+      obj,
+      state;
+  for(;i<len;++i) {
+    obj = animationList[i];
+    animatedElement = obj[0];
+    animation = obj[1];
 
     if(animatedElement === element) {
       state = animation.currentState();
@@ -262,7 +275,7 @@ snabbtjs.tickAnimations = function(time) {
 
   // See if there are any previously completed animations on the same element, if so, remove it before merging
   snabbtjs.completedAnimations = snabbtjs.completedAnimations.filter(function(animation) {
-    for(var i=0;i<completedAnimations.length;++i) {
+    for(var i= 0, len = completedAnimations.length;i<len;++i) {
       if(animation[0] === completedAnimations[i][0]) {
         return false;
       }

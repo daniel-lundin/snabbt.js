@@ -19,12 +19,13 @@ snabbtjs.easeOut = function(value) {
 };
 
 snabbtjs.SpringEasing = function(options) {
-  this.position = snabbtjs.optionOrDefault(options.startPosition, 0);
-  this.equilibriumPosition = snabbtjs.optionOrDefault(options.equilibriumPosition, 1);
-  this.velocity = snabbtjs.optionOrDefault(options.initialVelocity, 0);
-  this.springConstant = snabbtjs.optionOrDefault(options.springConstant, 0.8);
-  this.deacceleration = snabbtjs.optionOrDefault(options.springDeacceleration, 0.9);
-  this.mass = snabbtjs.optionOrDefault(options.springMass, 10);
+  var optionOrDefault = snabbtjs.optionOrDefault;
+  this.position = optionOrDefault(options.startPosition, 0);
+  this.equilibriumPosition = optionOrDefault(options.equilibriumPosition, 1);
+  this.velocity = optionOrDefault(options.initialVelocity, 0);
+  this.springConstant = optionOrDefault(options.springConstant, 0.8);
+  this.deacceleration = optionOrDefault(options.springDeacceleration, 0.9);
+  this.mass = optionOrDefault(options.springMass, 10);
 
   this.equilibrium = false;
 };
@@ -63,7 +64,7 @@ snabbtjs.EASING_FUNCS = {
   'linear': snabbtjs.linearEasing,
   'ease': snabbtjs.ease,
   'easeIn': snabbtjs.easeIn,
-  'easeOut': snabbtjs.easeOut,
+  'easeOut': snabbtjs.easeOut
 };
 
 snabbtjs.Easer = function(easer) {
