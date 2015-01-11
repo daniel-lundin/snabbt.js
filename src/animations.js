@@ -5,8 +5,6 @@ var snabbtjs = snabbtjs || {};
 // ------------------------------
 
 snabbtjs.Animation = function(options) {
-  var currentState = this._currentState;
-  var endState = this._endState;
   this._startState = options.startState;
   this._endState = options.endState;
   this.offset = options.offset;
@@ -17,6 +15,8 @@ snabbtjs.Animation = function(options) {
   if(options.easing)
     this.easing = snabbtjs.createEaser(options.easing, options);
   this._currentState = this._startState.clone();
+  var currentState = this._currentState;
+  var endState = this._endState;
   if(options.offset) {
     currentState.offsetX = this.offset[0];
     currentState.offsetY = this.offset[1];
@@ -118,21 +118,18 @@ snabbtjs.ValueFeededAnimation.prototype.stopped = function() {
 };
 
 snabbtjs.ValueFeededAnimation.prototype.tick = function(time) {
-  var startTime = this.startTime;
-  var currentTime = this.currentTime;
-  var delay = this.delay;
-  var duration = this.duration;
   if(this._stopped)
     return;
 
   // If first tick, set start_time
-  if(!startTime)
-    this.startTime = startTime = time;
-  if(time - startTime > delay)
-    this.currentTime = currentTime - delay;
+  if(!this.startTime)
+    this.startTime = time;
+  if(time - this.startTime > this.delay)
+    this.currentTime = time - this.delay;
 
-  var curr = Math.min(Math.max(0.001, currentTime - startTime), duration);
-  this.easing.tick(curr/duration);
+  //console.log(this.currentTime);
+  var curr = Math.min(Math.max(0.001, this.currentTime - this.startTime), this.duration);
+  this.easing.tick(curr/this.duration);
 
   this.updateCurrentTransform();
 };

@@ -150,6 +150,10 @@ snabbtjs.findAnimationState = function(animationList, element) {
  */
 snabbtjs.currentAnimationState = function(element) {
   // Check if a completed animation is stored for this element
+  var state = snabbtjs.findAnimationState(snabbtjs.runningAnimations, element);
+  if(state)
+    return state;
+ 
   return snabbtjs.findAnimationState(snabbtjs.completedAnimations, element);
 };
 
