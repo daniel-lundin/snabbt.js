@@ -234,13 +234,16 @@ snabbtjs.assignedMatrixMultiplication = function(a, b, res) {
 
 snabbtjs.matrixToCSS = function(matrix) {
   var css = 'matrix3d(';
-  for(var i=0;i<matrix.length-1;++i) {
-    if(Math.abs(matrix[i]) < 0.01)
+  for(var i=0;i<15;++i) {
+    if(Math.abs(matrix[i]) < 0.0001)
       css += '0,';
     else
-      css += matrix[i].toFixed(10) + '0,';
+      css += matrix[i].toFixed(10) + ',';
   }
-  css += matrix[15].toFixed(10) + ')';
+  if(Math.abs(matrix[15]) < 0.0001)
+    css += '0)';
+  else
+    css += matrix[15].toFixed(10) + ')';
   return css;
 };
 
