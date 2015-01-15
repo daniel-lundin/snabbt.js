@@ -141,7 +141,7 @@
   fromRotation: [0, 0, -2*Math.PI],
   easing: 'spring',
   springConstant: 0.2,
-  springDeaccelaration: 0.95,
+  springDecelaration: 0.95,
 });</code></pre>
           </div>
         </div>
@@ -229,7 +229,7 @@
         <p>When using spring easing, the <em>duration</em> parameter is not in effect. Instead the animation will progress until equilibrium is reached. When easing is set to <em>spring</em> there are three additional parameters that can be set on the animation configuration:</p>
         <ul>
           <li><strong>springConstant</strong> - The stiffness of the spring</li>
-          <li><strong>springDeaccelaration</strong> - Controls how fast the velocity decreases</li>
+          <li><strong>springDecelaration</strong> - Controls how fast the velocity decreases</li>
           <li><strong>springMass</strong> - The 'weight' of the object</li>
         </ul>
 
@@ -239,7 +239,7 @@
   rotation: [0, 0, 2*Math.PI],
   easing: 'spring',
   springConstant: 0.3,
-  springDeacceleration: 0.8,
+  springDecelaration: 0.8,
 }).then({
   rotation: [0, 0, 2*Math.PI],
   easing: 'ease'
@@ -268,7 +268,7 @@
             <pre><code>snabbt(element, 'attention', {
   rotation: [0, 0, Math.PI/2],
   springConstant: 1.9,
-  springDeacceleration: 0.9,
+  springDecelaration: 0.9,
 });</code></pre>
 
             <button id="attention-example-1" class="button-primary extra-top-margin">Run example</button>
@@ -277,7 +277,7 @@
             <pre><code>snabbt(element, 'attention', {
   position: [50, 0, 0],
   springConstant: 2.4,
-  springDeacceleration: 0.9,
+  springDecelaration: 0.9,
 });</code></pre>
 
             <button id="attention-example-2" class="button-primary extra-top-margin">Run example</button>
@@ -359,19 +359,19 @@ snabbt(element, {
               <td>width</td>
               <td>Scalar</td>
               <td>Unchanged</td>
-              <td>Element width in pixels</td>
+              <td>Element width in pixels(<em>fromWidth</em> mandatory if used)</td>
             </tr>
             <tr>
               <td>height</td>
               <td>Scalar</td>
               <td>Unchanged</td>
-              <td>Element height in pixels</td>
+              <td>Element height in pixels(<em>fromHeight</em> mandatory if used)</td>
             </tr>
             <tr>
               <td>opacity</td>
               <td>Scalar</td>
               <td>1</td>
-              <td>Element opacity(0 - 1)</td>
+              <td>Element opacity(0 - 1)(<em>fromOpactiy</em> mandatory if used)</td>
             </tr>
             <tr>
               <td>duration</td>
@@ -404,9 +404,9 @@ snabbt(element, {
           <li><strong>rotation</strong> - Rotation in radians in x-, y- and z-direction</li>
           <li><strong>scale</strong> - Scale in x- and y-direction</li>
           <li><strong>rotationPost</strong> - Rotation applied after <em>position</em> and <em>rotation</em></li>
-          <li><strong>width</strong> - Element width in pixels</li>
-          <li><strong>height</strong> - Element height in pixels</li>
-          <li><strong>opacity</strong> - Element opacity(0 - 1)</li>
+          <li><strong>width</strong> - Element width in pixels(<em>fromWidth</em> mandatory if used)</li>
+          <li><strong>height</strong> - Element height in pixels(<em>fromHeight</em> mandatory if used)</li>
+          <li><strong>opacity</strong> - Element opacity(0 - 1)(<em>fromOpactiy</em> mandatory if used)</li>
           <li><strong>duration</strong> - Animation duration in milliseconds</li>
           <li><strong>delay</strong> - Delay before the animation is started in milliseconds</li>
           <li><strong>loop</strong> - Number of times to repeat the animation</li>
@@ -464,9 +464,9 @@ snabbt(element, {
         <ul class="hide-desktop">
           <li><strong>fromPosition</strong> - set to [0, 0, 0] or previous end state</li>
           <li><strong>fromScale</strong> - set to [0, 0, 0] or previous end state</li>
-          <li><strong>fromWidth</strong></li>
-          <li><strong>fromHeight</strong></li>
-          <li><strong>fromOpacity</strong></li>
+          <li><strong>fromWidth</strong> - Mandatory if <em>width</em> is used</li>
+          <li><strong>fromHeight</strong> - Mandatory if <em>height</em> is used</li>
+          <li><strong>fromOpacity</strong> - Mandatory if <em>opacity</em> is used</li>
         </ul>
       </section>
     </div>

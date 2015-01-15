@@ -24,7 +24,7 @@ snabbtjs.SpringEasing = function(options) {
   this.equilibriumPosition = optionOrDefault(options.equilibriumPosition, 1);
   this.velocity = optionOrDefault(options.initialVelocity, 0);
   this.springConstant = optionOrDefault(options.springConstant, 0.8);
-  this.deacceleration = optionOrDefault(options.springDeacceleration, 0.9);
+  this.deceleration = optionOrDefault(options.springDeceleration, 0.9);
   this.mass = optionOrDefault(options.springMass, 10);
 
   this.equilibrium = false;
@@ -44,8 +44,8 @@ snabbtjs.SpringEasing.prototype.tick = function(value) {
   this.velocity += a;
   this.position += this.velocity;
 
-  // Deacceleartion
-  this.velocity *= this.deacceleration;
+  // Deceleration
+  this.velocity *= this.deceleration;
 
   if(Math.abs(this.position - this.equilibriumPosition) < 0.001 && Math.abs(this.velocity) < 0.001) {
     this.equilibrium = true;

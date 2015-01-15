@@ -222,7 +222,6 @@ snabbtjs.AttentionAnimation.prototype.completed = function() {
   return this.spring.equilibrium || this._stopped;
 };
 
-
 // Returns animation constructors based on options
 snabbtjs.createAnimation = function(options) {
   if(options.valueFeeder)

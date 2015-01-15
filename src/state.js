@@ -43,23 +43,6 @@ snabbtjs.State.prototype.clone = function() {
   return p;
 };
 
-snabbtjs.State.prototype.assign = function(p) {
-  this.ax = p.ax;
-  this.ay = p.ay;
-  this.az = p.az;
-  this.x = p.x;
-  this.y = p.y;
-  this.z = p.z;
-  this.bx = p.bx;
-  this.by = p.by;
-  this.bz = p.bz;
-  this.skewX = p.skewX;
-  this.skewY = p.skewY;
-  this.sx = p.sx;
-  this.sy = p.sy;
-  this.opacity = p.opacity;
-};
-
 snabbtjs.State.prototype.asMatrix = function() {
   var m = new snabbtjs.Matrix();
 
