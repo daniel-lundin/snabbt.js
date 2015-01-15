@@ -11,7 +11,7 @@ Fast animations with Javascript and CSS transforms(Work in progress)
 - [Card formations](http://daniel-lundin.github.io/snabbt.js/cards.html)
 - [Crazy sticks](http://daniel-lundin.github.io/snabbt.js/sticks.html)
 
-## Relases
+## Releases
 The initial release is out. Would love some feedback on things that can be improved. The release(and future ones) can be found in the release section
 
 - **0.3.0** - Memory optimizations, improved Matrix API, better UMD wrappers
