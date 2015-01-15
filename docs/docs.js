@@ -30,7 +30,7 @@ $(function() {
             easing: 'spring',
             perspective: 100,
             springConstant: 0.1,
-            springDeaccelaration: 0.99,
+            springDecelaration: 0.99,
             springMass: 2,
           });
         }
@@ -88,7 +88,7 @@ $(function() {
       fromRotation: [0, 0, -2*Math.PI],
       easing: 'spring',
       springConstant: 0.2,
-      springDeaccelaration: 0.95,
+      springDecelaration: 0.95,
     });
   };
 
@@ -118,12 +118,12 @@ $(function() {
       rotation: [0, 0, 2*Math.PI],
       easing: 'spring',
       springConstant: 0.3,
-      springDeacceleration: 0.8,
+      springDeceleration: 0.8,
     }).then({
       fromRotation: [0, 0, 0],
       easing: 'spring',
       springConstant: 0.3,
-      springDeacceleration: 0.8,
+      springDeceleration: 0.8,
     });
   });
 
@@ -153,7 +153,7 @@ $(function() {
     $("#attention-example-1").snabbt("attention", {
       rotation: [0, 0, Math.PI/2],
       springConstant: 1.9,
-      springDeacceleration: 0.9,
+      springDeceleration: 0.9,
     });
   });
 
@@ -162,7 +162,7 @@ $(function() {
     $("#attention-example-2").snabbt("attention", {
       position: [50, 0, 0],
       springConstant: 2.4,
-      springDeacceleration: 0.9,
+      springDeceleration: 0.9,
     });
   });
 
