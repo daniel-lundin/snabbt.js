@@ -17,7 +17,6 @@ The initial release is out. Would love some feedback on things that can be impro
 - **0.3.0** - Memory optimizations, improved Matrix API, better UMD wrappers
 - **0.2.0** - Added support for RequireJS and browserify. Published to npm and bower
 - **0.1.0** - Initial beta release
-- **0.2.0** - Added support for RequireJS and browserify. Published to npm and bower
 
 ## Get it
 snabbt is available with AMD-support, CommonJS-support and as a global module.
@@ -31,8 +30,8 @@ npm install snabbt.js
 ### CDNs
 
 ```
-https//cdnjs.com/libraries/snabbt.js
-https://www.jsdelivr.com/#!snabbt
+https://cdnjs.com/libraries/snabbt.js
+http://www.jsdelivr.com/#!snabbt
 ```
 ## Browser Support
 
