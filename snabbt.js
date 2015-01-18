@@ -405,9 +405,8 @@ snabbtjs.snabbtSingleElement = function(arg1, arg2, arg3) {
   // If there is a running or past completed animation with element, use that end state as start state
   var start = snabbtjs.currentAnimationState(element);
   // from has precendance over current animation state
-  start = snabbtjs.stateFromFromOptions(start, options);
-  var end = new snabbtjs.State({});
-  end = snabbtjs.stateFromOptions(end, options);
+  start = snabbtjs.stateFromOptions(options, start, true);
+  end = snabbtjs.stateFromOptions(options);
 
   var animOptions = snabbtjs.setupAnimationOptions(start, end, options);
   var animation = snabbtjs.createAnimation(animOptions);
@@ -447,8 +446,8 @@ snabbtjs.snabbtSingleElement = function(arg1, arg2, arg3) {
       if(queue.length) {
         options = queue.pop();
 
-        start = snabbtjs.stateFromFromOptions(end, options);
-        end = snabbtjs.stateFromOptions(new snabbtjs.State({}), options);
+        start = snabbtjs.stateFromOptions(options, end, true);
+        end = snabbtjs.stateFromOptions(options);
         options = snabbtjs.setupAnimationOptions(start, end, options);
 
         animation = new snabbtjs.Animation(options);
@@ -465,7 +464,7 @@ snabbtjs.snabbtSingleElement = function(arg1, arg2, arg3) {
 };
 
 snabbtjs.setupAttentionAnimation = function(element,  options) {
-  var movement = snabbtjs.stateFromOptions(new snabbtjs.State({}), options);
+  var movement = snabbtjs.stateFromOptions(options);
   options.movement = movement;
   var animation = new snabbtjs.AttentionAnimation(options);
 
@@ -533,98 +532,64 @@ snabbtjs.currentAnimationState = function(element) {
 /**
  * Parses an animation configuration object and returns a snabbtjs.State instance
  */
-snabbtjs.stateFromOptions = function(p, options) {
-  if(!p)
-    p = new snabbtjs.State({});
-  var position = options.position;
-  var rotation = options.rotation;
-  var skew = options.skew;
-  var rotationPost = options.rotationPost;
-  var scale = options.scale;
-  var width = options.width;
-  var height = options.height;
-  var opacity = options.opacity;
+snabbtjs.stateFromOptions = function(options, state, useFromPrefix) {
+  if (!state)
+    state = new snabbtjs.State({});
+  var position = 'position';
+  var rotation = 'rotation';
+  var skew = 'skew';
+  var rotationPost = 'rotationPost';
+  var scale = 'scale';
+  var width = 'width';
+  var height = 'height';
+  var opacity = 'opacity';
 
-  if(position) {
-    p.x = position[0];
-    p.y = position[1];
-    p.z = position[2];
+  if(useFromPrefix) {
+    position = 'fromPosition';
+    rotation = 'fromRotation';
+    skew = 'fromSkew';
+    rotationPost = 'fromRotationPost';
+    scale = 'fromScale';
+    width = 'fromWidth';
+    height = 'fromHeight';
+    opacity = 'fromOpacity';
   }
-  if(rotation) {
-    p.ax = rotation[0];
-    p.ay = rotation[1];
-    p.az = rotation[2];
-  }
-  if(skew) {
-    p.skewX = skew[0];
-    p.skewY = skew[1];
-  }
-  if(rotationPost) {
-    p.bx = rotationPost[0];
-    p.by = rotationPost[1];
-    p.bz = rotationPost[2];
-  }
-  if(scale) {
-    p.sx = scale[0];
-    p.sy = scale[1];
-  }
-  if(width !== undefined) {
-    p.width = width;
-  }
-  if(height !== undefined) {
-    p.height = height;
-  }
-  if(opacity !== undefined) {
-    p.opacity = opacity;
-  }
-  return p;
-};
+  var o = options;
 
-snabbtjs.stateFromFromOptions = function(p, options) {
-  var fromPosition = options.fromPosition;
-  var fromRotation = options.fromRotation;
-  var fromSkew = options.fromSkew;
-  var fromRotationPost = options.fromRotationPost;
-  var fromScale = options.fromScale;
-  var fromWidth = options.fromWidth;
-  var fromHeight = options.fromHeight;
-  var fromOpacity = options.fromOpacity;
-  if(!p)
-    p = new snabbtjs.State({});
+  if(o[position]) {
+    state.x = o[position][0];
+    state.y = o[position][1];
+    state.z = o[position][2];
+  }
+  if(o[rotation]) {
+    state.ax = o[rotation][0];
+    state.ay = o[rotation][1];
+    state.az = o[rotation][2];
+  }
+  if(o[skew]) {
+    state.skewX = o[skew][0];
+    state.skewY = o[skew][1];
+  }
+  if(o[rotationPost]) {
+    state.bx = o[rotationPost][0];
+    state.by = o[rotationPost][1];
+    state.bz = o[rotationPost][2];
+  }
+  if(o[scale]) {
+    state.sx = o[scale][0];
+    state.sy = o[scale][1];
+  }
+  if(o[width] !== undefined) {
+    state.width = o[width];
+  }
+  if(o[height] !== undefined) {
+    state.height = o[height];
+  }
+  if(o[opacity] !== undefined) {
+    state.opacity = o[opacity];
+  }
+  return state;
 
-  if(fromPosition) {
-    p.x = fromPosition[0];
-    p.y = fromPosition[1];
-    p.z = fromPosition[2];
-  }
-  if(fromRotation) {
-    p.ax =  fromRotation[0];
-    p.ay =  fromRotation[1];
-    p.az =  fromRotation[2];
-  }
-  if(fromSkew) {
-    p.skewX =  fromSkew[0];
-    p.skewY =  fromSkew[1];
-  }
-  if(fromRotationPost) {
-    p.bx =  fromRotationPost[0];
-    p.by =  fromRotationPost[1];
-    p.bz =  fromRotationPost[2];
-  }
-  if(fromScale) {
-    p.sx =  fromScale[0];
-    p.sy =  fromScale[1];
-  }
-  if(fromWidth !== undefined) {
-    p.width =  fromWidth;
-  }
-  if(fromHeight !== undefined) {
-    p.height =  fromHeight;
-  }
-  if(fromOpacity !== undefined) {
-    p.opacity =  fromOpacity;
-  }
-  return p;
 };
 
 snabbtjs.setupAnimationOptions = function(start, end, options) {
