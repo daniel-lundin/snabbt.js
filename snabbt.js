@@ -55,6 +55,11 @@ snabbtjs.Animation.prototype.stopped = function() {
   return this._stopped;
 };
 
+snabbtjs.Animation.prototype.restart = function() {
+  // Restart timer
+  this.startTime = undefined;
+};
+
 snabbtjs.Animation.prototype.tick = function(time) {
   var startTime = this.startTime;
   var currentTime = this.currentTime;
@@ -186,6 +191,7 @@ snabbtjs.AttentionAnimation = function(options) {
   options.equilibriumPosition = 0;
   this.spring = new snabbtjs.SpringEasing(options);
   this._stopped = false;
+  this.options = options;
 };
 
 snabbtjs.AttentionAnimation.prototype.stop = function() {
@@ -236,6 +242,11 @@ snabbtjs.AttentionAnimation.prototype.currentState = function() {
 
 snabbtjs.AttentionAnimation.prototype.completed = function() {
   return this.spring.equilibrium || this._stopped;
+};
+
+snabbtjs.AttentionAnimation.prototype.restart = function() {
+  // Restart spring
+  this.spring = new snabbtjs.SpringEasing(this.options);
 };
 
 // Returns animation constructors based on options
@@ -425,7 +436,7 @@ snabbtjs.snabbtSingleElement = function(arg1, arg2, arg3) {
     if(options.loop > 1 && !animation.stopped()) {
       // Loop current animation
       options.loop -= 1;
-      animation = snabbtjs.createAnimation(animOptions);
+      animation.restart();
       snabbtjs.requestAnimationFrame(tick);
     } else {
       if(options.callback) {
@@ -438,7 +449,8 @@ snabbtjs.snabbtSingleElement = function(arg1, arg2, arg3) {
 
         start = snabbtjs.stateFromFromOptions(end, options);
         end = snabbtjs.stateFromOptions(new snabbtjs.State({}), options);
-        snabbtjs.setupAnimationOptions(start, end, options);
+        options = snabbtjs.setupAnimationOptions(start, end, options);
+
         animation = new snabbtjs.Animation(options);
         snabbtjs.runningAnimations.push([element, animation]);
 
@@ -463,6 +475,15 @@ snabbtjs.setupAttentionAnimation = function(element,  options) {
     animation.updateElement(element);
     if(!animation.completed()) {
       snabbtjs.requestAnimationFrame(tick);
+    } else {
+      if(options.callback) {
+        options.callback();
+      }
+      if(options.loop && options.loop > 1) {
+        options.loop--;
+        animation.restart();
+        snabbtjs.requestAnimationFrame(tick);
+      }
     }
   }
   snabbtjs.requestAnimationFrame(tick);

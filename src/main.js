@@ -73,7 +73,7 @@ snabbtjs.snabbtSingleElement = function(arg1, arg2, arg3) {
     if(options.loop > 1 && !animation.stopped()) {
       // Loop current animation
       options.loop -= 1;
-      animation = snabbtjs.createAnimation(animOptions);
+      animation.restart();
       snabbtjs.requestAnimationFrame(tick);
     } else {
       if(options.callback) {
@@ -86,7 +86,8 @@ snabbtjs.snabbtSingleElement = function(arg1, arg2, arg3) {
 
         start = snabbtjs.stateFromFromOptions(end, options);
         end = snabbtjs.stateFromOptions(new snabbtjs.State({}), options);
-        snabbtjs.setupAnimationOptions(start, end, options);
+        options = snabbtjs.setupAnimationOptions(start, end, options);
+
         animation = new snabbtjs.Animation(options);
         snabbtjs.runningAnimations.push([element, animation]);
 
@@ -111,6 +112,15 @@ snabbtjs.setupAttentionAnimation = function(element,  options) {
     animation.updateElement(element);
     if(!animation.completed()) {
       snabbtjs.requestAnimationFrame(tick);
+    } else {
+      if(options.callback) {
+        options.callback();
+      }
+      if(options.loop && options.loop > 1) {
+        options.loop--;
+        animation.restart();
+        snabbtjs.requestAnimationFrame(tick);
+      }
     }
   }
   snabbtjs.requestAnimationFrame(tick);

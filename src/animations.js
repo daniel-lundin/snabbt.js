@@ -39,6 +39,11 @@ snabbtjs.Animation.prototype.stopped = function() {
   return this._stopped;
 };
 
+snabbtjs.Animation.prototype.restart = function() {
+  // Restart timer
+  this.startTime = undefined;
+};
+
 snabbtjs.Animation.prototype.tick = function(time) {
   var startTime = this.startTime;
   var currentTime = this.currentTime;
@@ -170,6 +175,7 @@ snabbtjs.AttentionAnimation = function(options) {
   options.equilibriumPosition = 0;
   this.spring = new snabbtjs.SpringEasing(options);
   this._stopped = false;
+  this.options = options;
 };
 
 snabbtjs.AttentionAnimation.prototype.stop = function() {
@@ -220,6 +226,11 @@ snabbtjs.AttentionAnimation.prototype.currentState = function() {
 
 snabbtjs.AttentionAnimation.prototype.completed = function() {
   return this.spring.equilibrium || this._stopped;
+};
+
+snabbtjs.AttentionAnimation.prototype.restart = function() {
+  // Restart spring
+  this.spring = new snabbtjs.SpringEasing(this.options);
 };
 
 // Returns animation constructors based on options
