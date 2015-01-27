@@ -10,11 +10,27 @@ snabbtjs.snabbt = function(arg1, arg2, arg3) {
     var aggregateChainer = {
       chainers: [],
       then: function(opts) {
-        var chainers = this.chainers;
-        var len = this.chainers.length;
-        for(var j=0;j<len;++j) {
-          chainers[j].then(opts);
-        }
+        this.chainers.forEach(function(chainer) {
+          chainer.then(opts);
+        });
+        return aggregateChainer;
+      },
+      setValue: function(value) {
+        this.chainers.forEach(function(chainer) {
+          chainer.setValue(value);
+        });
+        return aggregateChainer;
+      },
+      finish: function() {
+        this.chainers.forEach(function(chainer) {
+          chainer.finish();
+        });
+        return aggregateChainer;
+      },
+      rollback: function() {
+        this.chainers.forEach(function(chainer) {
+          chainer.rollback();
+        });
         return aggregateChainer;
       }
     };
@@ -97,6 +113,8 @@ snabbtjs.snabbtSingleElement = function(arg1, arg2, arg3) {
   }
 
   snabbtjs.requestAnimationFrame(tick);
+  if(options.manual)
+    return animation;
   return chainer;
 };
 

@@ -45,6 +45,10 @@ snabbtjs.Animation = function(options) {
   this.startTime = 0;
   this.currentTime = 0;
   this._stopped = false;
+
+  // Manual
+  this.manual = options.manual;
+  this.value = 0;
 };
 
 snabbtjs.Animation.prototype.stop = function() {
@@ -55,12 +59,36 @@ snabbtjs.Animation.prototype.stopped = function() {
   return this._stopped;
 };
 
+snabbtjs.Animation.prototype.finish = function(callback) {
+  this.manual = false;
+  var duration = this.duration * this.value;
+  this.startTime = this.currentTime - duration;
+  this.manualCallback = callback;
+};
+
+snabbtjs.Animation.prototype.rollback = function(callback) {
+  this.manual = false;
+  var duration = this.duration * (1 - this.value);
+  this.startTime = this.currentTime - duration;
+  var oldStart = this._startState;
+  this._startState = this._endState;
+  this._endState = oldStart;
+  this.manualCallback = callback;
+};
+
 snabbtjs.Animation.prototype.restart = function() {
   // Restart timer
   this.startTime = undefined;
 };
 
 snabbtjs.Animation.prototype.tick = function(time) {
+  if(this.manual) {
+    this.currentTime = time;
+    this.easing.tick(this.value);
+    this.updateCurrentTransform();
+    return;
+  }
+
   var startTime = this.startTime;
   var currentTime = this.currentTime;
   var delay = this.delay;
@@ -78,6 +106,10 @@ snabbtjs.Animation.prototype.tick = function(time) {
 
   this.easing.tick(curr/duration);
   this.updateCurrentTransform();
+};
+
+snabbtjs.Animation.prototype.setValue = function(value) {
+  this.value = value;
 };
 
 snabbtjs.Animation.prototype.currentState = function() {
@@ -148,7 +180,6 @@ snabbtjs.ValueFeededAnimation.prototype.tick = function(time) {
   if(time - this.startTime > this.delay)
     this.currentTime = time - this.delay;
 
-  //console.log(this.currentTime);
   var curr = Math.min(Math.max(0.001, this.currentTime - this.startTime), this.duration);
   this.easing.tick(curr/this.duration);
 
@@ -339,7 +370,10 @@ snabbtjs.Easer.prototype.value = function() {
 };
 
 snabbtjs.Easer.prototype.completed = function() {
-  return this.lastValue >= 1;
+  if(this.lastValue >= 1) {
+    return this.lastValue;
+  }
+  return false;
 };
 
 snabbtjs.createEaser = function(easerName, options) {
@@ -373,11 +407,27 @@ snabbtjs.snabbt = function(arg1, arg2, arg3) {
     var aggregateChainer = {
       chainers: [],
       then: function(opts) {
-        var chainers = this.chainers;
-        var len = this.chainers.length;
-        for(var j=0;j<len;++j) {
-          chainers[j].then(opts);
-        }
+        this.chainers.forEach(function(chainer) {
+          chainer.then(opts);
+        });
+        return aggregateChainer;
+      },
+      setValue: function(value) {
+        this.chainers.forEach(function(chainer) {
+          chainer.setValue(value);
+        });
+        return aggregateChainer;
+      },
+      finish: function() {
+        this.chainers.forEach(function(chainer) {
+          chainer.finish();
+        });
+        return aggregateChainer;
+      },
+      rollback: function() {
+        this.chainers.forEach(function(chainer) {
+          chainer.rollback();
+        });
         return aggregateChainer;
       }
     };
@@ -460,6 +510,8 @@ snabbtjs.snabbtSingleElement = function(arg1, arg2, arg3) {
   }
 
   snabbtjs.requestAnimationFrame(tick);
+  if(options.manual)
+    return animation;
   return chainer;
 };
 
