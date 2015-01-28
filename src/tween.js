@@ -1,41 +1,41 @@
 var snabbtjs = snabbtjs || {};
 
 snabbtjs.TweenStates = function(start, end, result, tweenValue) {
-  var dx = (end.x - start.x);
-  var dy = (end.y - start.y);
-  var dz = (end.z - start.z);
-  var dax = (end.ax - start.ax);
-  var day = (end.ay - start.ay);
-  var daz = (end.az - start.az);
-  var dbx = (end.bx - start.bx);
-  var dby = (end.by - start.by);
-  var dbz = (end.bz - start.bz);
-  var dsx = (end.sx - start.sx);
-  var dsy = (end.sy - start.sy);
-  var dskewx = (end.skewX - start.skewX);
-  var dskewy = (end.skewY - start.skewY);
-  var dwidth = (end.width - start.width);
-  var dheight = (end.height - start.height);
-  var dopacity = (end.opacity - start.opacity);
+  var dX = (end.position[0] - start.position[0]);
+  var dY = (end.position[1] - start.position[1]);
+  var dZ = (end.position[2] - start.position[2]);
+  var dAX = (end.rotation[0] - start.rotation[0]);
+  var dAY = (end.rotation[1] - start.rotation[1]);
+  var dAZ = (end.rotation[2] - start.rotation[2]);
+  var dBX = (end.rotationPost[0] - start.rotationPost[0]);
+  var dBY = (end.rotationPost[1] - start.rotationPost[1]);
+  var dBZ = (end.rotationPost[2] - start.rotationPost[2]);
+  var dSX = (end.scale[0] - start.scale[0]);
+  var dSY = (end.scale[1] - start.scale[1]);
+  var dSkewX = (end.skew[0] - start.skew[0]);
+  var dSkewY = (end.skew[1] - start.skew[1]);
+  var dWidth = (end.width - start.width);
+  var dHeight = (end.height - start.height);
+  var dOpacity = (end.opacity - start.opacity);
 
-  result.ax = start.ax + tweenValue*dax;
-  result.ay = start.ay + tweenValue*day;
-  result.az = start.az + tweenValue*daz;
-  result.x = start.x + tweenValue*dx;
-  result.y = start.y + tweenValue*dy;
-  result.z = start.z + tweenValue*dz;
-  result.bx = start.bx + tweenValue*dbx;
-  result.by = start.by + tweenValue*dby;
-  result.bz = start.bz + tweenValue*dbz;
-  result.skewX = start.skewX + tweenValue*dskewx;
-  result.skewY = start.skewY + tweenValue*dskewy;
-  result.sx = start.sx + tweenValue*dsx;
-  result.sy = start.sy + tweenValue*dsy;
+  result.position[0] = start.position[0] + tweenValue*dX;
+  result.position[1] = start.position[1] + tweenValue*dY;
+  result.position[2] = start.position[2] + tweenValue*dZ;
+  result.rotation[0] = start.rotation[0] + tweenValue*dAX;
+  result.rotation[1] = start.rotation[1] + tweenValue*dAY;
+  result.rotation[2] = start.rotation[2] + tweenValue*dAZ;
+  result.rotationPost[0] = start.rotationPost[0] + tweenValue*dBX;
+  result.rotationPost[1] = start.rotationPost[1] + tweenValue*dBY;
+  result.rotationPost[2] = start.rotationPost[2] + tweenValue*dBZ;
+  result.skew[0] = start.skew[0] + tweenValue*dSkewX;
+  result.skew[1] = start.skew[1] + tweenValue*dSkewY;
+  result.scale[0] = start.scale[0] + tweenValue*dSX;
+  result.scale[1] = start.scale[1] + tweenValue*dSY;
 
   if(end.width !== undefined)
-    result.width = start.width + tweenValue*dwidth;
+    result.width = start.width + tweenValue*dWidth;
   if(end.height !== undefined)
-    result.height = start.height + tweenValue*dheight;
+    result.height = start.height + tweenValue*dHeight;
   if(end.opacity !== undefined)
-    result.opacity = start.opacity + tweenValue*dopacity;
+    result.opacity = start.opacity + tweenValue*dOpacity;
 };

@@ -5,38 +5,28 @@ var snabbtjs = snabbtjs || {};
 // ------------------------------
 
 snabbtjs.Animation = function(options) {
-  this._startState = options.startState;
-  this._endState = options.endState;
-  this.offset = options.offset;
-  this.duration = options.duration || 500;
-  this.delay = options.delay || 0;
-  this.easing = snabbtjs.createEaser('linear');
+  var optionOrDefault = snabbtjs.optionOrDefault;
+  this.startState = options.startState;
+  this.endState = options.endState;
+  this.duration = optionOrDefault(options.duration, 500);
+  this.delay = optionOrDefault(options.delay, 0);
   this.perspective = options.perspective;
-  if(options.easing)
-    this.easing = snabbtjs.createEaser(options.easing, options);
-  this._currentState = this._startState.clone();
-  var currentState = this._currentState;
-  var endState = this._endState;
-  if(options.offset) {
-    currentState.offsetX = this.offset[0];
-    currentState.offsetY = this.offset[1];
-    currentState.offsetZ = this.offset[2];
-    endState.offsetX = this.offset[0];
-    endState.offsetY = this.offset[1];
-    endState.offsetZ = this.offset[2];
-  }
+  this.easing = snabbtjs.createEaser(optionOrDefault(options.easing, 'linear'), options);
+  this.currentState = this.startState.clone();
+  this.transformOrigin = options.transformOrigin;
+  this.currentState.transformOrigin = options.transformOrigin;
 
   this.startTime = 0;
   this.currentTime = 0;
-  this._stopped = false;
+  this.stopped = false;
 };
 
 snabbtjs.Animation.prototype.stop = function() {
-  this._stopped = true;
+  this.stopped = true;
 };
 
-snabbtjs.Animation.prototype.stopped = function() {
-  return this._stopped;
+snabbtjs.Animation.prototype.isStopped = function() {
+  return this.stopped;
 };
 
 snabbtjs.Animation.prototype.restart = function() {
@@ -45,36 +35,32 @@ snabbtjs.Animation.prototype.restart = function() {
 };
 
 snabbtjs.Animation.prototype.tick = function(time) {
-  var startTime = this.startTime;
-  var currentTime = this.currentTime;
-  var delay = this.delay;
-  var duration = this.duration;
-  if(this._stopped)
+  if(this.stopped)
     return;
 
   // If first tick, set start_time
-  if(!startTime)
-    this.startTime = startTime = time;
-  if(time - startTime > delay)
-    this.currentTime = currentTime = time - delay;
+  if(!this.startTime) {
+    this.startTime = time;
+  }
+  if(time - this.startTime > this.delay)
+    this.currentTime = time - this.delay;
 
-  var curr = Math.min(Math.max(0.0, currentTime - startTime), duration);
-
-  this.easing.tick(curr/duration);
+  var curr = Math.min(Math.max(0.0, this.currentTime - this.startTime), this.duration);
+  this.easing.tick(curr/this.duration);
   this.updateCurrentTransform();
 };
 
-snabbtjs.Animation.prototype.currentState = function() {
-  return this._currentState;
+snabbtjs.Animation.prototype.getCurrentState = function() {
+  return this.currentState;
 };
 
 snabbtjs.Animation.prototype.updateCurrentTransform = function() {
   var tweenValue = this.easing.value();
-  snabbtjs.TweenStates(this._startState, this._endState, this._currentState, tweenValue);
+  snabbtjs.TweenStates(this.startState, this.endState, this.currentState, tweenValue);
 };
 
 snabbtjs.Animation.prototype.completed = function() {
-  if(this._stopped)
+  if(this.stopped)
     return true;
   if(this.startTime === 0) {
     return false;
@@ -83,8 +69,9 @@ snabbtjs.Animation.prototype.completed = function() {
 };
 
 snabbtjs.Animation.prototype.updateElement = function(element) {
-  var matrix = this._currentState.asMatrix();
-  var properties = this._currentState.properties();
+  var matrix = this.currentState.asMatrix();
+  var properties = this.currentState.properties();
+  snabbtjs.setTransformOrigin(element, this.transformOrigin);
   snabbtjs.updateElementTransform(element, matrix, this.perspective);
   snabbtjs.updateElementProperties(element, properties);
 };
@@ -106,24 +93,25 @@ snabbtjs.ValueFeededAnimation = function(options) {
   this.easing = snabbtjs.createEaser('linear');
   if(options.easing)
     this.easing = snabbtjs.createEaser(options.easing, options);
-  this._currentState = new snabbtjs.State({});
+  this.currentState = new snabbtjs.State({});
   this.currentMatrix = this.valueFeeder(0, new snabbtjs.Matrix());
+  this.transformOrigin = options.transformOrigin;
 
   this.startTime = 0;
   this.currentTime = 0;
-  this._stopped = false;
+  this.stopped = false;
 };
 
 snabbtjs.ValueFeededAnimation.prototype.stop = function() {
-  this._stopped = true;
+  this.stopped = true;
 };
 
-snabbtjs.ValueFeededAnimation.prototype.stopped = function() {
-  return this._stopped;
+snabbtjs.ValueFeededAnimation.prototype.isStopped = function() {
+  return this.stopped;
 };
 
 snabbtjs.ValueFeededAnimation.prototype.tick = function(time) {
-  if(this._stopped)
+  if(this.stopped)
     return;
 
   // If first tick, set start_time
@@ -132,15 +120,14 @@ snabbtjs.ValueFeededAnimation.prototype.tick = function(time) {
   if(time - this.startTime > this.delay)
     this.currentTime = time - this.delay;
 
-  //console.log(this.currentTime);
   var curr = Math.min(Math.max(0.001, this.currentTime - this.startTime), this.duration);
   this.easing.tick(curr/this.duration);
 
   this.updateCurrentTransform();
 };
 
-snabbtjs.ValueFeededAnimation.prototype.currentState = function() {
-  return this._currentState;
+snabbtjs.ValueFeededAnimation.prototype.getCurrentState = function() {
+  return this.currentState;
 };
 
 snabbtjs.ValueFeededAnimation.prototype.updateCurrentTransform = function() {
@@ -151,12 +138,13 @@ snabbtjs.ValueFeededAnimation.prototype.updateCurrentTransform = function() {
 };
 
 snabbtjs.ValueFeededAnimation.prototype.completed = function() {
-  if(this._stopped)
+  if(this.stopped)
     return true;
   return this.easing.completed();
 };
 
 snabbtjs.ValueFeededAnimation.prototype.updateElement = function(element) {
+  snabbtjs.setTransformOrigin(element, this.transformOrigin);
   snabbtjs.updateElementTransform(element, this.currentMatrix.data, this.perspective);
 };
 
@@ -174,21 +162,21 @@ snabbtjs.AttentionAnimation = function(options) {
   options.initialVelocity = 0.1;
   options.equilibriumPosition = 0;
   this.spring = new snabbtjs.SpringEasing(options);
-  this._stopped = false;
+  this.stopped = false;
   this.options = options;
 };
 
 snabbtjs.AttentionAnimation.prototype.stop = function() {
-  this._stopped = true;
+  this.stopped = true;
 };
 
-snabbtjs.AttentionAnimation.prototype.stopped = function(time) {
-  return this._stopped;
+snabbtjs.AttentionAnimation.prototype.isStopped = function(time) {
+  return this.stopped;
 };
 
 snabbtjs.AttentionAnimation.prototype.tick = function(time) {
   var spring = this.spring;
-  if(this._stopped)
+  if(this.stopped)
     return;
   if(spring.equilibrium)
     return;
@@ -201,15 +189,22 @@ snabbtjs.AttentionAnimation.prototype.updateMovement = function() {
   var currentMovement = this.currentMovement;
   var movement = this.movement;
   var position = this.spring.position;
-  currentMovement.x = movement.x * position;
-  currentMovement.y = movement.y * position;
-  currentMovement.z = movement.z * position;
-  currentMovement.ax = movement.ax * position;
-  currentMovement.ay = movement.ay * position;
-  currentMovement.az = movement.az * position;
-  currentMovement.bx = movement.bx * position;
-  currentMovement.by = movement.by * position;
-  currentMovement.bz = movement.bz * position;
+  currentMovement.position[0] = movement.position[0] * position;
+  currentMovement.position[1] = movement.position[1] * position;
+  currentMovement.position[2] = movement.position[2] * position;
+  currentMovement.rotation[0] = movement.rotation[0] * position;
+  currentMovement.rotation[1] = movement.rotation[1] * position;
+  currentMovement.rotation[2] = movement.rotation[2] * position;
+  currentMovement.rotationPost[0] = movement.rotationPost[0] * position;
+  currentMovement.rotationPost[1] = movement.rotationPost[1] * position;
+  currentMovement.rotationPost[2] = movement.rotationPost[2] * position;
+  if(movement.scale[0] !== 1 && movement.scale[1] !== 1) {
+    currentMovement.scale[0] = 1 + movement.scale[0] * position;
+    currentMovement.scale[1] = 1 + movement.scale[1] * position;
+  }
+
+  currentMovement.skew[0] = movement.skew[0] * position;
+  currentMovement.skew[1] = movement.skew[1] * position;
 };
 
 snabbtjs.AttentionAnimation.prototype.updateElement = function(element) {
@@ -220,12 +215,12 @@ snabbtjs.AttentionAnimation.prototype.updateElement = function(element) {
   snabbtjs.updateElementProperties(element, properties);
 };
 
-snabbtjs.AttentionAnimation.prototype.currentState = function() {
+snabbtjs.AttentionAnimation.prototype.getCurrentState = function() {
   return this.currentMovement;
 };
 
 snabbtjs.AttentionAnimation.prototype.completed = function() {
-  return this.spring.equilibrium || this._stopped;
+  return this.spring.equilibrium || this.stopped;
 };
 
 snabbtjs.AttentionAnimation.prototype.restart = function() {

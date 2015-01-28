@@ -24,7 +24,7 @@ function animate(prefix, index) {
     snabbt(stick, {
       fromPosition: [0, -(STICK_COUNT/2) * 5 + 5*i, 0],
       position: [200, 0, 0],
-      duration: 500,
+      duration: 1000,
       easing: 'ease',
     }).then({
       position: [200, 0, 0],

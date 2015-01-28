@@ -119,8 +119,6 @@
             <pre><code>snabbt(element, {
   position: [100, 0, 0],
   rotation: [Math.PI, 0, 0],
-  duration: 1000,
-  delay: 100,
   easing: 'ease'
 });</code></pre>
           </div>
@@ -150,26 +148,6 @@
         <p>Animation can be stopped at any time by replacing the animation configuration with the string literal 'stop':</p>
         <pre><code>snabbt(element, 'stop');</code></pre>
         <p class="extra-top-margin">If a new animation is started with the same element it will start from the stopped position unless the 'from'-properties are used. </p>
-        <h3>jQuery</h3>
-        <p>snabbt.js works with or without jQuery. If jQuery is detected snabbt.js will be loaded as a jQuery-plugin. When using snabbt.js with jQuery, the first parameter is the animation configuration:</p>
-        <div class="row">
-          <div class="six columns">
-            <h5>With jQuery</h5>
-            <pre><code>$element.snabbt({
-  position: [150, 0, 0],
-  rotation: [0, 0, Math.PI],
-});</code></pre>
-          </div>
-          <div class="six columns">
-            <h5>Without jQuery</h5>
-            <pre><code>snabbt(element, {
-  position: [150, 0, 0],
-  rotation: [0, 0, Math.PI],
-});</code></pre>
-          </div>
-
-        </div>
-
       </section>
 
 
@@ -251,7 +229,7 @@
         <p>This section describes some of the more advanced usages.</p>
 
         <h3>Value feeding</h3>
-        <p>The animation object is very simple to work with but has it limitations. Sometimes you want to do the transforms in another order. This is where value feeding comes handy. The <em>valueFeeder</em> parameter expects a function that takes one parameter which will progress from 0 to 1 and a identity mtarix. Every time it is called you should return a matrix(see <a href="#matrix">Matrix API</a>) representing the current transform.</p>
+        <p>The animation object is very simple to work with but has it limitations. Sometimes you want to do the transforms in another order. This is where value feeding comes handy. The <em>valueFeeder</em> parameter expects a function that takes two parameters, one which will progress from 0 to 1 and an identity matrix that you can modify. The function will be called every frame and should return a matrix(see <a href="#matrix">Matrix API</a>) representing the current transform.</p>
         <pre><code>snabbt(element, {
   valueFeeder: function(i, matrix) {
     var x = Math.sin(i*Math.PI);
@@ -261,6 +239,16 @@
 });</code></pre>
         <button id="value-feed-example" class="button-primary extra-top-margin">Run example</button>
 
+        <h3>Transform origin</h3>
+        <p>By default, rotations are applied around the center of the element. By using <em>transformOrigin</em> rotations can be performed around abritary positions.</p>
+        <pre><code>snabbt(element, {
+  rotation: [0, 2*Math.PI, 0],
+  transformOrigin: [element.clientWidth, 0, 0]
+});</code></pre>
+        <button id='transform-origin-example' class="button-primary extra-top-margin">Run example</button>
+        <div>
+          <button id='transform-origin-example-2' class="button-primary extra-top-margin">Chained example</button>
+        </div>
         <h3>Attention animations</h3>
         <p>snabbt.js has support for attention animations. This can be useful in form validations when you want to draw attention to a form element for example. Attention animation use spring easings.</p>
         <div class="row">
@@ -303,6 +291,28 @@ snabbt(element, {
 });
 </pre></code>
       </section>
+      <section>
+        <h3>jQuery</h3>
+        <p>snabbt.js works with or without jQuery. If jQuery is detected snabbt.js will be loaded as a jQuery-plugin. When using snabbt.js with jQuery, the first parameter is the animation configuration:</p>
+        <div class="row">
+          <div class="six columns">
+            <h5>With jQuery</h5>
+            <pre><code>$element.snabbt({
+  position: [150, 0, 0],
+  rotation: [0, 0, Math.PI],
+});</code></pre>
+          </div>
+          <div class="six columns">
+            <h5>Without jQuery</h5>
+            <pre><code>snabbt(element, {
+  position: [150, 0, 0],
+  rotation: [0, 0, Math.PI],
+});</code></pre>
+          </div>
+
+        </div>
+      </section>
+
       <section id="matrix">
         <h2>Matrix API</h2>
         <p>Matrix operations are performed using the Matrix class. The class has the following methods:</p>

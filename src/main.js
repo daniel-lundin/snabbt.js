@@ -43,7 +43,7 @@ snabbtjs.snabbtSingleElement = function(arg1, arg2, arg3) {
   var start = snabbtjs.currentAnimationState(element);
   // from has precendance over current animation state
   start = snabbtjs.stateFromOptions(options, start, true);
-  end = snabbtjs.stateFromOptions(options);
+  var end = snabbtjs.stateFromOptions(options);
 
   var animOptions = snabbtjs.setupAnimationOptions(start, end, options);
   var animation = snabbtjs.createAnimation(animOptions);
@@ -62,14 +62,14 @@ snabbtjs.snabbtSingleElement = function(arg1, arg2, arg3) {
   function tick(time) {
     animation.tick(time);
     animation.updateElement(element);
-    if(animation.stopped())
+    if(animation.isStopped())
       return;
 
     if(!animation.completed())
       return snabbtjs.requestAnimationFrame(tick);
 
 
-    if(options.loop > 1 && !animation.stopped()) {
+    if(options.loop > 1 && !animation.isStopped()) {
       // Loop current animation
       options.loop -= 1;
       animation.restart();
@@ -139,13 +139,13 @@ snabbtjs.stopAnimation = function(element) {
 };
 
 snabbtjs.findAnimationState = function(animationList, element) {
-  for(var i= 0,len=animationList.length;i<len;++i) {
+  for(var i=0,len=animationList.length;i<len;++i) {
     var currentAnimation = animationList[i];
     var animatedElement = currentAnimation[0];
     var animation = currentAnimation[1];
 
     if(animatedElement === element) {
-      var state = animation.currentState();
+      var state = animation.getCurrentState();
       animation.stop();
       return state;
     }
@@ -191,40 +191,17 @@ snabbtjs.stateFromOptions = function(options, state, useFromPrefix) {
     height = 'fromHeight';
     opacity = 'fromOpacity';
   }
-  var o = options;
 
-  if(o[position]) {
-    state.x = o[position][0];
-    state.y = o[position][1];
-    state.z = o[position][2];
-  }
-  if(o[rotation]) {
-    state.ax = o[rotation][0];
-    state.ay = o[rotation][1];
-    state.az = o[rotation][2];
-  }
-  if(o[skew]) {
-    state.skewX = o[skew][0];
-    state.skewY = o[skew][1];
-  }
-  if(o[rotationPost]) {
-    state.bx = o[rotationPost][0];
-    state.by = o[rotationPost][1];
-    state.bz = o[rotationPost][2];
-  }
-  if(o[scale]) {
-    state.sx = o[scale][0];
-    state.sy = o[scale][1];
-  }
-  if(o[width] !== undefined) {
-    state.width = o[width];
-  }
-  if(o[height] !== undefined) {
-    state.height = o[height];
-  }
-  if(o[opacity] !== undefined) {
-    state.opacity = o[opacity];
-  }
+  var optionOrDefault = snabbtjs.optionOrDefault;
+  state.position = optionOrDefault(options[position], state.position);
+  state.rotation = optionOrDefault(options[rotation], state.rotation);
+  state.rotationPost = optionOrDefault(options[rotationPost], state.rotationPost);
+  state.skew = optionOrDefault(options[skew], state.skew);
+  state.scale = optionOrDefault(options[scale], state.scale);
+  state.opacity = options[opacity];
+  state.width = options[width];
+  state.height = options[height];
+
   return state;
 
 };

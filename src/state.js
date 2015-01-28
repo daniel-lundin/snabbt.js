@@ -1,41 +1,22 @@
 snabbtjs.State = function(config) {
   var optionOrDefault = snabbtjs.optionOrDefault;
-  this.ax = optionOrDefault(config.ax, 0);
-  this.ay = optionOrDefault(config.ay, 0);
-  this.az = optionOrDefault(config.az, 0);
-  this.x = optionOrDefault(config.x, 0);
-  this.y = optionOrDefault(config.y, 0);
-  this.z = optionOrDefault(config.z, 0);
-  this.bx = optionOrDefault(config.bx, 0);
-  this.by = optionOrDefault(config.by, 0);
-  this.bz = optionOrDefault(config.bz, 0);
-  this.skewX = optionOrDefault(config.skewX, 0);
-  this.skewY = optionOrDefault(config.skewY, 0);
-  this.offsetX = optionOrDefault(config.offsetX, 0);
-  this.offsetY = optionOrDefault(config.offsetY, 0);
-  this.offsetZ = optionOrDefault(config.offsetZ, 0);
-  this.sx = optionOrDefault(config.sx, 1);
-  this.sy = optionOrDefault(config.sy, 1);
+  this.position = optionOrDefault(config.position, [0, 0, 0]);
+  this.rotation = optionOrDefault(config.rotation, [0, 0, 0]);
+  this.rotationPost = optionOrDefault(config.rotationPost, [0, 0, 0]);
+  this.skew = optionOrDefault(config.skew, [0, 0]);
+  this.scale = optionOrDefault(config.scale, [1, 1]);
+  this.opacity = config.opacity;
   this.width = config.width;
   this.height = config.height;
-  this.opacity = optionOrDefault(config.opacity, 1);
 };
 
 snabbtjs.State.prototype.clone = function() {
   var p = new snabbtjs.State({
-    ax: this.ax,
-    ay: this.ay,
-    az: this.az,
-    x: this.x,
-    y: this.y,
-    z: this.z,
-    bx: this.bx,
-    by: this.by,
-    bz: this.bz,
-    skewX: this.skewX,
-    skewY: this.skewY,
-    sx: this.sx,
-    sy: this.sy,
+    position: this.position.slice(0),
+    rotation: this.rotation.slice(0),
+    rotationPost: this.rotationPost.slice(0),
+    skew: this.skew.slice(0),
+    scale: this.scale.slice(0),
     height: this.height,
     width: this.width,
     opacity: this.opacity
@@ -46,17 +27,25 @@ snabbtjs.State.prototype.clone = function() {
 snabbtjs.State.prototype.asMatrix = function() {
   var m = new snabbtjs.Matrix();
 
-  m.translate(this.offsetX, this.offsetY, this.offsetZ);
+  if(this.transformOrigin)
+    m.translate(-this.transformOrigin[0], -this.transformOrigin[1], -this.transformOrigin[2]);
 
-  m.scale(this.sx, this.sy);
-  m.skew(this.skewX, this.skewY);
-  m.rotateX(this.ax);
-  m.rotateY(this.ay);
-  m.rotateZ(this.az);
-  m.translate(this.x, this.y, this.z);
-  m.rotateX(this.bx);
-  m.rotateY(this.by);
-  m.rotateZ(this.bz);
+  m.scale(this.scale[0], this.scale[1]);
+
+  m.skew(this.skew[0], this.skew[1]);
+
+  m.rotateX(this.rotation[0]);
+  m.rotateY(this.rotation[1]);
+  m.rotateZ(this.rotation[2]);
+
+  m.translate(this.position[0], this.position[1], this.position[2]);
+
+  m.rotateX(this.rotationPost[0]);
+  m.rotateY(this.rotationPost[1]);
+  m.rotateZ(this.rotationPost[2]);
+
+  if(this.transformOrigin)
+    m.translate(this.transformOrigin[0], this.transformOrigin[1], this.transformOrigin[2]);
   return m.data;
 };
 

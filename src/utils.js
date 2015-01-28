@@ -7,6 +7,13 @@ snabbtjs.optionOrDefault = function(option, def) {
   return option;
 };
 
+snabbtjs.setTransformOrigin = function(element, transformOrigin) {
+  if(transformOrigin) {
+    element.style.webkitTransformOrigin = transformOrigin;
+    element.style.transformOrigin = transformOrigin;
+  }
+};
+
 snabbtjs.updateElementTransform = function(element, matrix, perspective) {
   var cssPerspective = '';
   if(perspective) {
@@ -21,6 +28,7 @@ snabbtjs.updateElementProperties = function(element, properties) {
     element.style[key] = properties[key];
   }
 };
+
 
 snabbtjs.isFunction = function(object) {
   return (typeof object === "function");
