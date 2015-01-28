@@ -89,8 +89,9 @@ function init() {
     }
   }
   setupSticks(c1, 'r');
-  animate('r', STICK_COUNT - 1);
   setupSticks(c2, 'l');
+
+  animate('r', STICK_COUNT - 1);
   animate('l', STICK_COUNT - 1);
 
 }

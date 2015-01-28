@@ -30,19 +30,29 @@ snabbtjs.State.prototype.asMatrix = function() {
   if(this.transformOrigin)
     m.translate(-this.transformOrigin[0], -this.transformOrigin[1], -this.transformOrigin[2]);
 
-  m.scale(this.scale[0], this.scale[1]);
+  if(this.scale[0] !== 1 || this.scale[1] !== 1) {
+    m.scale(this.scale[0], this.scale[1]);
+  }
 
-  m.skew(this.skew[0], this.skew[1]);
+  if(this.skew[0] !== 0 || this.skew[1] !== 0) {
+    m.skew(this.skew[0], this.skew[1]);
+  }
 
-  m.rotateX(this.rotation[0]);
-  m.rotateY(this.rotation[1]);
-  m.rotateZ(this.rotation[2]);
+  if(this.rotation[0] !== 0 || this.rotation[1] !== 0 || this.rotation[2] !== 0) {
+    m.rotateX(this.rotation[0]);
+    m.rotateY(this.rotation[1]);
+    m.rotateZ(this.rotation[2]);
+  }
 
-  m.translate(this.position[0], this.position[1], this.position[2]);
+  if(this.position[0] !== 0 || this.position[1] !== 0 || this.position[2] !== 0) {
+    m.translate(this.position[0], this.position[1], this.position[2]);
+  }
 
-  m.rotateX(this.rotationPost[0]);
-  m.rotateY(this.rotationPost[1]);
-  m.rotateZ(this.rotationPost[2]);
+  if(this.rotationPost[0] !== 0 || this.rotationPost[1] !== 0 || this.rotationPost[2] !== 0) {
+    m.rotateX(this.rotationPost[0]);
+    m.rotateY(this.rotationPost[1]);
+    m.rotateZ(this.rotationPost[2]);
+  }
 
   if(this.transformOrigin)
     m.translate(this.transformOrigin[0], this.transformOrigin[1], this.transformOrigin[2]);
