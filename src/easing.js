@@ -82,7 +82,10 @@ snabbtjs.Easer.prototype.value = function() {
 };
 
 snabbtjs.Easer.prototype.completed = function() {
-  return this.lastValue >= 1;
+  if(this.lastValue >= 1) {
+    return this.lastValue;
+  }
+  return false;
 };
 
 snabbtjs.createEaser = function(easerName, options) {

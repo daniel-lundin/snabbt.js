@@ -19,6 +19,10 @@ snabbtjs.Animation = function(options) {
   this.startTime = 0;
   this.currentTime = 0;
   this.stopped = false;
+
+  // Manual
+  this.manual = options.manual;
+  this.value = 0;
 };
 
 snabbtjs.Animation.prototype.stop = function() {
@@ -29,6 +33,21 @@ snabbtjs.Animation.prototype.isStopped = function() {
   return this.stopped;
 };
 
+snabbtjs.Animation.prototype.finish = function(callback) {
+  this.manual = false;
+  var duration = this.duration * this.value;
+  this.startTime = this.currentTime - duration;
+};
+
+snabbtjs.Animation.prototype.rollback = function(callback) {
+  this.manual = false;
+  var duration = this.duration * (1 - this.value);
+  this.startTime = this.currentTime - duration;
+  var oldStart = this.startState;
+  this.startState = this.endState;
+  this.endState = oldStart;
+};
+
 snabbtjs.Animation.prototype.restart = function() {
   // Restart timer
   this.startTime = undefined;
@@ -37,6 +56,12 @@ snabbtjs.Animation.prototype.restart = function() {
 snabbtjs.Animation.prototype.tick = function(time) {
   if(this.stopped)
     return;
+  if(this.manual) {
+    this.currentTime = time;
+    this.easing.tick(this.value);
+    this.updateCurrentTransform();
+    return;
+  }
 
   // If first tick, set start_time
   if(!this.startTime) {
@@ -52,6 +77,10 @@ snabbtjs.Animation.prototype.tick = function(time) {
 
 snabbtjs.Animation.prototype.getCurrentState = function() {
   return this.currentState;
+};
+
+snabbtjs.Animation.prototype.setValue = function(value) {
+  this.value = value;
 };
 
 snabbtjs.Animation.prototype.updateCurrentTransform = function() {
