@@ -1,41 +1,95 @@
 var snabbtjs = snabbtjs || {};
 
-snabbtjs.TweenStates = function(start, end, result, tweenValue) {
-  var dX = (end.position[0] - start.position[0]);
-  var dY = (end.position[1] - start.position[1]);
-  var dZ = (end.position[2] - start.position[2]);
-  var dAX = (end.rotation[0] - start.rotation[0]);
-  var dAY = (end.rotation[1] - start.rotation[1]);
-  var dAZ = (end.rotation[2] - start.rotation[2]);
-  var dBX = (end.rotationPost[0] - start.rotationPost[0]);
-  var dBY = (end.rotationPost[1] - start.rotationPost[1]);
-  var dBZ = (end.rotationPost[2] - start.rotationPost[2]);
-  var dSX = (end.scale[0] - start.scale[0]);
-  var dSY = (end.scale[1] - start.scale[1]);
-  var dSkewX = (end.skew[0] - start.skew[0]);
-  var dSkewY = (end.skew[1] - start.skew[1]);
-  var dWidth = (end.width - start.width);
-  var dHeight = (end.height - start.height);
-  var dOpacity = (end.opacity - start.opacity);
+// ------------------
+// -- StateTweener -- 
+// -------------------
 
-  result.position[0] = start.position[0] + tweenValue*dX;
-  result.position[1] = start.position[1] + tweenValue*dY;
-  result.position[2] = start.position[2] + tweenValue*dZ;
-  result.rotation[0] = start.rotation[0] + tweenValue*dAX;
-  result.rotation[1] = start.rotation[1] + tweenValue*dAY;
-  result.rotation[2] = start.rotation[2] + tweenValue*dAZ;
-  result.rotationPost[0] = start.rotationPost[0] + tweenValue*dBX;
-  result.rotationPost[1] = start.rotationPost[1] + tweenValue*dBY;
-  result.rotationPost[2] = start.rotationPost[2] + tweenValue*dBZ;
-  result.skew[0] = start.skew[0] + tweenValue*dSkewX;
-  result.skew[1] = start.skew[1] + tweenValue*dSkewY;
-  result.scale[0] = start.scale[0] + tweenValue*dSX;
-  result.scale[1] = start.scale[1] + tweenValue*dSY;
+snabbtjs.StateTweener = function(startState, endState, resultState) {
+  this.start = startState;
+  this.end = endState;
+  this.result = resultState;
+};
 
-  if(end.width !== undefined)
-    result.width = start.width + tweenValue*dWidth;
-  if(end.height !== undefined)
-    result.height = start.height + tweenValue*dHeight;
-  if(end.opacity !== undefined)
-    result.opacity = start.opacity + tweenValue*dOpacity;
+snabbtjs.StateTweener.prototype.tween = function(tweenValue) {
+  var dX = (this.end.position[0] - this.start.position[0]);
+  var dY = (this.end.position[1] - this.start.position[1]);
+  var dZ = (this.end.position[2] - this.start.position[2]);
+  var dAX = (this.end.rotation[0] - this.start.rotation[0]);
+  var dAY = (this.end.rotation[1] - this.start.rotation[1]);
+  var dAZ = (this.end.rotation[2] - this.start.rotation[2]);
+  var dBX = (this.end.rotationPost[0] - this.start.rotationPost[0]);
+  var dBY = (this.end.rotationPost[1] - this.start.rotationPost[1]);
+  var dBZ = (this.end.rotationPost[2] - this.start.rotationPost[2]);
+  var dSX = (this.end.scale[0] - this.start.scale[0]);
+  var dSY = (this.end.scale[1] - this.start.scale[1]);
+  var dSkewX = (this.end.skew[0] - this.start.skew[0]);
+  var dSkewY = (this.end.skew[1] - this.start.skew[1]);
+  var dWidth = (this.end.width - this.start.width);
+  var dHeight = (this.end.height - this.start.height);
+  var dOpacity = (this.end.opacity - this.start.opacity);
+
+  this.result.position[0] = this.start.position[0] + tweenValue*dX;
+  this.result.position[1] = this.start.position[1] + tweenValue*dY;
+  this.result.position[2] = this.start.position[2] + tweenValue*dZ;
+  this.result.rotation[0] = this.start.rotation[0] + tweenValue*dAX;
+  this.result.rotation[1] = this.start.rotation[1] + tweenValue*dAY;
+  this.result.rotation[2] = this.start.rotation[2] + tweenValue*dAZ;
+  this.result.rotationPost[0] = this.start.rotationPost[0] + tweenValue*dBX;
+  this.result.rotationPost[1] = this.start.rotationPost[1] + tweenValue*dBY;
+  this.result.rotationPost[2] = this.start.rotationPost[2] + tweenValue*dBZ;
+  this.result.skew[0] = this.start.skew[0] + tweenValue*dSkewX;
+  this.result.skew[1] = this.start.skew[1] + tweenValue*dSkewY;
+  this.result.scale[0] = this.start.scale[0] + tweenValue*dSX;
+  this.result.scale[1] = this.start.scale[1] + tweenValue*dSY;
+
+  if(this.end.width !== undefined)
+    this.result.width = this.start.width + tweenValue*dWidth;
+  if(this.end.height !== undefined)
+    this.result.height = this.start.height + tweenValue*dHeight;
+  if(this.end.opacity !== undefined)
+    this.result.opacity = this.start.opacity + tweenValue*dOpacity;
+};
+
+snabbtjs.StateTweener.prototype.asMatrix = function() {
+  return this.result.asMatrix();
+};
+
+snabbtjs.StateTweener.prototype.getProperties = function() {
+  return this.result.getProperties();
+};
+
+// ------------------------
+// -- ValueFeederTweener -- 
+// ------------------------
+
+snabbtjs.ValueFeederTweener = function(valueFeeder, startState, endState, resultState) {
+  this.currentMatrix = valueFeeder(0, new snabbtjs.Matrix());
+  this.valueFeeder = valueFeeder;
+  this.start = startState;
+  this.end = endState;
+  this.result = resultState;
+};
+
+snabbtjs.ValueFeederTweener.prototype.tween = function(tweenValue) {
+  this.currentMatrix.clear();
+  this.currentMatrix = this.valueFeeder(tweenValue, this.currentMatrix);
+
+  var dWidth = (this.end.width - this.start.width);
+  var dHeight = (this.end.height - this.start.height);
+  var dOpacity = (this.end.opacity - this.start.opacity);
+
+  if(this.end.width !== undefined)
+    this.result.width = this.start.width + tweenValue*dWidth;
+  if(this.end.height !== undefined)
+    this.result.height = this.start.height + tweenValue*dHeight;
+  if(this.end.opacity !== undefined)
+    this.result.opacity = this.start.opacity + tweenValue*dOpacity;
+};
+
+snabbtjs.ValueFeederTweener.prototype.asMatrix = function() {
+  return this.currentMatrix.data;
+};
+
+snabbtjs.ValueFeederTweener.prototype.getProperties = function() {
+  return this.result.getProperties();
 };

@@ -8,6 +8,14 @@ snabbtjs.State = function(config) {
   this.opacity = config.opacity;
   this.width = config.width;
   this.height = config.height;
+
+  // Caching of matrix and properties so we don't have to create new ones everytime they are needed
+  this.matrix = new snabbtjs.Matrix();
+  this.properties = {
+    opacity: undefined,
+    width: undefined,
+    height: undefined
+  };
 };
 
 snabbtjs.State.prototype.clone = function() {
@@ -25,7 +33,8 @@ snabbtjs.State.prototype.clone = function() {
 };
 
 snabbtjs.State.prototype.asMatrix = function() {
-  var m = new snabbtjs.Matrix();
+  var m = this.matrix;
+  m.clear();
 
   if(this.transformOrigin)
     m.translate(-this.transformOrigin[0], -this.transformOrigin[1], -this.transformOrigin[2]);
@@ -59,10 +68,9 @@ snabbtjs.State.prototype.asMatrix = function() {
   return m.data;
 };
 
-snabbtjs.State.prototype.properties = function() {
-  return {
-    opacity: this.opacity,
-    width: this.width + 'px',
-    height: this.height + 'px'
-  };
+snabbtjs.State.prototype.getProperties = function() {
+  this.properties.opacity = this.opacity;
+  this.properties.width = this.width + 'px';
+  this.properties.height = this.height + 'px';
+  return this.properties;
 };

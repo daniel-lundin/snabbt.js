@@ -246,8 +246,3 @@ snabbtjs.matrixToCSS = function(matrix) {
     css += matrix[15].toFixed(10) + ')';
   return css;
 };
-
-snabbtjs.setCSS = function(el, matrix) {
-  el.style.webkitTransform = snabbtjs.matrixToCSS(matrix);
-  el.style.transform = snabbtjs.matrixTCSS(matrix);
-};
