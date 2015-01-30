@@ -196,6 +196,77 @@ $(function() {
     });
   });
 
+
+  // Manual example
+  (function() {
+    var flipper = document.getElementById('flipper');
+
+    var dragInProgress = false;
+
+    function dragRightAnimation() {
+      return snabbt(flipper, {
+        fromRotation: [0, 0, 0],
+        rotation: [0, -Math.PI, 0],
+        transformOrigin: [50, 0, 0],
+        manual: true,
+        easing: 'ease',
+        duration: 400
+      });
+    }
+
+    function dragLeftAnimation() {
+      return snabbt(flipper, {
+        fromRotation: [0, -Math.PI, 0],
+        rotation: [0, 0, 0],
+        transformOrigin: [50, 0, 0],
+        manual: true,
+        easing: 'ease',
+        duration: 400
+      });
+    }
+
+
+    var hammer = new Hammer(flipper);
+    var opened = false;
+    hammer.on('pan', function(event) {
+      if(!dragInProgress) {
+        if(!opened) {
+          animation = dragRightAnimation();
+        } else {
+          animation = dragLeftAnimation();
+        }
+        dragInProgress = true;
+      }
+
+      var delta = Math.abs(event.deltaX/200);
+      if(animation) {
+        animation.setValue(delta);
+      }
+
+
+      if(event.isFinal) {
+        if(animation) {
+          var callback = function() {
+            dragInProgress = false;
+          };
+          if(delta > 0.5) {
+            animation.finish(function() {
+              dragInProgress = false;
+              opened = !opened;
+            });
+          } else {
+            animation.rollback(function() {
+              dragInProgress = false;
+            });
+          }
+          animation = undefined;
+        }
+
+      }
+    });
+
+  })();
+
   // Scroll spy
   var navtop = $("#navbar").offset().top;
   var $dockedNavbar = $("#docked-navbar");

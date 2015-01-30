@@ -63,15 +63,18 @@ snabbtjs.Animation.prototype.finish = function(callback) {
   this.manual = false;
   var duration = this.duration * this.value;
   this.startTime = this.currentTime - duration;
+  this.manualCallback = callback;
 };
 
 snabbtjs.Animation.prototype.rollback = function(callback) {
   this.manual = false;
+  this.tweener.setReverse();
   var duration = this.duration * (1 - this.value);
   this.startTime = this.currentTime - duration;
-  var oldStart = this.startState;
-  this.startState = this.endState;
-  this.endState = oldStart;
+  //var oldStart = this.startState;
+  //this.startState = this.endState;
+  //this.endState = oldStart;
+  this.manualCallback = callback;
 };
 
 snabbtjs.Animation.prototype.restart = function() {
@@ -99,6 +102,9 @@ snabbtjs.Animation.prototype.tick = function(time) {
   var curr = Math.min(Math.max(0.0, this.currentTime - this.startTime), this.duration);
   this.easing.tick(curr/this.duration);
   this.updateCurrentTransform();
+  if(this.completed() && this.manualCallback) {
+    this.manualCallback();
+  }
 };
 
 snabbtjs.Animation.prototype.getCurrentState = function() {
@@ -991,6 +997,12 @@ snabbtjs.StateTweener.prototype.asMatrix = function() {
 
 snabbtjs.StateTweener.prototype.getProperties = function() {
   return this.result.getProperties();
+};
+
+snabbtjs.StateTweener.prototype.setReverse = function() {
+  var oldStart = this.start;
+  this.start = this.end;
+  this.end = oldStart;
 };
 
 // ------------------------

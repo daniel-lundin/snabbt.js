@@ -58,6 +58,12 @@ snabbtjs.StateTweener.prototype.getProperties = function() {
   return this.result.getProperties();
 };
 
+snabbtjs.StateTweener.prototype.setReverse = function() {
+  var oldStart = this.start;
+  this.start = this.end;
+  this.end = oldStart;
+};
+
 // ------------------------
 // -- ValueFeederTweener -- 
 // ------------------------

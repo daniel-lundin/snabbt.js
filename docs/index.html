@@ -249,6 +249,23 @@
         <div>
           <button id='transform-origin-example-2' class="button-primary extra-top-margin">Chained example</button>
         </div>
+
+        <h3>Manual mode</h3>
+        <p>By using manual mode, animations can be fed by user input instead of just being time-based. Define your animations as you normally would but set the manual-property to true. Instead of returning a chainer object, an animation control object is returned. The control object has the following methods:</p>
+        <ul>
+          <li><strong>setValue(value)</strong> - value should be a number between 0 and 1 where 0 represents the beginning of the animation and 1 represents the end</li>
+          <li><strong>rollback(callback)</strong> - Rollbacks the animation to the start state. The callback is an optional parameter that will be called when the rollback is completed</li>
+          <li><strong>finish(callback)</strong> - Will complete the animation starting at the value last called to <em>setValue</em></li>
+        </ul>
+
+        <div class="flip-container">
+          <div class="flipper-background">Peek-a-boo!</div>
+          <div class="flipper" id="flipper">
+            <div class="flipper-front">Drag to flip!</div>
+            <div class="flipper-back">Flip me back!</div>
+          </div>
+        </div>
+
         <h3>Attention animations</h3>
         <p>snabbt.js has support for attention animations. This can be useful in form validations when you want to draw attention to a form element for example. Attention animation use spring easings.</p>
         <div class="row">
@@ -486,6 +503,7 @@ snabbt(element, {
       </div>
     </footer>
     <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+    <script type="text/javascript" src="//hammerjs.github.io/dist/hammer.min.js"></script>
     <script src="snabbt.min.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.3/fastclick.min.js"></script>
     <script src="docs.js"></script>

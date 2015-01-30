@@ -112,6 +112,64 @@ footer {
   border-radius: 4px;
   background: rgb(30, 174, 219);
 }
+
+.flip-container {
+  margin: 0 auto;
+  width: 200px;
+  height: 50px;
+  position: relative;
+  -webkit-perspective-origin: 50% 50%;
+  -webkit-perspective: 800px;
+  perspective-origin: 50% 50%;
+  perspective: 800px;
+}
+
+.flip-container > div {
+  position: absolute;
+}
+
+.flipper-background {
+  line-height: 50px;
+  text-align: center;
+  width: 100px;
+  height: 50px;
+  background: gainsboro;
+}
+
+.flipper {
+  position: relative;
+  perspective: 1000px;
+  -webkit-transform-style: preserve-3d;
+  transform-style: preserve-3d;
+  width: 100px;
+  height: 50px;
+}
+
+.flipper > div {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  -webkit-backface-visibility: hidden;
+  -webkit-background: brown;
+  backface-visibility: hidden;
+  background: brown;
+  color: white;
+  line-height: 50px;
+  text-align: center;
+
+}
+.flipper .flipper-front {
+  z-index: 2;
+  -webkit-transform: rotateY(0deg);
+  transform: rotateY(0deg);
+}
+.flipper .flipper-back {
+  z-index: 1;
+  -webkit-transform: rotateY(-180deg);
+  transform: rotateY(-180deg);
+}
 /* Some utiliy classes */
 @media screen and (max-width:600px) {
   .hide-mobile {
