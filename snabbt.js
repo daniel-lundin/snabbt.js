@@ -71,9 +71,6 @@ snabbtjs.Animation.prototype.rollback = function(callback) {
   this.tweener.setReverse();
   var duration = this.duration * (1 - this.value);
   this.startTime = this.currentTime - duration;
-  //var oldStart = this.startState;
-  //this.startState = this.endState;
-  //this.endState = oldStart;
   this.manualCallback = callback;
 };
 
@@ -1018,6 +1015,8 @@ snabbtjs.ValueFeederTweener = function(valueFeeder, startState, endState, result
 };
 
 snabbtjs.ValueFeederTweener.prototype.tween = function(tweenValue) {
+  if(this.reverse)
+    tweenValue = 1 - tweenValue;
   this.currentMatrix.clear();
   this.currentMatrix = this.valueFeeder(tweenValue, this.currentMatrix);
 
@@ -1039,6 +1038,10 @@ snabbtjs.ValueFeederTweener.prototype.asMatrix = function() {
 
 snabbtjs.ValueFeederTweener.prototype.getProperties = function() {
   return this.result.getProperties();
+};
+
+snabbtjs.ValueFeederTweener.prototype.setReverse = function() {
+  this.reverse = true;
 };
 ;var snabbtjs = snabbtjs || {};
 
