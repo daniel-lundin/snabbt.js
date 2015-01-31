@@ -114,7 +114,7 @@ footer {
 }
 
 .flip-container {
-  margin: 0 auto;
+  margin-bottom: 20px;
   width: 200px;
   height: 50px;
   position: relative;
@@ -122,6 +122,15 @@ footer {
   -webkit-perspective: 800px;
   perspective-origin: 50% 50%;
   perspective: 800px;
+  cursor: ew-resize;
+
+  /* No text selection */
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
 }
 
 .flip-container > div {
@@ -152,9 +161,8 @@ footer {
   right: 0;
   bottom: 0;
   -webkit-backface-visibility: hidden;
-  -webkit-background: brown;
   backface-visibility: hidden;
-  background: brown;
+  background: rgb(51, 195, 240);
   color: white;
   line-height: 50px;
   text-align: center;

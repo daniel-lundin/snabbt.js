@@ -200,71 +200,110 @@ $(function() {
   // Manual example
   (function() {
     var flipper = document.getElementById('flipper');
+    var flipperDrag = document.getElementById('flipper-drag');
+    var flipperBackground = document.getElementById('flipper-background');
 
     var dragInProgress = false;
 
-    function dragRightAnimation() {
-      return snabbt(flipper, {
+    function dragRightAnimations() {
+      var animations = [];
+      animations.push(snabbt(flipper, {
         fromRotation: [0, 0, 0],
         rotation: [0, -Math.PI, 0],
         transformOrigin: [50, 0, 0],
         manual: true,
         easing: 'ease',
-        duration: 400
-      });
+        duration: 1000
+      }));
+      animations.push(snabbt(flipperBackground, {
+        fromScale: [0.0, 0.0],
+        fromRotation: [0, 0, 2*Math.PI],
+        rotation: [0, 0, 0],
+        manual: true,
+        easing: 'ease',
+        duration: 1000
+      }));
+      return animations;
     }
 
-    function dragLeftAnimation() {
-      return snabbt(flipper, {
+    function dragLeftAnimations() {
+      var animations = [];
+      animations.push(snabbt(flipper, {
         fromRotation: [0, -Math.PI, 0],
         rotation: [0, 0, 0],
         transformOrigin: [50, 0, 0],
         manual: true,
         easing: 'ease',
-        duration: 400
-      });
+        duration: 1000
+      }));
+      animations.push(snabbt(flipperBackground, {
+        scale: [0.0, 0.0],
+        fromRotation: [0, 0, 0],
+        rotation: [0, 0, 2*Math.PI],
+        manual: true,
+        easing: 'ease',
+        duration: 1000
+      }));
+      return animations;
     }
 
+    // Execute callback after `number` calls
+    var debouncedCallback = function(callback, number) {
+      var n = number;
+      return function() {
+        n--;
+        if(n === 0) {
+          callback();
+        }
+      };
+    };
 
-    var hammer = new Hammer(flipper);
-    var opened = false;
+
+    var hammer = new Hammer(flipperDrag);
+    var opened = -1;
+    var animations = [];
     hammer.on('pan', function(event) {
       if(!dragInProgress) {
-        if(!opened) {
-          animation = dragRightAnimation();
+        if(opened === -1) {
+          animations = dragRightAnimations();
         } else {
-          animation = dragLeftAnimation();
+          animations = dragLeftAnimations();
         }
         dragInProgress = true;
       }
 
-      var delta = Math.abs(event.deltaX/200);
-      if(animation) {
-        animation.setValue(delta);
+      var delta = Math.min(1, Math.max(0, (-opened * event.deltaX)/200));
+      if(animations.length) {
+        animations.forEach(function(animation) {
+          animation.setValue(delta);
+        });
       }
 
 
       if(event.isFinal) {
-        if(animation) {
-          var callback = function() {
-            dragInProgress = false;
-          };
+        if(animations) {
           if(delta > 0.5) {
-            animation.finish(function() {
+            var finishCallback = debouncedCallback(function() {
               dragInProgress = false;
-              opened = !opened;
+              opened *= -1;
+            }, animations.length);
+
+            animations.forEach(function(animation) {
+              animation.finish(finishCallback);
             });
           } else {
-            animation.rollback(function() {
+            var rollbackCallback = debouncedCallback(function() {
               dragInProgress = false;
+            }, animations.length);
+
+            animations.forEach(function(animation) {
+              animation.rollback(rollbackCallback);
             });
           }
-          animation = undefined;
+          animations = undefined;
         }
-
       }
     });
-
   })();
 
   // Scroll spy
