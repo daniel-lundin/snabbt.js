@@ -161,6 +161,21 @@ snabbtjs.Matrix = function() {
   snabbtjs.assignIdentity(this.data);
 };
 
+snabbtjs.Matrix.prototype.asCSS = function() {
+  var css = 'matrix3d(';
+  for(var i=0;i<15;++i) {
+    if(Math.abs(this.data[i]) < 0.0001)
+      css += '0,';
+    else
+      css += this.data[i].toFixed(10) + ',';
+  }
+  if(Math.abs(this.data[15]) < 0.0001)
+    css += '0)';
+  else
+    css += this.data[15].toFixed(10) + ')';
+  return css;
+};
+
 snabbtjs.Matrix.prototype.clear = function() {
   snabbtjs.assignIdentity(this.data);
 };
@@ -230,19 +245,4 @@ snabbtjs.assignedMatrixMultiplication = function(a, b, res) {
   res[15] = a[12] * b[3] + a[13] * b[7] + a[14] * b[11] + a[15] * b[15];
 
   return res;
-};
-
-snabbtjs.matrixToCSS = function(matrix) {
-  var css = 'matrix3d(';
-  for(var i=0;i<15;++i) {
-    if(Math.abs(matrix[i]) < 0.0001)
-      css += '0,';
-    else
-      css += matrix[i].toFixed(10) + ',';
-  }
-  if(Math.abs(matrix[15]) < 0.0001)
-    css += '0)';
-  else
-    css += matrix[15].toFixed(10) + ')';
-  return css;
 };

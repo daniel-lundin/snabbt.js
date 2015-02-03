@@ -1,16 +1,21 @@
 (function (root, factory) {
+  var snabbtjs = factory();
+  // Expose Matrix class and some other things that could be useful
+  snabbtjs.snabbt.Matrix = snabbtjs.Matrix;
+  snabbtjs.snabbt.setElementTransform = snabbtjs.updateElementTransform;
+
   if (typeof exports === 'object') {
     // CommonJS
-    module.exports = factory().snabbt;
+    module.exports = snabbtjs.snabbt;
   } else if (typeof define === 'function' && define.amd) {
     // AMD
     define([], function () {
-      return (root.returnExportsGlobal = factory().snabbt);
+      return (root.returnExportsGlobal = snabbtjs.snabbt);
     });
   } else {
     // Global Variables
 
-    root.snabbt = factory().snabbt;
+    root.snabbt = snabbtjs.snabbt;
   }
 }(this, function () {
 
@@ -133,7 +138,6 @@ snabbtjs.Animation.prototype.completed = function() {
 snabbtjs.Animation.prototype.updateElement = function(element) {
   var matrix = this.tweener.asMatrix();
   var properties = this.tweener.getProperties();
-  snabbtjs.setTransformOrigin(element, this.transformOrigin);
   snabbtjs.updateElementTransform(element, matrix, this.perspective);
   snabbtjs.updateElementProperties(element, properties);
 };
@@ -580,18 +584,6 @@ snabbtjs.requestAnimationFrame = function(func) {
   snabbtjs.tickRequests.push(func);
 };
 
-snabbtjs.ticker = window.requestAnimationFrame;
-
-// Fallback to setTimeout if window.requestAnimationFrmae is not available
-if(!window.requestAnimationFrame) {
-  snabbtjs.ticker = function(func) {
-    var currentTime = Date.now();
-    setTimeout(function() {
-      func(currentTime);
-    }, 16.6667);
-  };
-}
-
 snabbtjs.tickAnimations = function(time) {
   var tickRequests = snabbtjs.tickRequests;
   var len = tickRequests.length;
@@ -599,7 +591,7 @@ snabbtjs.tickAnimations = function(time) {
     tickRequests[i](time);
   }
   tickRequests.splice(0, len);
-  snabbtjs.ticker.call(window, snabbtjs.tickAnimations);
+  window.requestAnimationFrame(snabbtjs.tickAnimations);
 
   var completedAnimations = snabbtjs.runningAnimations.filter(function(animation) {
     return animation[1].completed();
@@ -636,7 +628,9 @@ snabbtjs.findUltimateAncestor = function(node) {
   return ancestor;
 };
 
-snabbtjs.ticker.call(window, snabbtjs.tickAnimations);
+if(window.requestAnimationFrame) {
+  window.requestAnimationFrame(snabbtjs.tickAnimations);
+}
 ;var snabbtjs = snabbtjs || {};
 
 snabbtjs.assignTranslate = function(matrix, x, y, z) {
@@ -800,6 +794,21 @@ snabbtjs.Matrix = function() {
   snabbtjs.assignIdentity(this.data);
 };
 
+snabbtjs.Matrix.prototype.asCSS = function() {
+  var css = 'matrix3d(';
+  for(var i=0;i<15;++i) {
+    if(Math.abs(this.data[i]) < 0.0001)
+      css += '0,';
+    else
+      css += this.data[i].toFixed(10) + ',';
+  }
+  if(Math.abs(this.data[15]) < 0.0001)
+    css += '0)';
+  else
+    css += this.data[15].toFixed(10) + ')';
+  return css;
+};
+
 snabbtjs.Matrix.prototype.clear = function() {
   snabbtjs.assignIdentity(this.data);
 };
@@ -871,20 +880,20 @@ snabbtjs.assignedMatrixMultiplication = function(a, b, res) {
   return res;
 };
 
-snabbtjs.matrixToCSS = function(matrix) {
-  var css = 'matrix3d(';
-  for(var i=0;i<15;++i) {
-    if(Math.abs(matrix[i]) < 0.0001)
-      css += '0,';
-    else
-      css += matrix[i].toFixed(10) + ',';
-  }
-  if(Math.abs(matrix[15]) < 0.0001)
-    css += '0)';
-  else
-    css += matrix[15].toFixed(10) + ')';
-  return css;
-};
+//snabbtjs.matrixToCSS = function(matrix) {
+//  var css = 'matrix3d(';
+//  for(var i=0;i<15;++i) {
+//    if(Math.abs(matrix[i]) < 0.0001)
+//      css += '0,';
+//    else
+//      css += matrix[i].toFixed(10) + ',';
+//  }
+//  if(Math.abs(matrix[15]) < 0.0001)
+//    css += '0)';
+//  else
+//    css += matrix[15].toFixed(10) + ')';
+//  return css;
+//};
 ;snabbtjs.State = function(config) {
   var optionOrDefault = snabbtjs.optionOrDefault;
   this.position = optionOrDefault(config.position, [0, 0, 0]);
@@ -952,7 +961,7 @@ snabbtjs.State.prototype.asMatrix = function() {
 
   if(this.transformOrigin)
     m.translate(this.transformOrigin[0], this.transformOrigin[1], this.transformOrigin[2]);
-  return m.data;
+  return m;
 };
 
 snabbtjs.State.prototype.getProperties = function() {
@@ -1058,7 +1067,7 @@ snabbtjs.ValueFeederTweener.prototype.tween = function(tweenValue) {
 };
 
 snabbtjs.ValueFeederTweener.prototype.asMatrix = function() {
-  return this.currentMatrix.data;
+  return this.currentMatrix;
 };
 
 snabbtjs.ValueFeederTweener.prototype.getProperties = function() {
@@ -1077,20 +1086,14 @@ snabbtjs.optionOrDefault = function(option, def) {
   return option;
 };
 
-snabbtjs.setTransformOrigin = function(element, transformOrigin) {
-  if(transformOrigin) {
-    element.style.webkitTransformOrigin = transformOrigin;
-    element.style.transformOrigin = transformOrigin;
-  }
-};
-
 snabbtjs.updateElementTransform = function(element, matrix, perspective) {
   var cssPerspective = '';
   if(perspective) {
     cssPerspective = 'perspective(' + perspective + 'px) ';
   }
-  element.style.webkitTransform = cssPerspective + snabbtjs.matrixToCSS(matrix);
-  element.style.transform = cssPerspective + snabbtjs.matrixToCSS(matrix);
+  var cssMatrix = matrix.asCSS();
+  element.style.webkitTransform = cssPerspective + cssMatrix;
+  element.style.transform = cssPerspective + cssMatrix;
 };
 
 snabbtjs.updateElementProperties = function(element, properties) {

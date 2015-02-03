@@ -117,7 +117,6 @@ snabbtjs.Animation.prototype.completed = function() {
 snabbtjs.Animation.prototype.updateElement = function(element) {
   var matrix = this.tweener.asMatrix();
   var properties = this.tweener.getProperties();
-  snabbtjs.setTransformOrigin(element, this.transformOrigin);
   snabbtjs.updateElementTransform(element, matrix, this.perspective);
   snabbtjs.updateElementProperties(element, properties);
 };

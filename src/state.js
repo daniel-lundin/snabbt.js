@@ -65,7 +65,7 @@ snabbtjs.State.prototype.asMatrix = function() {
 
   if(this.transformOrigin)
     m.translate(this.transformOrigin[0], this.transformOrigin[1], this.transformOrigin[2]);
-  return m.data;
+  return m;
 };
 
 snabbtjs.State.prototype.getProperties = function() {

@@ -95,7 +95,7 @@ snabbtjs.ValueFeederTweener.prototype.tween = function(tweenValue) {
 };
 
 snabbtjs.ValueFeederTweener.prototype.asMatrix = function() {
-  return this.currentMatrix.data;
+  return this.currentMatrix;
 };
 
 snabbtjs.ValueFeederTweener.prototype.getProperties = function() {

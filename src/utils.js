@@ -7,20 +7,14 @@ snabbtjs.optionOrDefault = function(option, def) {
   return option;
 };
 
-snabbtjs.setTransformOrigin = function(element, transformOrigin) {
-  if(transformOrigin) {
-    element.style.webkitTransformOrigin = transformOrigin;
-    element.style.transformOrigin = transformOrigin;
-  }
-};
-
 snabbtjs.updateElementTransform = function(element, matrix, perspective) {
   var cssPerspective = '';
   if(perspective) {
     cssPerspective = 'perspective(' + perspective + 'px) ';
   }
-  element.style.webkitTransform = cssPerspective + snabbtjs.matrixToCSS(matrix);
-  element.style.transform = cssPerspective + snabbtjs.matrixToCSS(matrix);
+  var cssMatrix = matrix.asCSS();
+  element.style.webkitTransform = cssPerspective + cssMatrix;
+  element.style.transform = cssPerspective + cssMatrix;
 };
 
 snabbtjs.updateElementProperties = function(element, properties) {

@@ -247,18 +247,6 @@ snabbtjs.requestAnimationFrame = function(func) {
   snabbtjs.tickRequests.push(func);
 };
 
-snabbtjs.ticker = window.requestAnimationFrame;
-
-// Fallback to setTimeout if window.requestAnimationFrmae is not available
-if(!window.requestAnimationFrame) {
-  snabbtjs.ticker = function(func) {
-    var currentTime = Date.now();
-    setTimeout(function() {
-      func(currentTime);
-    }, 16.6667);
-  };
-}
-
 snabbtjs.tickAnimations = function(time) {
   var tickRequests = snabbtjs.tickRequests;
   var len = tickRequests.length;
@@ -266,7 +254,7 @@ snabbtjs.tickAnimations = function(time) {
     tickRequests[i](time);
   }
   tickRequests.splice(0, len);
-  snabbtjs.ticker.call(window, snabbtjs.tickAnimations);
+  window.requestAnimationFrame(snabbtjs.tickAnimations);
 
   var completedAnimations = snabbtjs.runningAnimations.filter(function(animation) {
     return animation[1].completed();
@@ -303,4 +291,6 @@ snabbtjs.findUltimateAncestor = function(node) {
   return ancestor;
 };
 
-snabbtjs.ticker.call(window, snabbtjs.tickAnimations);
+if(window.requestAnimationFrame) {
+  window.requestAnimationFrame(snabbtjs.tickAnimations);
+}
