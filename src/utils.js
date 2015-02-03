@@ -29,7 +29,14 @@ snabbtjs.updateElementProperties = function(element, properties) {
   }
 };
 
-
 snabbtjs.isFunction = function(object) {
   return (typeof object === "function");
+};
+
+snabbtjs.cloneObject = function(object) {
+  var clone = {};
+  for(var key in object) {
+    clone[key] = object[key];
+  }
+  return clone;
 };

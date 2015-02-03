@@ -5,8 +5,9 @@ snabbtjs.snabbt = function(arg1, arg2, arg3) {
 
   var elements = arg1;
 
-  // If argument is an array, loop through and start one animation for each element.
-  if(Array.isArray(elements)) {
+  // If argument is an Array or a NodeList or other list type that can be iterable.
+  // Loop through and start one animation for each element.
+  if(elements.hasOwnProperty('length')) {
     var aggregateChainer = {
       chainers: [],
       then: function(opts) {
@@ -36,7 +37,7 @@ snabbtjs.snabbt = function(arg1, arg2, arg3) {
     };
 
     for(var i=0, len=elements.length;i<len;++i) {
-      aggregateChainer.chainers.push(snabbtjs.snabbtSingleElement(elements[i], arg2, arg3));
+      aggregateChainer.chainers.push(snabbtjs.snabbtSingleElement(elements[i], snabbtjs.preprocessDelay(arg2, i), arg3));
     }
     return aggregateChainer;
   } else {
@@ -44,12 +45,20 @@ snabbtjs.snabbt = function(arg1, arg2, arg3) {
   }
 };
 
-snabbtjs.snabbtSingleElement = function(arg1, arg2, arg3) {
+snabbtjs.preprocessDelay = function(options, index) {
+  if(snabbtjs.isFunction(options.delay)) {
+    var clone = snabbtjs.cloneObject(options);
+    clone.delay = options.delay(index);
+    return clone;
+  }
+  return options;
+};
+
+snabbtjs.snabbtSingleElement = function(element, arg2, arg3) {
   if(arg2 === 'attention')
-    return snabbtjs.setupAttentionAnimation(arg1, arg3);
+    return snabbtjs.setupAttentionAnimation(element, arg3);
   if(arg2 === 'stop')
-    return snabbtjs.stopAnimation(arg1);
-  var element = arg1;
+    return snabbtjs.stopAnimation(element);
   var options = arg2;
 
   // Remove orphaned end states
