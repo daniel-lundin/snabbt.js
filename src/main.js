@@ -92,7 +92,7 @@ snabbtjs.snabbtSingleElement = function(arg1, arg2, arg3) {
       snabbtjs.requestAnimationFrame(tick);
     } else {
       if(options.callback) {
-        options.callback();
+        options.callback(element);
       }
 
       // Start next animation in queue
@@ -131,7 +131,7 @@ snabbtjs.setupAttentionAnimation = function(element,  options) {
       snabbtjs.requestAnimationFrame(tick);
     } else {
       if(options.callback) {
-        options.callback();
+        options.callback(element);
       }
       if(options.loop && options.loop > 1) {
         options.loop--;

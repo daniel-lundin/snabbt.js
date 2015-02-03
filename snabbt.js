@@ -36,9 +36,10 @@ snabbtjs.Animation = function(options) {
   this.currentTime = 0;
   this.stopped = false;
 
-  // Manual
+  // Manual related
   this.manual = options.manual;
-  this.value = 0;
+  this.manualValue = 0;
+  this.manualDelayFactor = this.delay / this.duration;
 
   // Setup tweener
   if(options.valueFeeder) {
@@ -61,7 +62,7 @@ snabbtjs.Animation.prototype.isStopped = function() {
 
 snabbtjs.Animation.prototype.finish = function(callback) {
   this.manual = false;
-  var duration = this.duration * this.value;
+  var duration = this.duration * this.manualValue;
   this.startTime = this.currentTime - duration;
   this.manualCallback = callback;
 };
@@ -69,7 +70,7 @@ snabbtjs.Animation.prototype.finish = function(callback) {
 snabbtjs.Animation.prototype.rollback = function(callback) {
   this.manual = false;
   this.tweener.setReverse();
-  var duration = this.duration * (1 - this.value);
+  var duration = this.duration * (1 - this.manualValue);
   this.startTime = this.currentTime - duration;
   this.manualCallback = callback;
 };
@@ -83,8 +84,11 @@ snabbtjs.Animation.prototype.tick = function(time) {
   if(this.stopped)
     return;
   if(this.manual) {
+    var delayFactor = this.delay / this.duration;
+
     this.currentTime = time;
-    this.easing.tick(this.value);
+    if(this.manualValue > delayFactor)
+      this.easing.tick(this.manualValue - delayFactor);
     this.updateCurrentTransform();
     return;
   }
@@ -108,8 +112,8 @@ snabbtjs.Animation.prototype.getCurrentState = function() {
   return this.currentState;
 };
 
-snabbtjs.Animation.prototype.setValue = function(value) {
-  this.value = value;
+snabbtjs.Animation.prototype.setValue = function(manualValue) {
+  this.manualValue = Math.min(Math.max(manualValue, 0), 1 + this.manualDelayFactor);
 };
 
 snabbtjs.Animation.prototype.updateCurrentTransform = function() {
@@ -421,7 +425,7 @@ snabbtjs.snabbtSingleElement = function(arg1, arg2, arg3) {
       snabbtjs.requestAnimationFrame(tick);
     } else {
       if(options.callback) {
-        options.callback();
+        options.callback(element);
       }
 
       // Start next animation in queue
@@ -460,7 +464,7 @@ snabbtjs.setupAttentionAnimation = function(element,  options) {
       snabbtjs.requestAnimationFrame(tick);
     } else {
       if(options.callback) {
-        options.callback();
+        options.callback(element);
       }
       if(options.loop && options.loop > 1) {
         options.loop--;
