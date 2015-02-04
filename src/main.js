@@ -65,10 +65,12 @@ snabbtjs.snabbtSingleElement = function(element, arg2, arg3) {
   snabbtjs.clearOphanedEndStates();
 
   // If there is a running or past completed animation with element, use that end state as start state
-  var start = snabbtjs.currentAnimationState(element);
+  var currentState = snabbtjs.currentAnimationState(element);
+  var start = currentState;
   // from has precendance over current animation state
   start = snabbtjs.stateFromOptions(options, start, true);
-  var end = snabbtjs.stateFromOptions(options);
+  var end = snabbtjs.cloneObject(currentState);
+  end = snabbtjs.stateFromOptions(options, end);
 
   var animOptions = snabbtjs.setupAnimationOptions(start, end, options);
   var animation = snabbtjs.createAnimation(animOptions);
@@ -109,7 +111,7 @@ snabbtjs.snabbtSingleElement = function(element, arg2, arg3) {
         options = queue.pop();
 
         start = snabbtjs.stateFromOptions(options, end, true);
-        end = snabbtjs.stateFromOptions(options);
+        end = snabbtjs.stateFromOptions(options, snabbtjs.cloneObject(end));
         options = snabbtjs.setupAnimationOptions(start, end, options);
 
         animation = new snabbtjs.Animation(options);
@@ -122,6 +124,8 @@ snabbtjs.snabbtSingleElement = function(element, arg2, arg3) {
   }
 
   snabbtjs.requestAnimationFrame(tick);
+  // Manual animations are not chainable, instead an animation controller object is returned
+  // with setValue, finish and rollback methods
   if(options.manual)
     return animation;
   return chainer;
@@ -254,7 +258,6 @@ snabbtjs.tickAnimations = function(time) {
     tickRequests[i](time);
   }
   tickRequests.splice(0, len);
-  window.requestAnimationFrame(snabbtjs.tickAnimations);
 
   var completedAnimations = snabbtjs.runningAnimations.filter(function(animation) {
     return animation[1].completed();
@@ -275,6 +278,8 @@ snabbtjs.tickAnimations = function(time) {
   snabbtjs.runningAnimations = snabbtjs.runningAnimations.filter(function(animation) {
     return !animation[1].completed();
   });
+
+  window.requestAnimationFrame(snabbtjs.tickAnimations);
 };
 
 snabbtjs.clearOphanedEndStates = function() {

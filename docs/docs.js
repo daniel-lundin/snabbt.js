@@ -21,12 +21,13 @@ $(function() {
             delay: 400,
             duration: 1000
           }).then({
+            rotation: [0, 0, 0],
             transformOrigin: [0, 100, 0],
             easing: 'spring',
             perspective: 300,
-            springConstant: 0.1,
-            springDecelaration: 0.99,
-            springMass: 2,
+            springConstant: 0.2,
+            springDeceleration: 0.90,
+            springMass: 4,
           });
         }
       }
@@ -38,6 +39,7 @@ $(function() {
   $("h1").on('click', function() {
     var width = $("h1").width();
     $("h1").snabbt({
+      fromPosition: [0, 0, 0],
       skew: [0, 0.9],
       easing: 'ease',
     }).then({
@@ -78,10 +80,12 @@ $(function() {
       position: [100, 0, 0],
       easing: 'ease'
     }).then({
+      position: [0, 0, 0],
       fromRotation: [0, 0, -2*Math.PI],
+      rotation: [0, 0, 0],
       easing: 'spring',
       springConstant: 0.2,
-      springDecelaration: 0.95,
+      springDeceleration: 0.95,
     });
   };
 

@@ -53,6 +53,8 @@ snabbtjs.SpringEasing.prototype.tick = function(value) {
 };
 
 snabbtjs.SpringEasing.prototype.value = function() {
+  if(this.equilibrium)
+    return this.equilibriumPosition;
   return this.position;
 };
 

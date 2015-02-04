@@ -28,6 +28,8 @@ snabbtjs.isFunction = function(object) {
 };
 
 snabbtjs.cloneObject = function(object) {
+  if(!object)
+    return object;
   var clone = {};
   for(var key in object) {
     clone[key] = object[key];
