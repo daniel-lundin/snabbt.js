@@ -11,8 +11,9 @@ snabbtjs.snabbt = function(arg1, arg2, arg3) {
     var aggregateChainer = {
       chainers: [],
       then: function(opts) {
-        this.chainers.forEach(function(chainer) {
-          chainer.then(opts);
+        var len = this.chainers.length;
+        this.chainers.forEach(function(chainer, index) {
+          chainer.then(snabbtjs.preprocessOptions(opts, index, len));
         });
         return aggregateChainer;
       },
@@ -37,21 +38,62 @@ snabbtjs.snabbt = function(arg1, arg2, arg3) {
     };
 
     for(var i=0, len=elements.length;i<len;++i) {
-      aggregateChainer.chainers.push(snabbtjs.snabbtSingleElement(elements[i], snabbtjs.preprocessDelay(arg2, i), arg3));
+      if(typeof arg2 == 'string')
+        aggregateChainer.chainers.push(snabbtjs.snabbtSingleElement(elements[i], arg2, snabbtjs.preprocessOptions(arg3, i, len)));
+      else
+        aggregateChainer.chainers.push(snabbtjs.snabbtSingleElement(elements[i], snabbtjs.preprocessOptions(arg2, i, len), arg3));
     }
     return aggregateChainer;
   } else {
-    return snabbtjs.snabbtSingleElement(elements, arg2, arg3);
+    if(typeof arg2 == 'string')
+      return snabbtjs.snabbtSingleElement(elements, arg2, snabbtjs.preprocessOptions(arg3, 0, 1));
+    else
+      return snabbtjs.snabbtSingleElement(elements, snabbtjs.preprocessOptions(arg2, 0, 1), arg3);
   }
 };
 
-snabbtjs.preprocessDelay = function(options, index) {
+snabbtjs.preprocessOptions = function(options, index, len) {
+  if(!options)
+    return options;
+  var clone = snabbtjs.cloneObject(options);
   if(snabbtjs.isFunction(options.delay)) {
-    var clone = snabbtjs.cloneObject(options);
-    clone.delay = options.delay(index);
-    return clone;
+    clone.delay = options.delay(index, len);
   }
-  return options;
+  if(snabbtjs.isFunction(options.callback)) {
+    clone.callback = function() {
+      options.callback(index, len);
+    };
+  }
+
+  var properties = [
+    'position',
+    'rotation',
+    'skew',
+    'rotationPost',
+    'scale',
+    'width',
+    'height',
+    'opacity',
+    'fromPosition',
+    'fromRotation',
+    'fromSkew',
+    'fromRotationPost',
+    'fromScale',
+    'fromWidth',
+    'fromHeight',
+    'fromOpacity',
+    'transformOrigin',
+    'duration',
+    'delay'
+  ];
+
+  properties.forEach(function(property) {
+    if(snabbtjs.isFunction(options[property])) {
+      clone[property] = options[property](index, len);
+    }
+  });
+
+  return clone;
 };
 
 snabbtjs.snabbtSingleElement = function(element, arg2, arg3) {
@@ -81,7 +123,7 @@ snabbtjs.snabbtSingleElement = function(element, arg2, arg3) {
   var queue = [];
   var chainer = {
     then: function(opts) {
-      queue.unshift(opts);
+      queue.unshift(snabbtjs.preprocessOptions(opts, 0, 1));
       return chainer;
     }
   };
@@ -248,6 +290,8 @@ snabbtjs.runningAnimations = [];
 snabbtjs.completedAnimations = [];
 
 snabbtjs.requestAnimationFrame = function(func) {
+  if(snabbtjs.tickRequests.length === 0)
+    window.requestAnimationFrame(snabbtjs.tickAnimations);
   snabbtjs.tickRequests.push(func);
 };
 
@@ -279,7 +323,8 @@ snabbtjs.tickAnimations = function(time) {
     return !animation[1].completed();
   });
 
-  window.requestAnimationFrame(snabbtjs.tickAnimations);
+  if(tickRequests.length !== 0)
+    window.requestAnimationFrame(snabbtjs.tickAnimations);
 };
 
 snabbtjs.clearOphanedEndStates = function() {
@@ -295,7 +340,3 @@ snabbtjs.findUltimateAncestor = function(node) {
   }
   return ancestor;
 };
-
-if(window.requestAnimationFrame) {
-  window.requestAnimationFrame(snabbtjs.tickAnimations);
-}

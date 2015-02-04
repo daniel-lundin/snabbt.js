@@ -58,7 +58,7 @@
           </div>
           <div class="four columns">
             <h3><i class="fa fa-paper-plane"></i>Light</h3>
-            <p> &lt; 4kb minified and gzipped</p>
+            <p> &lt; 5kb minified and gzipped</p>
           </div>
           <div class="four columns">
             <h3><i class="fa fa-user"></i>Simple</h3>
@@ -92,7 +92,7 @@
         <ul>
           <li>All transforms work on pixels or radians. Any unit conversion has to be done beforehand.</li>
           <li>No arbitrary property animations, e.g. colors, padding, margin or line height animations.</li>
-          <li>For performance reasons, snabbt.js never queries the DOM. This means that in some cases you need to store end transforms yourself.</li>
+          <li>For performance reasons, snabbt.js never queries the DOM. This means that in some cases you need to transforms yourself.(Specifically when using value feeding)</li>
         </ul>
       </section>
 
@@ -116,7 +116,7 @@
           </div>
           <div class="six columns">
 
-            <pre><code>snabbt(element, {
+            <pre><code class="javascript">snabbt(element, {
   position: [100, 0, 0],
   rotation: [Math.PI, 0, 0],
   easing: 'ease'
@@ -132,21 +132,23 @@
             <button id="chaining-example-execute">Run example</button>
           </div>
           <div class="six columns">
-            <pre><code>snabbt(element, {
+            <pre><code class="javascript">snabbt(element, {
   position: [100, 0, 0],
   easing: 'ease'
 }).then({
   fromRotation: [0, 0, -2*Math.PI],
+  position: [0, 0, 0],
   easing: 'spring',
   springConstant: 0.2,
-  springDecelaration: 0.95,
+  springDeceleration: 0.90,
+  springMass: 10,
 });</code></pre>
           </div>
         </div>
 
         <h3>Make it stop</h3>
         <p>Animation can be stopped at any time by replacing the animation configuration with the string literal 'stop':</p>
-        <pre><code>snabbt(element, 'stop');</code></pre>
+        <pre><code class="javascript">snabbt(element, 'stop');</code></pre>
         <p class="extra-top-margin">If a new animation is started with the same element it will start from the stopped position unless the 'from'-properties are used. </p>
       </section>
 
@@ -192,11 +194,14 @@
         <button id="custom-easer" class="button-primary">Run example</button>
           </div>
           <div class="six columns">
-            <pre><code>snabbt(element, {
+            <pre><code class="javascript">snabbt(element, {
   position: [200, 0, 0],
   easing: function(value) {
-    return Math.sin(Math.PI * value);
+    return value + 0.3 * Math.sin(2*Math.PI * value);
   }
+}).then({
+  position: [0, 0, 0],
+  easing: 'easeOut'
 });</code></pre>
           </div>
         </div>
@@ -207,20 +212,22 @@
         <p>When using spring easing, the <em>duration</em> parameter is not in effect. Instead the animation will progress until equilibrium is reached. When easing is set to <em>spring</em> there are three additional parameters that can be set on the animation configuration:</p>
         <ul>
           <li><strong>springConstant</strong> - The stiffness of the spring</li>
-          <li><strong>springDecelaration</strong> - Controls how fast the velocity decreases</li>
+          <li><strong>springDeceleration</strong> - Controls how fast the velocity decreases</li>
           <li><strong>springMass</strong> - The 'weight' of the object</li>
         </ul>
 
         <p>Example:</p>
-        <pre><code>snabbt(element, {
+        <pre><code class="javascript">snabbt(element, {
   position: [100, 0, 0],
   rotation: [0, 0, 2*Math.PI],
   easing: 'spring',
   springConstant: 0.3,
-  springDecelaration: 0.8,
+  springDeceleration: 0.8,
 }).then({
-  rotation: [0, 0, 2*Math.PI],
-  easing: 'ease'
+  position: [0, 0, 0],
+  easing: 'spring',
+  springConstant: 0.3,
+  springDeceleration: 0.8,
 });</code></pre>
         <button id="spring-example" class="button-primary extra-top-margin">Run example</button>
       </section>
@@ -230,7 +237,7 @@
 
         <h3>Value feeding</h3>
         <p>The animation object is very simple to work with but has it limitations. Sometimes you want to do the transforms in another order. This is where value feeding comes handy. The <em>valueFeeder</em> parameter expects a function that takes two parameters, one which will progress from 0 to 1 and an identity matrix that you can modify. The function will be called every frame and should return a matrix(see <a href="#matrix">Matrix API</a>) representing the current transform.</p>
-        <pre><code>snabbt(element, {
+        <pre><code class="javascript">snabbt(element, {
   valueFeeder: function(i, matrix) {
     var x = Math.sin(i*Math.PI);
     return matrix.rotateZ(Math.sin(6*i*Math.PI)).translate(x*200, 0, 0);
@@ -241,7 +248,7 @@
 
         <h3>Transform origin</h3>
         <p>By default, rotations are applied around the center of the element. By using <em>transformOrigin</em> rotations can be performed around abritary positions.</p>
-        <pre><code>snabbt(element, {
+        <pre><code class="javascript">snabbt(element, {
   rotation: [0, 2*Math.PI, 0],
   transformOrigin: [element.clientWidth, 0, 0]
 });</code></pre>
@@ -270,30 +277,66 @@
         <p>snabbt.js has support for attention animations. This can be useful in form validations when you want to draw attention to a form element for example. Attention animation use spring easings.</p>
         <div class="row">
           <div class="six columns">
-            <pre><code>snabbt(element, 'attention', {
+            <pre><code class="javascript">snabbt(element, 'attention', {
   rotation: [0, 0, Math.PI/2],
   springConstant: 1.9,
-  springDecelaration: 0.9,
+  springDeceleration: 0.9,
 });</code></pre>
 
             <button id="attention-example-1" class="button-primary extra-top-margin">Run example</button>
           </div>
           <div class="six columns">
-            <pre><code>snabbt(element, 'attention', {
+            <pre><code class="javascript">snabbt(element, 'attention', {
   position: [50, 0, 0],
   springConstant: 2.4,
-  springDecelaration: 0.9,
+  springDeceleration: 0.9,
 });</code></pre>
 
             <button id="attention-example-2" class="button-primary extra-top-margin">Run example</button>
           </div>
         </div>
       </section>
+      <section id="multi-element">
+        <h2>Multi-element animations</h2>
+        <p>Several elements can be animated with a single snabbt-call by passing a list of elements instead of just one. If you want to set different values for each of the elements you can pass initilization functions for the properties instead of actual values.</p>
+        <p>The Initialization functions take two parameters, the current index of the element in the collection and the total number of elements. The functions must return a value in the same format as usual, e.g. a position function initializer must return an array of three coordinates for example.</p>
+        <p>This makes it possible to create complex animations with very little code:</p>
+
+        <pre><code class="javascript">snabbt(document.querySelectorAll('.multi-example-box'), {
+  fromRotation: [0, 0, 0],
+  rotation: function(i, elementCount) {
+    return [0, 0, (i/(count - 1)) * (Math.PI/2)];
+  },
+  delay: function(i) {
+    return i * 50;
+  },
+  easing: 'spring',
+}).then({
+  rotation: [0, 0, 0],
+  delay: function(i, elementCount) {
+    return 200 + (elementCount - i) * 50;
+  },
+  easing: 'ease',
+});</code></pre>
+        <button id="multi-element-example" class="button-primary extra-top-margin">Run example</button>
+        <div>
+          <div class="multi-example"></div>
+          <div class="multi-example"></div>
+          <div class="multi-example"></div>
+          <div class="multi-example"></div>
+          <div class="multi-example"></div>
+          <div class="multi-example"></div>
+          <div class="multi-example"></div>
+          <div class="multi-example"></div>
+          <div class="multi-example"></div>
+        </div>
+
+      </section>
       <section id="module-loaders">
         <h2>Module loaders</h2>
         <p>snabbt.js is wrapped in a UMD boilerplate which means it will work with both RequireJS and browserify.</p>
         <strong>CommonJS:</strong>
-        <pre><code>var snabbt = require('snabbt.js');
+        <pre><code class="javascript">var snabbt = require('snabbt.js');
 
 snabbt(element, {
   position: [200, 0, 0]
@@ -301,7 +344,7 @@ snabbt(element, {
 </pre></code>
 
         <strong>AMD:</strong>
-        <pre><code>require(["snabbt.js"], function(snabbt) {
+        <pre><code class="javascript">require(["snabbt.js"], function(snabbt) {
   snabbt(element, {
     rotation: [2*Math.PI, 0, 0]
   });
@@ -314,14 +357,14 @@ snabbt(element, {
         <div class="row">
           <div class="six columns">
             <h5>With jQuery</h5>
-            <pre><code>$element.snabbt({
+            <pre><code class="javascript">$element.snabbt({
   position: [150, 0, 0],
   rotation: [0, 0, Math.PI],
 });</code></pre>
           </div>
           <div class="six columns">
             <h5>Without jQuery</h5>
-            <pre><code>snabbt(element, {
+            <pre><code class="javascript">snabbt(element, {
   position: [150, 0, 0],
   rotation: [0, 0, Math.PI],
 });</code></pre>
@@ -342,7 +385,7 @@ snabbt(element, {
           <li><strong>Matrix.skew(ax, ay)</strong> - Multiplies with a skew matrix</li>
         </ul>
         <p>All operations are chainable to make writing matrix multiplications concise, e.g.:</p>
-        <pre><code>matrix.translate(100, 0, 0).rotateX(Math.PI);</code></pre>
+        <pre><code class="javascript">matrix.translate(100, 0, 0).rotateX(Math.PI);</code></pre>
       </section>
 
       <section id="api">

@@ -178,6 +178,18 @@ footer {
   -webkit-transform: rotateY(-180deg);
   transform: rotateY(-180deg);
 }
+
+
+.multi-container {
+  position: relative;
+  height: 50px;
+}
+.multi-example {
+  display: inline-block;
+  width: 50px;
+  height: 50px;
+  background: brown;
+}
 /* Some utiliy classes */
 @media screen and (max-width:600px) {
   .hide-mobile {

@@ -3,36 +3,34 @@ $(function() {
   var title = $("h1").text();
   var titleHeight = $("h1").height();
 
-  $("h1 span").each(function(idx, element) {
-    var x = 20;
-    var z = title.length/2 * x - Math.abs((title.length/2 - idx) * x);
-    snabbt(element, {
-      fromRotation: [0, 0, -8*Math.PI],
-      delay: 1000 + idx * 100,
-      duration: 1000,
-      easing: 'ease',
-      callback: function() {
-        if(idx == title.length - 1) {
-          $("h1").snabbt({
-            transformOrigin: [0, 100, 0],
-            rotation: [-Math.PI/4, 0, 0],
-            perspective: 300,
-            easing: 'linear',
-            delay: 400,
-            duration: 1000
-          }).then({
-            rotation: [0, 0, 0],
-            transformOrigin: [0, 100, 0],
-            easing: 'spring',
-            perspective: 300,
-            springConstant: 0.2,
-            springDeceleration: 0.90,
-            springMass: 4,
-          });
-        }
+  // Title animation
+  $("h1 span").snabbt({
+    fromRotation: [0, 0, -8*Math.PI],
+    delay: function(i) {
+      return 1000 + i * 100;
+    },
+    duration: 1000,
+    easing: 'ease',
+    callback: function(i, length) {
+      if(i === length - 1) {
+        $("h1").snabbt({
+          transformOrigin: [0, 100, 0],
+          rotation: [-Math.PI/4, 0, 0],
+          perspective: 300,
+          easing: 'linear',
+          delay: 400,
+          duration: 1000
+        }).then({
+          rotation: [0, 0, 0],
+          transformOrigin: [0, 100, 0],
+          easing: 'spring',
+          perspective: 300,
+          springConstant: 0.2,
+          springDeceleration: 0.90,
+          springMass: 4,
+        });
       }
-    });
-
+    }
   });
 
   // Title easter egg
@@ -57,7 +55,7 @@ $(function() {
       delay: 200,
     }).then({
       transformOrigin: [width/2, 0, 0],
-      fromRotation: [0, -Math.PI, 0],
+      rotation: [0, 0, 0],
       fromPosition: [0, 0, 0],
       position: [0, 0, 0],
       perspective: 500,
@@ -85,7 +83,8 @@ $(function() {
       rotation: [0, 0, 0],
       easing: 'spring',
       springConstant: 0.2,
-      springDeceleration: 0.95,
+      springDeceleration: 0.90,
+      springMass: 10,
     });
   };
 
@@ -98,7 +97,6 @@ $(function() {
     container.onclick = function(container, element, easingName) {
       var containerWidth = container.offsetWidth;
       var elementWidth = element.offsetWidth;
-      snabbt(element, 'stop');
       snabbt(element, {
         fromPosition: [0, 0, 0],
         position: [containerWidth - elementWidth, 0, 0],
@@ -117,7 +115,7 @@ $(function() {
       springConstant: 0.3,
       springDeceleration: 0.8,
     }).then({
-      fromRotation: [0, 0, 0],
+      position: [0, 0, 0],
       easing: 'spring',
       springConstant: 0.3,
       springDeceleration: 0.8,
@@ -129,8 +127,11 @@ $(function() {
     $("#custom-easer").snabbt({
       position: [200, 0, 0],
       easing: function(value) {
-        return Math.sin(Math.PI * value);
+        return value + 0.3 * Math.sin(2*Math.PI * value);
       }
+    }).then({
+      position: [0, 0, 0],
+      easing: 'easeOut'
     });
   });
 
@@ -168,6 +169,7 @@ $(function() {
       fromPosition: [2*elementWidth, 0, 0],
       position: [2*elementWidth, 0, 0],
       fromRotation: [0, -Math.PI, 0],
+      rotation: [0, 0, 0],
       transformOrigin: [-elementWidth/2, 0, 0],
       perspective: 400,
       duration: 300,
@@ -175,6 +177,7 @@ $(function() {
     }).then({
       fromRotation: [0, 0, 0],
       fromPosition: [2*elementWidth, 0, 0],
+      position: [0, 0, 0],
       duration: 300,
       easing: 'ease'
     });
@@ -197,6 +200,26 @@ $(function() {
       position: [50, 0, 0],
       springConstant: 2.4,
       springDeceleration: 0.9,
+    });
+  });
+
+  // Multi element animation
+  $("#multi-element-example").on('click', function() {
+    $(".multi-example").snabbt({
+      fromRotation: [0, 0, 0],
+      rotation: function(i, count) {
+        return [0, 0, (i/(count - 1)) * (Math.PI/2)];
+      },
+      delay: function(i) {
+        return i * 50;
+      },
+      easing: 'spring',
+    }).then({
+      rotation: [0, 0, 0],
+      delay: function(i, elementCount) {
+        return 200 + (elementCount - i) * 50;
+      },
+      easing: 'ease',
     });
   });
 
