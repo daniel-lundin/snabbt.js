@@ -216,7 +216,7 @@ $(function() {
       easing: 'spring',
     }).then({
       rotation: [0, 0, 0],
-      delay: function(i, elementCount) {
+      delay: function(i, count) {
         return 200 + (elementCount - i) * 50;
       },
       easing: 'ease',
