@@ -207,8 +207,8 @@ $(function() {
   $("#multi-element-example").on('click', function() {
     $(".multi-example").snabbt({
       fromRotation: [0, 0, 0],
-      rotation: function(i, count) {
-        return [0, 0, (i/(count - 1)) * (Math.PI/2)];
+      rotation: function(i, total) {
+        return [0, 0, (i/(total - 1)) * (Math.PI/2)];
       },
       delay: function(i) {
         return i * 50;
@@ -216,8 +216,8 @@ $(function() {
       easing: 'spring',
     }).then({
       rotation: [0, 0, 0],
-      delay: function(i, count) {
-        return 200 + (elementCount - i) * 50;
+      delay: function(i, total) {
+        return (total - i - 1) * 50;
       },
       easing: 'ease',
     });

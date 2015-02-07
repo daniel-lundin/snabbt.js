@@ -296,16 +296,17 @@
           </div>
         </div>
       </section>
+
       <section id="multi-element">
         <h2>Multi-element animations</h2>
         <p>Several elements can be animated with a single snabbt-call by passing a list of elements instead of just one. If you want to set different values for each of the elements you can pass initilization functions for the properties instead of actual values.</p>
-        <p>The Initialization functions take two parameters, the current index of the element in the collection and the total number of elements. The functions must return a value in the same format as usual, e.g. a position function initializer must return an array of three coordinates for example.</p>
+        <p>The Initialization functions take two parameters, the current index of the element in the collection and the total number of elements. The functions must return a value in the same format as usual, e.g. a position function initializer must return an array of three coordinates.</p>
         <p>This makes it possible to create complex animations with very little code:</p>
 
         <pre><code class="javascript">snabbt(document.querySelectorAll('.multi-example-box'), {
   fromRotation: [0, 0, 0],
-  rotation: function(i, elementCount) {
-    return [0, 0, (i/(count - 1)) * (Math.PI/2)];
+  rotation: function(i, total) {
+    return [0, 0, (i/(total - 1)) * (Math.PI/2)];
   },
   delay: function(i) {
     return i * 50;
@@ -313,8 +314,8 @@
   easing: 'spring',
 }).then({
   rotation: [0, 0, 0],
-  delay: function(i, elementCount) {
-    return 200 + (elementCount - i) * 50;
+  delay: function(i, total) {
+    return (total - i - 1) * 50;
   },
   easing: 'ease',
 });</code></pre>

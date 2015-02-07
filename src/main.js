@@ -64,6 +64,16 @@ snabbtjs.preprocessOptions = function(options, index, len) {
       options.callback(index, len);
     };
   }
+  if(snabbtjs.isFunction(options.valueFeeder)) {
+    clone.valueFeeder = function(i, matrix) {
+      return options.valueFeeder(i, matrix, index, len);
+    };
+  }
+  if(snabbtjs.isFunction(options.easing)) {
+    clone.easing = function(i) {
+      return options.easing(i, index, len);
+    };
+  }
 
   var properties = [
     'position',

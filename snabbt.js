@@ -403,6 +403,16 @@ snabbtjs.preprocessOptions = function(options, index, len) {
       options.callback(index, len);
     };
   }
+  if(snabbtjs.isFunction(options.valueFeeder)) {
+    clone.valueFeeder = function(i, matrix) {
+      return options.valueFeeder(i, matrix, index, len);
+    };
+  }
+  if(snabbtjs.isFunction(options.easing)) {
+    clone.easing = function(i) {
+      return options.easing(i, index, len);
+    };
+  }
 
   var properties = [
     'position',
@@ -462,7 +472,7 @@ snabbtjs.snabbtSingleElement = function(element, arg2, arg3) {
   var queue = [];
   var chainer = {
     then: function(opts) {
-      queue.unshift(opts);
+      queue.unshift(snabbtjs.preprocessOptions(opts, 0, 1));
       return chainer;
     }
   };
