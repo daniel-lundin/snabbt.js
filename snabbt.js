@@ -70,6 +70,7 @@ snabbtjs.Animation.prototype.finish = function(callback) {
   var duration = this.duration * this.manualValue;
   this.startTime = this.currentTime - duration;
   this.manualCallback = callback;
+  this.easing.resetFrom = this.manualValue;
 };
 
 snabbtjs.Animation.prototype.rollback = function(callback) {
@@ -78,6 +79,7 @@ snabbtjs.Animation.prototype.rollback = function(callback) {
   var duration = this.duration * (1 - this.manualValue);
   this.startTime = this.currentTime - duration;
   this.manualCallback = callback;
+  this.easing.resetFrom = this.manualValue;
 };
 
 snabbtjs.Animation.prototype.restart = function() {
@@ -92,9 +94,9 @@ snabbtjs.Animation.prototype.tick = function(time) {
     var delayFactor = this.delay / this.duration;
 
     this.currentTime = time;
-    if(this.manualValue > delayFactor)
-      this.easing.tick(this.manualValue - delayFactor);
-    this.updateCurrentTransform();
+    if(this.manualValue > delayFactor) {
+      this.updateCurrentTransform();
+    }
     return;
   }
 
@@ -123,6 +125,8 @@ snabbtjs.Animation.prototype.setValue = function(manualValue) {
 
 snabbtjs.Animation.prototype.updateCurrentTransform = function() {
   var tweenValue = this.easing.value();
+  if(this.manual)
+    tweenValue = this.manualValue;
   this.tweener.tween(tweenValue);
 };
 
@@ -280,6 +284,12 @@ snabbtjs.SpringEasing.prototype.tick = function(value) {
   }
 };
 
+snabbtjs.SpringEasing.prototype.resetFrom = function(value) {
+  this.position = value;
+  this.velocity = 0;
+};
+
+
 snabbtjs.SpringEasing.prototype.value = function() {
   if(this.equilibrium)
     return this.equilibriumPosition;
@@ -305,6 +315,9 @@ snabbtjs.Easer = function(easer) {
 snabbtjs.Easer.prototype.tick = function(value) {
   this._value = this.easer(value);
   this.lastValue = value;
+};
+
+snabbtjs.Easer.prototype.resetFrom = function(value) {
 };
 
 snabbtjs.Easer.prototype.value = function() {

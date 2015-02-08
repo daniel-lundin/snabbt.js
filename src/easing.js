@@ -52,6 +52,12 @@ snabbtjs.SpringEasing.prototype.tick = function(value) {
   }
 };
 
+snabbtjs.SpringEasing.prototype.resetFrom = function(value) {
+  this.position = value;
+  this.velocity = 0;
+};
+
+
 snabbtjs.SpringEasing.prototype.value = function() {
   if(this.equilibrium)
     return this.equilibriumPosition;
@@ -77,6 +83,9 @@ snabbtjs.Easer = function(easer) {
 snabbtjs.Easer.prototype.tick = function(value) {
   this._value = this.easer(value);
   this.lastValue = value;
+};
+
+snabbtjs.Easer.prototype.resetFrom = function(value) {
 };
 
 snabbtjs.Easer.prototype.value = function() {
