@@ -64,6 +64,7 @@ snabbtjs.Animation.prototype.rollback = function(callback) {
 snabbtjs.Animation.prototype.restart = function() {
   // Restart timer
   this.startTime = undefined;
+  this.easing.resetFrom(0);
 };
 
 snabbtjs.Animation.prototype.tick = function(time) {

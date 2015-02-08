@@ -286,7 +286,6 @@ snabbtjs.stateFromOptions = function(options, state, useFromPrefix) {
   state.height = options[height];
 
   return state;
-
 };
 
 snabbtjs.setupAnimationOptions = function(start, end, options) {

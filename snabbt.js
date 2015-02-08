@@ -85,6 +85,7 @@ snabbtjs.Animation.prototype.rollback = function(callback) {
 snabbtjs.Animation.prototype.restart = function() {
   // Restart timer
   this.startTime = undefined;
+  this.easing.resetFrom(0);
 };
 
 snabbtjs.Animation.prototype.tick = function(time) {
@@ -318,6 +319,7 @@ snabbtjs.Easer.prototype.tick = function(value) {
 };
 
 snabbtjs.Easer.prototype.resetFrom = function(value) {
+  this.lastValue = 0;
 };
 
 snabbtjs.Easer.prototype.value = function() {
@@ -638,7 +640,6 @@ snabbtjs.stateFromOptions = function(options, state, useFromPrefix) {
   state.height = options[height];
 
   return state;
-
 };
 
 snabbtjs.setupAnimationOptions = function(start, end, options) {

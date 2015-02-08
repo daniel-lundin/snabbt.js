@@ -86,6 +86,7 @@ snabbtjs.Easer.prototype.tick = function(value) {
 };
 
 snabbtjs.Easer.prototype.resetFrom = function(value) {
+  this.lastValue = 0;
 };
 
 snabbtjs.Easer.prototype.value = function() {
