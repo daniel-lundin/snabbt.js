@@ -1,7 +1,7 @@
 {
   "name": "snabbt.js",
   "main": "snabbt.min.js",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "authors": [
     "daniel-lundin <daniel.t.lundin@gmail.com>"
   ],

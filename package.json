@@ -1,6 +1,6 @@
 {
   "name": "snabbt.js",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "description": "Fast animations with javascript and CSS-transforms",
   "main": "snabbt.min.js",
   "files": ["LICENSE.txt", "README.md", "bower.json", "package.json", "snabbt.js", "snabbt.min.js"],
