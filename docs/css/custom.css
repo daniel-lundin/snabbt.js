@@ -190,6 +190,11 @@ footer {
   height: 50px;
   background: brown;
 }
+
+#multi-example span {
+  display: inline-block;
+}
+
 /* Some utiliy classes */
 @media screen and (max-width:600px) {
   .hide-mobile {

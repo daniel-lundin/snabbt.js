@@ -110,6 +110,7 @@ $(function() {
   $("#spring-example").on('click', function() {
     $("#spring-example").snabbt({
       position: [100, 0, 0],
+      fromRotation: [0, 0, 0],
       rotation: [0, 0, 2*Math.PI],
       easing: 'spring',
       springConstant: 0.3,
@@ -244,6 +245,7 @@ $(function() {
       }));
       animations.push(snabbt(flipperBackground, {
         fromScale: [0.0, 0.0],
+        scale: [1.0, 1.0],
         fromRotation: [0, 0, 2*Math.PI],
         rotation: [0, 0, 0],
         manual: true,

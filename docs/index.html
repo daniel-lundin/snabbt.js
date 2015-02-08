@@ -92,7 +92,8 @@
         <ul>
           <li>All transforms work on pixels or radians. Any unit conversion has to be done beforehand.</li>
           <li>No arbitrary property animations, e.g. colors, padding, margin or line height animations.</li>
-          <li>For performance reasons, snabbt.js never queries the DOM. This means that in some cases you need to transforms yourself.(Specifically when using value feeding)</li>
+          <li>For performance reasons, snabbt never queries the DOM. This means that in some cases you need to transforms yourself.(Specifically when using value feeding)</li>
+          <li>snabbt.js needs requestAnimationFrame and matrix3d to work, so no IE &lt; 10</li>
         </ul>
       </section>
 
@@ -109,7 +110,7 @@
         <h2>Usage</h2>
         <div class="row">
           <div class="six columns">
-            <p>Animations are started with the snabbt-function call. The function takes an element as first parameter and a configutation-object as second. Example:</p>
+            <p>Animations are started with the snabbt-function call. The function takes an element as first parameter(or list there of) and a configutation-object as second. Example:</p>
 
 
             <button id="usage-example-execute">Run example</button>
@@ -191,7 +192,7 @@
         <div class="row">
           <div class="six columns">
             <p>Instead of easing name, pass in a function that takes one parameter:</p>
-        <button id="custom-easer" class="button-primary">Run example</button>
+            <button id="custom-easer" class="button-primary">Run example</button>
           </div>
           <div class="six columns">
             <pre><code class="javascript">snabbt(element, {
@@ -300,7 +301,7 @@
       <section id="multi-element">
         <h2>Multi-element animations</h2>
         <p>Several elements can be animated with a single snabbt-call by passing a list of elements instead of just one. If you want to set different values for each of the elements you can pass initilization functions for the properties instead of actual values.</p>
-        <p>The Initialization functions take two parameters, the current index of the element in the collection and the total number of elements. The functions must return a value in the same format as usual, e.g. a position function initializer must return an array of three coordinates.</p>
+        <p>The initialization functions take two parameters, the current index of the element in the collection and the total number of elements. The functions must return a value in the same format as usual, e.g. a position function initializer must return an array of three coordinates.</p>
         <p>This makes it possible to create complex animations with very little code:</p>
 
         <pre><code class="javascript">snabbt(document.querySelectorAll('.multi-example-box'), {
@@ -346,7 +347,7 @@ snabbt(element, {
 </pre></code>
 
         <strong>AMD:</strong>
-        <pre><code class="javascript">require(["snabbt.js"], function(snabbt) {
+        <pre><code class="javascript">require(['snabbt.js'], function(snabbt) {
   snabbt(element, {
     rotation: [2*Math.PI, 0, 0]
   });
@@ -355,7 +356,7 @@ snabbt(element, {
       </section>
       <section>
         <h3>jQuery</h3>
-        <p>snabbt.js works with or without jQuery. If jQuery is detected snabbt.js will be loaded as a jQuery-plugin. When using snabbt.js with jQuery, the first parameter is the animation configuration:</p>
+        <p>snabbt.js works with or without jQuery. If jQuery is detected snabbt will be loaded as a jQuery-plugin. When using snabbt with jQuery, the first parameter is the animation configuration:</p>
         <div class="row">
           <div class="six columns">
             <h5>With jQuery</h5>
@@ -388,6 +389,12 @@ snabbt(element, {
         </ul>
         <p>All operations are chainable to make writing matrix multiplications concise, e.g.:</p>
         <pre><code class="javascript">matrix.translate(100, 0, 0).rotateX(Math.PI);</code></pre>
+
+        <h3 class="extra-top-margin">Freeform transforms</h3>
+        <p>The matrix operations can be used outside of snabbt's animation engine engine. This could be useful for building games etc. </p>
+        <pre><code class="javascript">var matrix = new snabbt.Matrix();
+matrix.translate(100, 0, 0);
+snabbt.setElementTransform(element, matrix);</code></pre>
       </section>
 
       <section id="api">
