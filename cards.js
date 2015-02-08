@@ -42,7 +42,7 @@ var PILE = 1;
 var HOUSE = 2;
 var WALL = 3;
 var CYLINDER = 4;
-var current_mode = PILE;
+var current_mode;
 
 var formation_builders = {};
 formation_builders[PILE] = pile_positions;
@@ -245,7 +245,7 @@ function build_pile() {
 function init() {
   update_sizes();
   Deck.reset();
-  build_wall();
+  build_pile();
   rotate_container();
 
   // Initialize fast click
