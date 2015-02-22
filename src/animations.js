@@ -71,12 +71,9 @@ snabbtjs.Animation.prototype.tick = function(time) {
   if(this.stopped)
     return;
   if(this.manual) {
-    var delayFactor = this.delay / this.duration;
 
     this.currentTime = time;
-    if(this.manualValue > delayFactor) {
-      this.updateCurrentTransform();
-    }
+    this.updateCurrentTransform();
     return;
   }
 
@@ -100,13 +97,13 @@ snabbtjs.Animation.prototype.getCurrentState = function() {
 };
 
 snabbtjs.Animation.prototype.setValue = function(manualValue) {
-  this.manualValue = Math.min(Math.max(manualValue, 0), 1 + this.manualDelayFactor);
+  this.manualValue = Math.min(Math.max(manualValue, 0.0001), 1 + this.manualDelayFactor);
 };
 
 snabbtjs.Animation.prototype.updateCurrentTransform = function() {
   var tweenValue = this.easing.value();
   if(this.manual)
-    tweenValue = this.manualValue;
+    tweenValue = Math.max(0.00001, this.manualValue - this.manualDelayFactor);
   this.tweener.tween(tweenValue);
 };
 
