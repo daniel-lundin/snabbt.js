@@ -3,6 +3,9 @@ module.exports = function(grunt) {
   // Project configuration.
   grunt.initConfig({
     pkg: grunt.file.readJSON('package.json'),
+    jshint: {
+      all: ['snabbt.js']
+    },
     uglify: {
       options: {
         banner: '/*! <%= pkg.name %> v<%= pkg.version %> built: <%= grunt.template.today("yyyy-mm-dd") %>  (c)2015 Daniel Lundin @license MIT */\n'
@@ -13,21 +16,13 @@ module.exports = function(grunt) {
         }
       },
     },
-    concat: {
-      options: {
-        separator: ';',
-      },
-      dist: {
-        src: ['src/module_pre.js', 'src/animations.js', 'src/easing.js', 'src/jquery.snabbt.js', 'src/main.js', 'src/matrix.js', 'src/state.js', 'src/tween.js', 'src/utils.js', 'src/module_post.js'],
-        dest: 'snabbt.js',
-      },
-    }
   });
 
   grunt.loadNpmTasks('grunt-contrib-uglify');
-  grunt.loadNpmTasks('grunt-contrib-concat');
+  grunt.loadNpmTasks('grunt-contrib-jshint');
+  
 
 
   // Default task(s).
-  grunt.registerTask('default', ['concat', 'uglify']);
+  grunt.registerTask('default', ['jshint', 'uglify']);
 };
