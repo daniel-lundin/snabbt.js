@@ -21,7 +21,7 @@
   var completedAnimations = [];
 
   /* Entry point, only function to be called by user */
-  snabbt = function(arg1, arg2, arg3) {
+  var snabbt = function(arg1, arg2, arg3) {
 
     var elements = arg1;
 
@@ -1008,7 +1008,7 @@
   // -- StateTweener -- 
   // -------------------
 
-  StateTweener = function(startState, endState, resultState) {
+  var StateTweener = function(startState, endState, resultState) {
     this.start = startState;
     this.end = endState;
     this.result = resultState;
