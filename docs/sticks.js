@@ -58,13 +58,13 @@ function animate(selector) {
     position: [200, 0, 0],
     duration: 1000,
     easing: 'ease'
-  }).then({
+  }).snabbt({
     rotationPost: function(i, count) {
       return [0, 0, (i/count)*2*Math.PI];
     },
     duration: 1000,
     easing: 'ease'
-  }).then({
+  }).snabbt({
     fromPosition: function(i, count) {
       return [
         200*Math.cos((i/count)*2*Math.PI),
@@ -89,7 +89,7 @@ function animate(selector) {
     rotationPost: [0, 0, 0],
     delay: function(i) { return i*10; },
     duration: 1000,
-  }).then({
+  }).snabbt({
     fromPosition: [100, 0, 0],
     position: function(i, count) {
       return [0, -(count/2) * 5 + 5*i, 0];
@@ -104,7 +104,7 @@ function animate(selector) {
       return count*10 + i*10;
     },
     duration: 1000,
-    callback: function(i, count) {
+    complete: function(i, count) {
       if(i === count - 1) {
         animate(selector);
       }
