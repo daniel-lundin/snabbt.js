@@ -10,8 +10,7 @@
       return (root.returnExportsGlobal = snabbt);
     });
   } else {
-    // Global Variables
-
+    // As global variable
     root.snabbt = snabbt;
   }
 }(this, function () {
@@ -31,9 +30,13 @@
       var aggregateChainer = {
         chainers: [],
         then: function(opts) {
+          console.log('DeprecationWarning: then() is renamed to snabbt()');
+          return this.snabbt(opts);
+        },
+        snabbt: function(opts) {
           var len = this.chainers.length;
           this.chainers.forEach(function(chainer, index) {
-            chainer.then(preprocessOptions(opts, index, len));
+            chainer.snabbt(preprocessOptions(opts, index, len));
           });
           return aggregateChainer;
         },
@@ -80,8 +83,14 @@
       clone.delay = options.delay(index, len);
     }
     if(isFunction(options.callback)) {
-      clone.callback = function() {
+      console.log('DeprecationWarning: callback is renamed to complete');
+      clone.complete = function() {
         options.callback(index, len);
+      };
+    }
+    if(isFunction(options.complete)) {
+      clone.complete = function() {
+        options.complete(index, len);
       };
     }
     if(isFunction(options.valueFeeder)) {
@@ -152,9 +161,13 @@
     animation.updateElement(element);
     var queue = [];
     var chainer = {
-      then: function(opts) {
+      snabbt: function(opts) {
         queue.unshift(preprocessOptions(opts, 0, 1));
         return chainer;
+      },
+      then: function(opts) {
+        console.log('DeprecationWarning: then() is renamed to snabbt()');
+        return this.snabbt(opts);
       }
     };
 
@@ -167,15 +180,14 @@
       if(!animation.completed())
         return queueTick(tick);
 
-
       if(options.loop > 1 && !animation.isStopped()) {
         // Loop current animation
         options.loop -= 1;
         animation.restart();
         queueTick(tick);
       } else {
-        if(options.callback) {
-          options.callback(element);
+        if(options.complete) {
+          options.complete(element);
         }
 
         // Start next animation in queue
