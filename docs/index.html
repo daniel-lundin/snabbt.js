@@ -386,13 +386,14 @@ snabbt(element, {
           <li><strong>Matrix.rotateZ(radians)</strong> - Multiplies with a rotation around the z-axis</li>
           <li><strong>Matrix.scale(x, y)</strong> - Multiplies with a scaling matrix</li>
           <li><strong>Matrix.skew(ax, ay)</strong> - Multiplies with a skew matrix</li>
+          <li><strong>Matrix.clear()</strong> - Sets the matrix to the identity matrix</li>
         </ul>
         <p>All operations are chainable to make writing matrix multiplications concise, e.g.:</p>
         <pre><code class="javascript">matrix.translate(100, 0, 0).rotateX(Math.PI);</code></pre>
 
         <h3 class="extra-top-margin">Freeform transforms</h3>
         <p>The matrix operations can be used outside of snabbt's animation engine. This could be useful for interactive animations. </p>
-        <pre><code class="javascript">var matrix = new snabbt.Matrix();
+        <pre><code class="javascript">var matrix = snabbt.createMatrix();
 matrix.translate(100, 0, 0);
 snabbt.setElementTransform(element, matrix);</code></pre>
       </section>

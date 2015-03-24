@@ -198,7 +198,7 @@
           end = stateFromOptions(options, cloneObject(end));
           options = setupAnimationOptions(start, end, options);
 
-          animation = new Animation(options);
+          animation = createAnimation(options);
           runningAnimations.push([element, animation]);
 
           animation.tick(time);
@@ -218,7 +218,7 @@
   var setupAttentionAnimation = function(element,  options) {
     var movement = stateFromOptions(options);
     options.movement = movement;
-    var animation = new AttentionAnimation(options);
+    var animation = createAttentionAnimation(options);
 
     runningAnimations.push([element, animation]);
     function tick(time) {
@@ -299,7 +299,7 @@
    */
   var stateFromOptions = function(options, state, useFromPrefix) {
     if (!state)
-      state = new State({});
+      state = createState({});
     var position = 'position';
     var rotation = 'rotation';
     var skew = 'skew';
@@ -377,122 +377,126 @@
 
 
   // Class for handling animation between two states
-  var Animation = function(options) {
-    this.startState = options.startState;
-    this.endState = options.endState;
-    this.duration = optionOrDefault(options.duration, 500);
-    this.delay = optionOrDefault(options.delay, 0);
-    this.perspective = options.perspective;
-    this.easing = createEaser(optionOrDefault(options.easing, 'linear'), options);
-    this.currentState = this.startState.clone();
-    this.transformOrigin = options.transformOrigin;
-    this.currentState.transformOrigin = options.transformOrigin;
+  var createAnimation = function(options) {
+    var startState = options.startState;
+    var endState = options.endState;
+    var duration = optionOrDefault(options.duration, 500);
+    var delay = optionOrDefault(options.delay, 0);
+    var perspective = options.perspective;
+    var easing = createEaser(optionOrDefault(options.easing, 'linear'), options);
+    var currentState = startState.clone();
+    var transformOrigin = options.transformOrigin;
+    currentState.transformOrigin = options.transformOrigin;
 
-    this.startTime = 0;
-    this.currentTime = 0;
-    this.stopped = false;
+    var startTime = 0;
+    var currentTime = 0;
+    var stopped = false;
 
     // Manual related
-    this.manual = options.manual;
-    this.manualValue = 0;
-    this.manualDelayFactor = this.delay / this.duration;
+    var manual = options.manual;
+    var manualValue = 0;
+    var manualDelayFactor = delay / duration;
+    var manualCallback;
 
+    var tweener;
     // Setup tweener
     if(options.valueFeeder) {
-      this.tweener = new ValueFeederTweener(options.valueFeeder,
-                                                     this.startState,
-                                                     this.endState,
-                                                     this.currentState);
+      tweener = createValueFeederTweener(options.valueFeeder,
+                                         startState,
+                                         endState,
+                                         currentState);
     } else {
-      this.tweener = new StateTweener(this.startState, this.endState, this.currentState);
-    }
-  };
-
-  Animation.prototype.stop = function() {
-    this.stopped = true;
-  };
-
-  Animation.prototype.isStopped = function() {
-    return this.stopped;
-  };
-
-  Animation.prototype.finish = function(callback) {
-    this.manual = false;
-    var duration = this.duration * this.manualValue;
-    this.startTime = this.currentTime - duration;
-    this.manualCallback = callback;
-    this.easing.resetFrom = this.manualValue;
-  };
-
-  Animation.prototype.rollback = function(callback) {
-    this.manual = false;
-    this.tweener.setReverse();
-    var duration = this.duration * (1 - this.manualValue);
-    this.startTime = this.currentTime - duration;
-    this.manualCallback = callback;
-    this.easing.resetFrom = this.manualValue;
-  };
-
-  Animation.prototype.restart = function() {
-    // Restart timer
-    this.startTime = undefined;
-    this.easing.resetFrom(0);
-  };
-
-  Animation.prototype.tick = function(time) {
-    if(this.stopped)
-      return;
-    if(this.manual) {
-
-      this.currentTime = time;
-      this.updateCurrentTransform();
-      return;
+      tweener = createStateTweener(startState, endState, currentState);
     }
 
-    // If first tick, set start_time
-    if(!this.startTime) {
-      this.startTime = time;
-    }
-    if(time - this.startTime > this.delay)
-      this.currentTime = time - this.delay;
+    // Public api
+    return {
+      stop: function() {
+        stopped = true;
+      },
+      isStopped: function() {
+        return stopped;
+      },
 
-    var curr = Math.min(Math.max(0.0, this.currentTime - this.startTime), this.duration);
-    this.easing.tick(curr/this.duration);
-    this.updateCurrentTransform();
-    if(this.completed() && this.manualCallback) {
-      this.manualCallback();
-    }
-  };
+      finish: function(callback) {
+        manual = false;
+        var manualDuration = duration * manualValue;
+        startTime = currentTime - manualDuration;
+        manualCallback = callback;
+        easing.resetFrom = manualValue;
+      },
 
-  Animation.prototype.getCurrentState = function() {
-    return this.currentState;
-  };
+      rollback: function(callback) {
+        manual = false;
+        tweener.setReverse();
+        var manualDuration = duration * (1 - manualValue);
+        startTime = currentTime - manualDuration;
+        manualCallback = callback;
+        easing.resetFrom = manualValue;
+      },
 
-  Animation.prototype.setValue = function(manualValue) {
-    this.manualValue = Math.min(Math.max(manualValue, 0.0001), 1 + this.manualDelayFactor);
-  };
+      restart: function() {
+        // Restart timer
+        startTime = undefined;
+        easing.resetFrom(0);
+      },
 
-  Animation.prototype.updateCurrentTransform = function() {
-    var tweenValue = this.easing.value();
-    if(this.manual)
-      tweenValue = Math.max(0.00001, this.manualValue - this.manualDelayFactor);
-    this.tweener.tween(tweenValue);
-  };
+      tick: function(time) {
+        if(stopped)
+          return;
+        if(manual) {
 
-  Animation.prototype.completed = function() {
-    if(this.stopped)
-      return true;
-    if(this.startTime === 0) {
-      return false;
-    }
-    return this.easing.completed();
-  };
+          currentTime = time;
+          this.updateCurrentTransform();
+          return;
+        }
 
-  Animation.prototype.updateElement = function(element) {
-    var matrix = this.tweener.asMatrix();
-    var properties = this.tweener.getProperties();
-    updateElementTransform(element, matrix, this.perspective);
-    updateElementProperties(element, properties);
+        // If first tick, set start_time
+        if(!startTime) {
+          startTime = time;
+        }
+        if(time - startTime > delay)
+          currentTime = time - delay;
+
+        var curr = Math.min(Math.max(0.0, currentTime - startTime), duration);
+        easing.tick(curr/duration);
+        this.updateCurrentTransform();
+        if(this.completed() && manualCallback) {
+          manualCallback();
+        }
+      },
+
+      getCurrentState: function() {
+        return currentState;
+      },
+
+      setValue: function(_manualValue) {
+        manualValue = Math.min(Math.max(_manualValue, 0.0001), 1 + manualDelayFactor);
+      },
+
+      updateCurrentTransform: function() {
+        var tweenValue = easing.getValue();
+        if(manual)
+          tweenValue = Math.max(0.00001, manualValue - manualDelayFactor);
+        tweener.tween(tweenValue);
+      },
+
+      completed: function() {
+        if(stopped)
+          return true;
+        if(startTime === 0) {
+          return false;
+        }
+        return easing.completed();
+      },
+
+      updateElement: function(element) {
+        var matrix = tweener.asMatrix();
+        var properties = tweener.getProperties();
+        updateElementTransform(element, matrix, perspective);
+        updateElementProperties(element, properties);
+      }
+    };
   };
 
   // ------------------------------
@@ -503,77 +507,72 @@
   // -- AttentionAnimation --
   // ------------------------
 
-  var AttentionAnimation = function(options) {
-    this.movement = options.movement;
-    this.currentMovement = new State({});
+  var createAttentionAnimation = function(options) {
+    var movement = options.movement;
+    var currentMovement = createState({});
     options.initialVelocity = 0.1;
     options.equilibriumPosition = 0;
-    this.spring = new SpringEasing(options);
-    this.stopped = false;
-    this.options = options;
-  };
+    var spring = createSpringEasing(options);
+    var stopped = false;
 
-  AttentionAnimation.prototype.stop = function() {
-    this.stopped = true;
-  };
+    // Public API
+    return {
+      stop: function() {
+        stopped = true;
+      },
 
-  AttentionAnimation.prototype.isStopped = function(time) {
-    return this.stopped;
-  };
+      isStopped: function(time) {
+        return stopped;
+      },
 
-  AttentionAnimation.prototype.tick = function(time) {
-    if(this.stopped)
-      return;
-    if(this.spring.equilibrium)
-      return;
-    this.spring.tick();
+      tick: function(time) {
+        if(stopped)
+          return;
+        if(spring.equilibrium)
+          return;
+        spring.tick();
 
-    this.updateMovement();
-  };
+        this.updateMovement();
+      },
 
-  AttentionAnimation.prototype.updateMovement = function() {
-    var currentMovement = this.currentMovement;
-    var movement = this.movement;
-    var position = this.spring.position;
-    currentMovement.position[0] = movement.position[0] * position;
-    currentMovement.position[1] = movement.position[1] * position;
-    currentMovement.position[2] = movement.position[2] * position;
-    currentMovement.rotation[0] = movement.rotation[0] * position;
-    currentMovement.rotation[1] = movement.rotation[1] * position;
-    currentMovement.rotation[2] = movement.rotation[2] * position;
-    currentMovement.rotationPost[0] = movement.rotationPost[0] * position;
-    currentMovement.rotationPost[1] = movement.rotationPost[1] * position;
-    currentMovement.rotationPost[2] = movement.rotationPost[2] * position;
-    if(movement.scale[0] !== 1 && movement.scale[1] !== 1) {
-      currentMovement.scale[0] = 1 + movement.scale[0] * position;
-      currentMovement.scale[1] = 1 + movement.scale[1] * position;
-    }
+      updateMovement:function() {
+        var value = spring.getValue();
+        currentMovement.position[0] = movement.position[0] * value;
+        currentMovement.position[1] = movement.position[1] * value;
+        currentMovement.position[2] = movement.position[2] * value;
+        currentMovement.rotation[0] = movement.rotation[0] * value;
+        currentMovement.rotation[1] = movement.rotation[1] * value;
+        currentMovement.rotation[2] = movement.rotation[2] * value;
+        currentMovement.rotationPost[0] = movement.rotationPost[0] * value;
+        currentMovement.rotationPost[1] = movement.rotationPost[1] * value;
+        currentMovement.rotationPost[2] = movement.rotationPost[2] * value;
+        if(movement.scale[0] !== 1 && movement.scale[1] !== 1) {
+          currentMovement.scale[0] = 1 + movement.scale[0] * value;
+          currentMovement.scale[1] = 1 + movement.scale[1] * value;
+        }
 
-    currentMovement.skew[0] = movement.skew[0] * position;
-    currentMovement.skew[1] = movement.skew[1] * position;
-  };
+        currentMovement.skew[0] = movement.skew[0] * value;
+        currentMovement.skew[1] = movement.skew[1] * value;
+      },
 
-  AttentionAnimation.prototype.updateElement = function(element) {
-    updateElementTransform(element, this.currentMovement.asMatrix());
-    updateElementProperties(element, this.currentMovement.getProperties());
-  };
+      updateElement: function(element) {
+        updateElementTransform(element, currentMovement.asMatrix());
+        updateElementProperties(element, currentMovement.getProperties());
+      },
 
-  AttentionAnimation.prototype.getCurrentState = function() {
-    return this.currentMovement;
-  };
+      getCurrentState: function() {
+        return currentMovement;
+      },
 
-  AttentionAnimation.prototype.completed = function() {
-    return this.spring.equilibrium || this.stopped;
-  };
+      completed: function() {
+        return spring.equilibrium || stopped;
+      },
 
-  AttentionAnimation.prototype.restart = function() {
-    // Restart spring
-    this.spring = new SpringEasing(this.options);
-  };
-
-  // Returns animation constructors based on options
-  var createAnimation = function(options) {
-    return new Animation(options);
+      restart: function() {
+        // Restart spring
+        spring = createSpringEasing(options);
+      }
+    };
   };
 
 
@@ -597,53 +596,57 @@
     return -Math.pow(value - 1, 2) + 1;
   };
 
-  var SpringEasing = function(options) {
-    this.position = optionOrDefault(options.startPosition, 0);
-    this.equilibriumPosition = optionOrDefault(options.equilibriumPosition, 1);
-    this.velocity = optionOrDefault(options.initialVelocity, 0);
-    this.springConstant = optionOrDefault(options.springConstant, 0.8);
-    this.deceleration = optionOrDefault(options.springDeceleration, 0.9);
-    this.mass = optionOrDefault(options.springMass, 10);
+  var createSpringEasing = function(options) {
+    var position = optionOrDefault(options.startPosition, 0);
+    var equilibriumPosition = optionOrDefault(options.equilibriumPosition, 1);
+    var velocity = optionOrDefault(options.initialVelocity, 0);
+    var springConstant = optionOrDefault(options.springConstant, 0.8);
+    var deceleration = optionOrDefault(options.springDeceleration, 0.9);
+    var mass = optionOrDefault(options.springMass, 10);
 
-    this.equilibrium = false;
-  };
+    var equilibrium = false;
 
-  SpringEasing.prototype.tick = function(value) {
-    if(value === 0.0)
-      return;
-    if(this.equilibrium)
-      return;
-    var springForce = -(this.position - this.equilibriumPosition) * this.springConstant;
-    // f = m * a
-    // a = f / m
-    var a = springForce / this.mass;
-    // s = v * t
-    // t = 1 ( for now )
-    this.velocity += a;
-    this.position += this.velocity;
+    // Public API
+    return {
 
-    // Deceleration
-    this.velocity *= this.deceleration;
+      tick: function(value) {
+        if(value === 0.0)
+          return;
+        if(equilibrium)
+          return;
+        var springForce = -(position - equilibriumPosition) * springConstant;
+        // f = m * a
+        // a = f / m
+        var a = springForce / mass;
+        // s = v * t
+        // t = 1 ( for now )
+        velocity += a;
+        position += velocity;
 
-    if(Math.abs(this.position - this.equilibriumPosition) < 0.001 && Math.abs(this.velocity) < 0.001) {
-      this.equilibrium = true;
-    }
-  };
+        // Deceleration
+        velocity *= deceleration;
 
-  SpringEasing.prototype.resetFrom = function(value) {
-    this.position = value;
-    this.velocity = 0;
-  };
+        if(Math.abs(position - equilibriumPosition) < 0.001 && Math.abs(velocity) < 0.001) {
+          equilibrium = true;
+        }
+      },
+
+      resetFrom: function(value) {
+        position = value;
+        velocity = 0;
+      },
 
 
-  SpringEasing.prototype.value = function() {
-    if(this.equilibrium)
-      return this.equilibriumPosition;
-    return this.position;
-  };
+      getValue: function() {
+        if(equilibrium)
+          return equilibriumPosition;
+        return position;
+      },
 
-  SpringEasing.prototype.completed = function() {
-    return this.equilibrium;
+      completed: function() {
+        return equilibrium;
+      }
+    };
   };
 
   var EASING_FUNCS = {
@@ -653,40 +656,42 @@
     'easeOut': easeOut,
   };
 
-  var Easer = function(easer) {
-    this.easer = easer;
-    this._value = 0;
-  };
-
-  Easer.prototype.tick = function(value) {
-    this._value = this.easer(value);
-    this.lastValue = value;
-  };
-
-  Easer.prototype.resetFrom = function(value) {
-    this.lastValue = 0;
-  };
-
-  Easer.prototype.value = function() {
-    return this._value;
-  };
-
-  Easer.prototype.completed = function() {
-    if(this.lastValue >= 1) {
-      return this.lastValue;
-    }
-    return false;
-  };
 
   var createEaser = function(easerName, options) {
     if(easerName == 'spring') {
-      return new SpringEasing(options);
+      return createSpringEasing(options);
     }
     var easeFunction = easerName;
     if(!isFunction(easerName)) {
       easeFunction = EASING_FUNCS[easerName];
     }
-    return new Easer(easeFunction);
+
+    var easer = easeFunction;
+    var value = 0;
+    var lastValue;
+
+    // Public API
+    return {
+      tick: function(v) {
+        value = easer(v);
+        lastValue = v;
+      },
+
+      resetFrom: function(value) {
+        lastValue = 0;
+      },
+
+      getValue: function() {
+        return value;
+      },
+
+      completed: function() {
+        if(lastValue >= 1) {
+          return lastValue;
+        }
+        return false;
+      }
+    };
   };
 
   /***
@@ -847,72 +852,76 @@
     b[15] = a[15];
   };
 
-  var Matrix = function() {
-    this.data = new Float32Array(16);
-    this.a = new Float32Array(16);
-    this.b = new Float32Array(16);
-    assignIdentity(this.data);
-  };
+  var createMatrix = function() {
+    var data = new Float32Array(16);
+    var a = new Float32Array(16);
+    var b = new Float32Array(16);
+    assignIdentity(data);
 
-  Matrix.prototype.asCSS = function() {
-    var css = 'matrix3d(';
-    for(var i=0;i<15;++i) {
-      if(Math.abs(this.data[i]) < 0.0001)
-        css += '0,';
-      else
-        css += this.data[i].toFixed(10) + ',';
-    }
-    if(Math.abs(this.data[15]) < 0.0001)
-      css += '0)';
-    else
-      css += this.data[15].toFixed(10) + ')';
-    return css;
-  };
+    return {
+      data: data,
 
-  Matrix.prototype.clear = function() {
-    assignIdentity(this.data);
-  };
+      asCSS: function() {
+        var css = 'matrix3d(';
+        for(var i=0;i<15;++i) {
+          if(Math.abs(data[i]) < 0.0001)
+            css += '0,';
+          else
+            css += data[i].toFixed(10) + ',';
+        }
+        if(Math.abs(data[15]) < 0.0001)
+          css += '0)';
+        else
+          css += data[15].toFixed(10) + ')';
+        return css;
+      },
 
-  Matrix.prototype.translate = function(x, y, z) {
-    copyArray(this.data, this.a);
-    assignTranslate(this.b, x, y, z);
-    assignedMatrixMultiplication(this.a, this.b, this.data);
-    return this;
-  };
+      clear: function() {
+        assignIdentity(data);
+      },
 
-  Matrix.prototype.rotateX = function(radians) {
-    copyArray(this.data, this.a);
-    assignRotateX(this.b, radians);
-    assignedMatrixMultiplication(this.a, this.b, this.data);
-    return this;
-  };
+      translate: function(x, y, z) {
+        copyArray(data, a);
+        assignTranslate(b, x, y, z);
+        assignedMatrixMultiplication(a, b, data);
+        return this;
+      },
 
-  Matrix.prototype.rotateY = function(radians) {
-    copyArray(this.data, this.a);
-    assignRotateY(this.b, radians);
-    assignedMatrixMultiplication(this.a, this.b, this.data);
-    return this;
-  };
+      rotateX: function(radians) {
+        copyArray(data, a);
+        assignRotateX(b, radians);
+        assignedMatrixMultiplication(a, b, data);
+        return this;
+      },
 
-  Matrix.prototype.rotateZ = function(radians) {
-    copyArray(this.data, this.a);
-    assignRotateZ(this.b, radians);
-    assignedMatrixMultiplication(this.a, this.b, this.data);
-    return this;
-  };
+      rotateY: function(radians) {
+        copyArray(data, a);
+        assignRotateY(b, radians);
+        assignedMatrixMultiplication(a, b, data);
+        return this;
+      },
 
-  Matrix.prototype.scale = function(x, y) {
-    copyArray(this.data, this.a);
-    assignScale(this.b, x, y);
-    assignedMatrixMultiplication(this.a, this.b, this.data);
-    return this;
-  };
+      rotateZ: function(radians) {
+        copyArray(data, a);
+        assignRotateZ(b, radians);
+        assignedMatrixMultiplication(a, b, data);
+        return this;
+      },
 
-  Matrix.prototype.skew = function(ax, ay) {
-    copyArray(this.data, this.a);
-    assignSkew(this.b, ax, ay);
-    assignedMatrixMultiplication(this.a, this.b, this.data);
-    return this;
+      scale: function(x, y) {
+        copyArray(data, a);
+        assignScale(b, x, y);
+        assignedMatrixMultiplication(a, b, data);
+        return this;
+      },
+
+      skew: function(ax, ay) {
+        copyArray(data, a);
+        assignSkew(b, ax, ay);
+        assignedMatrixMultiplication(a, b, data);
+        return this;
+      }
+    };
   };
 
   var assignedMatrixMultiplication = function(a, b, res) {
@@ -940,186 +949,198 @@
     return res;
   };
 
-  var State = function(config) {
-    this.position = optionOrDefault(config.position, [0, 0, 0]);
-    this.rotation = optionOrDefault(config.rotation, [0, 0, 0]);
-    this.rotationPost = optionOrDefault(config.rotationPost, [0, 0, 0]);
-    this.skew = optionOrDefault(config.skew, [0, 0]);
-    this.scale = optionOrDefault(config.scale, [1, 1]);
-    this.opacity = config.opacity;
-    this.width = config.width;
-    this.height = config.height;
-
+  var createState = function(config) {
     // Caching of matrix and properties so we don't have to create new ones everytime they are needed
-    this.matrix = new Matrix();
-    this.properties = {
+    var matrix = createMatrix();
+    var properties = {
       opacity: undefined,
       width: undefined,
       height: undefined
     };
+
+    // Public API
+    return {
+      position: optionOrDefault(config.position, [0, 0, 0]),
+      rotation: optionOrDefault(config.rotation, [0, 0, 0]),
+      rotationPost: optionOrDefault(config.rotationPost, [0, 0, 0]),
+      skew: optionOrDefault(config.skew, [0, 0]),
+      scale: optionOrDefault(config.scale, [1, 1]),
+      opacity: config.opacity,
+      width: config.width,
+      height: config.height,
+
+
+      clone: function() {
+        return createState({
+          position: this.position.slice(0),
+          rotation: this.rotation.slice(0),
+          rotationPost: this.rotationPost.slice(0),
+          skew: this.skew.slice(0),
+          scale: this.scale.slice(0),
+          height: this.height,
+          width: this.width,
+          opacity: this.opacity
+        });
+      },
+
+      asMatrix: function() {
+        var m = matrix;
+        m.clear();
+
+        if(this.transformOrigin)
+          m.translate(-this.transformOrigin[0], -this.transformOrigin[1], -this.transformOrigin[2]);
+
+        if(this.scale[0] !== 1 || this.scale[1] !== 1) {
+          m.scale(this.scale[0], this.scale[1]);
+        }
+
+        if(this.skew[0] !== 0 || this.skew[1] !== 0) {
+          m.skew(this.skew[0], this.skew[1]);
+        }
+
+        if(this.rotation[0] !== 0 || this.rotation[1] !== 0 || this.rotation[2] !== 0) {
+          m.rotateX(this.rotation[0]);
+          m.rotateY(this.rotation[1]);
+          m.rotateZ(this.rotation[2]);
+        }
+
+        if(this.position[0] !== 0 || this.position[1] !== 0 || this.position[2] !== 0) {
+          m.translate(this.position[0], this.position[1], this.position[2]);
+        }
+
+        if(this.rotationPost[0] !== 0 || this.rotationPost[1] !== 0 || this.rotationPost[2] !== 0) {
+          m.rotateX(this.rotationPost[0]);
+          m.rotateY(this.rotationPost[1]);
+          m.rotateZ(this.rotationPost[2]);
+        }
+
+        if(this.transformOrigin)
+          m.translate(this.transformOrigin[0], this.transformOrigin[1], this.transformOrigin[2]);
+        return m;
+      },
+
+      getProperties: function() {
+        properties.opacity = this.opacity;
+        properties.width = this.width + 'px';
+        properties.height = this.height + 'px';
+        return properties;
+      }
+    };
   };
-
-  State.prototype.clone = function() {
-    var p = new State({
-      position: this.position.slice(0),
-      rotation: this.rotation.slice(0),
-      rotationPost: this.rotationPost.slice(0),
-      skew: this.skew.slice(0),
-      scale: this.scale.slice(0),
-      height: this.height,
-      width: this.width,
-      opacity: this.opacity
-    });
-    return p;
-  };
-
-  State.prototype.asMatrix = function() {
-    var m = this.matrix;
-    m.clear();
-
-    if(this.transformOrigin)
-      m.translate(-this.transformOrigin[0], -this.transformOrigin[1], -this.transformOrigin[2]);
-
-    if(this.scale[0] !== 1 || this.scale[1] !== 1) {
-      m.scale(this.scale[0], this.scale[1]);
-    }
-
-    if(this.skew[0] !== 0 || this.skew[1] !== 0) {
-      m.skew(this.skew[0], this.skew[1]);
-    }
-
-    if(this.rotation[0] !== 0 || this.rotation[1] !== 0 || this.rotation[2] !== 0) {
-      m.rotateX(this.rotation[0]);
-      m.rotateY(this.rotation[1]);
-      m.rotateZ(this.rotation[2]);
-    }
-
-    if(this.position[0] !== 0 || this.position[1] !== 0 || this.position[2] !== 0) {
-      m.translate(this.position[0], this.position[1], this.position[2]);
-    }
-
-    if(this.rotationPost[0] !== 0 || this.rotationPost[1] !== 0 || this.rotationPost[2] !== 0) {
-      m.rotateX(this.rotationPost[0]);
-      m.rotateY(this.rotationPost[1]);
-      m.rotateZ(this.rotationPost[2]);
-    }
-
-    if(this.transformOrigin)
-      m.translate(this.transformOrigin[0], this.transformOrigin[1], this.transformOrigin[2]);
-    return m;
-  };
-
-  State.prototype.getProperties = function() {
-    this.properties.opacity = this.opacity;
-    this.properties.width = this.width + 'px';
-    this.properties.height = this.height + 'px';
-    return this.properties;
-  };
-
   // ------------------
   // -- StateTweener -- 
   // -------------------
 
-  var StateTweener = function(startState, endState, resultState) {
-    this.start = startState;
-    this.end = endState;
-    this.result = resultState;
-  };
+  var createStateTweener = function(startState, endState, resultState) {
+    var start = startState;
+    var end = endState;
+    var result = resultState;
 
-  StateTweener.prototype.tween = function(tweenValue) {
-    var dX = (this.end.position[0] - this.start.position[0]);
-    var dY = (this.end.position[1] - this.start.position[1]);
-    var dZ = (this.end.position[2] - this.start.position[2]);
-    var dAX = (this.end.rotation[0] - this.start.rotation[0]);
-    var dAY = (this.end.rotation[1] - this.start.rotation[1]);
-    var dAZ = (this.end.rotation[2] - this.start.rotation[2]);
-    var dBX = (this.end.rotationPost[0] - this.start.rotationPost[0]);
-    var dBY = (this.end.rotationPost[1] - this.start.rotationPost[1]);
-    var dBZ = (this.end.rotationPost[2] - this.start.rotationPost[2]);
-    var dSX = (this.end.scale[0] - this.start.scale[0]);
-    var dSY = (this.end.scale[1] - this.start.scale[1]);
-    var dSkewX = (this.end.skew[0] - this.start.skew[0]);
-    var dSkewY = (this.end.skew[1] - this.start.skew[1]);
-    var dWidth = (this.end.width - this.start.width);
-    var dHeight = (this.end.height - this.start.height);
-    var dOpacity = (this.end.opacity - this.start.opacity);
+    // Public API
+    return {
 
-    this.result.position[0] = this.start.position[0] + tweenValue*dX;
-    this.result.position[1] = this.start.position[1] + tweenValue*dY;
-    this.result.position[2] = this.start.position[2] + tweenValue*dZ;
-    this.result.rotation[0] = this.start.rotation[0] + tweenValue*dAX;
-    this.result.rotation[1] = this.start.rotation[1] + tweenValue*dAY;
-    this.result.rotation[2] = this.start.rotation[2] + tweenValue*dAZ;
-    this.result.rotationPost[0] = this.start.rotationPost[0] + tweenValue*dBX;
-    this.result.rotationPost[1] = this.start.rotationPost[1] + tweenValue*dBY;
-    this.result.rotationPost[2] = this.start.rotationPost[2] + tweenValue*dBZ;
-    this.result.skew[0] = this.start.skew[0] + tweenValue*dSkewX;
-    this.result.skew[1] = this.start.skew[1] + tweenValue*dSkewY;
-    this.result.scale[0] = this.start.scale[0] + tweenValue*dSX;
-    this.result.scale[1] = this.start.scale[1] + tweenValue*dSY;
+      tween: function(tweenValue) {
+        var dX = (end.position[0] - start.position[0]);
+        var dY = (end.position[1] - start.position[1]);
+        var dZ = (end.position[2] - start.position[2]);
+        var dAX = (end.rotation[0] - start.rotation[0]);
+        var dAY = (end.rotation[1] - start.rotation[1]);
+        var dAZ = (end.rotation[2] - start.rotation[2]);
+        var dBX = (end.rotationPost[0] - start.rotationPost[0]);
+        var dBY = (end.rotationPost[1] - start.rotationPost[1]);
+        var dBZ = (end.rotationPost[2] - start.rotationPost[2]);
+        var dSX = (end.scale[0] - start.scale[0]);
+        var dSY = (end.scale[1] - start.scale[1]);
+        var dSkewX = (end.skew[0] - start.skew[0]);
+        var dSkewY = (end.skew[1] - start.skew[1]);
+        var dWidth = (end.width - start.width);
+        var dHeight = (end.height - start.height);
+        var dOpacity = (end.opacity - start.opacity);
 
-    if(this.end.width !== undefined)
-      this.result.width = this.start.width + tweenValue*dWidth;
-    if(this.end.height !== undefined)
-      this.result.height = this.start.height + tweenValue*dHeight;
-    if(this.end.opacity !== undefined)
-      this.result.opacity = this.start.opacity + tweenValue*dOpacity;
-  };
+        result.position[0] = start.position[0] + tweenValue*dX;
+        result.position[1] = start.position[1] + tweenValue*dY;
+        result.position[2] = start.position[2] + tweenValue*dZ;
+        result.rotation[0] = start.rotation[0] + tweenValue*dAX;
+        result.rotation[1] = start.rotation[1] + tweenValue*dAY;
+        result.rotation[2] = start.rotation[2] + tweenValue*dAZ;
+        result.rotationPost[0] = start.rotationPost[0] + tweenValue*dBX;
+        result.rotationPost[1] = start.rotationPost[1] + tweenValue*dBY;
+        result.rotationPost[2] = start.rotationPost[2] + tweenValue*dBZ;
+        result.skew[0] = start.skew[0] + tweenValue*dSkewX;
+        result.skew[1] = start.skew[1] + tweenValue*dSkewY;
+        result.scale[0] = start.scale[0] + tweenValue*dSX;
+        result.scale[1] = start.scale[1] + tweenValue*dSY;
 
-  StateTweener.prototype.asMatrix = function() {
-    return this.result.asMatrix();
-  };
+        if(end.width !== undefined)
+          result.width = start.width + tweenValue*dWidth;
+        if(end.height !== undefined)
+          result.height = start.height + tweenValue*dHeight;
+        if(end.opacity !== undefined)
+          result.opacity = start.opacity + tweenValue*dOpacity;
+      },
 
-  StateTweener.prototype.getProperties = function() {
-    return this.result.getProperties();
-  };
+      asMatrix: function() {
+        return result.asMatrix();
+      },
 
-  StateTweener.prototype.setReverse = function() {
-    var oldStart = this.start;
-    this.start = this.end;
-    this.end = oldStart;
+      getProperties: function() {
+        return result.getProperties();
+      },
+
+      setReverse: function() {
+        var oldStart = start;
+        start = end;
+        end = oldStart;
+      }
+    };
   };
 
   // ------------------------
   // -- ValueFeederTweener -- 
   // ------------------------
 
-  var ValueFeederTweener = function(valueFeeder, startState, endState, resultState) {
-    this.currentMatrix = valueFeeder(0, new Matrix());
-    this.valueFeeder = valueFeeder;
-    this.start = startState;
-    this.end = endState;
-    this.result = resultState;
-  };
+  var createValueFeederTweener = function(valueFeeder, startState, endState, resultState) {
+    var currentMatrix = valueFeeder(0, createMatrix());
+    var start = startState;
+    var end = endState;
+    var result = resultState;
+    var reverse = false;
 
-  ValueFeederTweener.prototype.tween = function(tweenValue) {
-    if(this.reverse)
-      tweenValue = 1 - tweenValue;
-    this.currentMatrix.clear();
-    this.currentMatrix = this.valueFeeder(tweenValue, this.currentMatrix);
 
-    var dWidth = (this.end.width - this.start.width);
-    var dHeight = (this.end.height - this.start.height);
-    var dOpacity = (this.end.opacity - this.start.opacity);
+    // Public API
+    return {
 
-    if(this.end.width !== undefined)
-      this.result.width = this.start.width + tweenValue*dWidth;
-    if(this.end.height !== undefined)
-      this.result.height = this.start.height + tweenValue*dHeight;
-    if(this.end.opacity !== undefined)
-      this.result.opacity = this.start.opacity + tweenValue*dOpacity;
-  };
+      tween: function(tweenValue) {
+        if(reverse)
+          tweenValue = 1 - tweenValue;
+        currentMatrix.clear();
+        currentMatrix = valueFeeder(tweenValue, currentMatrix);
 
-  ValueFeederTweener.prototype.asMatrix = function() {
-    return this.currentMatrix;
-  };
+        var dWidth = (end.width - start.width);
+        var dHeight = (end.height - start.height);
+        var dOpacity = (end.opacity - start.opacity);
 
-  ValueFeederTweener.prototype.getProperties = function() {
-    return this.result.getProperties();
-  };
+        if(end.width !== undefined)
+          result.width = start.width + tweenValue*dWidth;
+        if(end.height !== undefined)
+          result.height = start.height + tweenValue*dHeight;
+        if(end.opacity !== undefined)
+          result.opacity = start.opacity + tweenValue*dOpacity;
+      },
 
-  ValueFeederTweener.prototype.setReverse = function() {
-    this.reverse = true;
+      asMatrix: function() {
+        return currentMatrix;
+      },
+
+      getProperties: function() {
+        return result.getProperties();
+      },
+
+      setReverse: function() {
+        reverse = true;
+      }
+
+    };
   };
 
   var optionOrDefault = function(option, def) {
@@ -1167,7 +1188,7 @@
     }( jQuery ));
   }
 
-  snabbt.Matrix = Matrix;
+  snabbt.createMatrix = createMatrix;
   snabbt.setElementTransform = updateElementTransform;
   return snabbt;
 }));
