@@ -11,7 +11,7 @@ $(function() {
     },
     duration: 1000,
     easing: 'ease',
-    callback: function(i, length) {
+    complete: function(i, length) {
       if(i === length - 1) {
         $("h1").snabbt({
           transformOrigin: [0, 100, 0],
@@ -20,7 +20,7 @@ $(function() {
           easing: 'linear',
           delay: 400,
           duration: 1000
-        }).then({
+        }).snabbt({
           rotation: [0, 0, 0],
           transformOrigin: [0, 100, 0],
           easing: 'spring',
@@ -40,12 +40,12 @@ $(function() {
       fromPosition: [0, 0, 0],
       skew: [0, 0.9],
       easing: 'ease',
-    }).then({
+    }).snabbt({
       position: [2*width, 0, 0],
       skew: [0, 0],
       easing: 'easeIn',
       duration: 200,
-    }).then({
+    }).snabbt({
       transformOrigin: [-width/2, 0, 0],
       rotation: [0, -Math.PI, 0],
       fromPosition: [2*width, 0, 0],
@@ -53,7 +53,7 @@ $(function() {
       perspective: 500,
       easing: 'ease',
       delay: 200,
-    }).then({
+    }).snabbt({
       transformOrigin: [width/2, 0, 0],
       rotation: [0, 0, 0],
       fromPosition: [0, 0, 0],
@@ -77,7 +77,7 @@ $(function() {
     snabbt(document.getElementById('chaining-example-execute'), {
       position: [100, 0, 0],
       easing: 'ease'
-    }).then({
+    }).snabbt({
       position: [0, 0, 0],
       fromRotation: [0, 0, -2*Math.PI],
       rotation: [0, 0, 0],
@@ -115,7 +115,7 @@ $(function() {
       easing: 'spring',
       springConstant: 0.3,
       springDeceleration: 0.8,
-    }).then({
+    }).snabbt({
       position: [0, 0, 0],
       easing: 'spring',
       springConstant: 0.3,
@@ -130,7 +130,7 @@ $(function() {
       easing: function(value) {
         return value + 0.3 * Math.sin(2*Math.PI * value);
       }
-    }).then({
+    }).snabbt({
       position: [0, 0, 0],
       easing: 'easeOut'
     });
@@ -166,7 +166,7 @@ $(function() {
       perspective: 400,
       duration: 300,
       easing: 'ease'
-    }).then({
+    }).snabbt({
       fromPosition: [2*elementWidth, 0, 0],
       position: [2*elementWidth, 0, 0],
       fromRotation: [0, -Math.PI, 0],
@@ -175,7 +175,7 @@ $(function() {
       perspective: 400,
       duration: 300,
       easing: 'ease'
-    }).then({
+    }).snabbt({
       fromRotation: [0, 0, 0],
       fromPosition: [2*elementWidth, 0, 0],
       position: [0, 0, 0],
@@ -215,7 +215,7 @@ $(function() {
         return i * 50;
       },
       easing: 'spring',
-    }).then({
+    }).snabbt({
       rotation: [0, 0, 0],
       delay: function(i, total) {
         return (total - i - 1) * 50;

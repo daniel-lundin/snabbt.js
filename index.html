@@ -129,14 +129,14 @@
         <h3>Chaining</h3>
         <div class="row">
           <div class="six columns">
-            <p>Animation can be chained by using the `then()`-method on the returned animation object. All fromXxx properties will be set to the end state of the previous animation.</p>
+            <p>Animation can be chained by using `snabbt()` on the returned animation object. All fromXxx properties will be set to the end state of the previous animation.</p>
             <button id="chaining-example-execute">Run example</button>
           </div>
           <div class="six columns">
             <pre><code class="javascript">snabbt(element, {
   position: [100, 0, 0],
   easing: 'ease'
-}).then({
+}).snabbt({
   fromRotation: [0, 0, -2*Math.PI],
   position: [0, 0, 0],
   easing: 'spring',
@@ -200,7 +200,7 @@
   easing: function(value) {
     return value + 0.3 * Math.sin(2*Math.PI * value);
   }
-}).then({
+}).snabbt({
   position: [0, 0, 0],
   easing: 'easeOut'
 });</code></pre>
@@ -224,7 +224,7 @@
   easing: 'spring',
   springConstant: 0.3,
   springDeceleration: 0.8,
-}).then({
+}).snabbt({
   position: [0, 0, 0],
   easing: 'spring',
   springConstant: 0.3,
@@ -313,7 +313,7 @@
     return i * 50;
   },
   easing: 'spring',
-}).then({
+}).snabbt({
   rotation: [0, 0, 0],
   delay: function(i, total) {
     return (total - i - 1) * 50;
@@ -386,13 +386,14 @@ snabbt(element, {
           <li><strong>Matrix.rotateZ(radians)</strong> - Multiplies with a rotation around the z-axis</li>
           <li><strong>Matrix.scale(x, y)</strong> - Multiplies with a scaling matrix</li>
           <li><strong>Matrix.skew(ax, ay)</strong> - Multiplies with a skew matrix</li>
+          <li><strong>Matrix.clear()</strong> - Sets the matrix to the identity matrix</li>
         </ul>
         <p>All operations are chainable to make writing matrix multiplications concise, e.g.:</p>
         <pre><code class="javascript">matrix.translate(100, 0, 0).rotateX(Math.PI);</code></pre>
 
         <h3 class="extra-top-margin">Freeform transforms</h3>
-        <p>The matrix operations can be used outside of snabbt's animation engine engine. This could be useful for interactive animations. </p>
-        <pre><code class="javascript">var matrix = new snabbt.Matrix();
+        <p>The matrix operations can be used outside of snabbt's animation engine. This could be useful for interactive animations. </p>
+        <pre><code class="javascript">var matrix = snabbt.createMatrix();
 matrix.translate(100, 0, 0);
 snabbt.setElementTransform(element, matrix);</code></pre>
       </section>
@@ -471,7 +472,7 @@ snabbt.setElementTransform(element, matrix);</code></pre>
               <td>Number of times to repeat the animation</td>
             </tr>
             <tr>
-              <td>callback</td>
+              <td>complete</td>
               <td>function</td>
               <td>undefined</td>
               <td>Function to be called when animation is completed</td>
@@ -489,7 +490,7 @@ snabbt.setElementTransform(element, matrix);</code></pre>
           <li><strong>duration</strong> - Animation duration in milliseconds</li>
           <li><strong>delay</strong> - Delay before the animation is started in milliseconds</li>
           <li><strong>loop</strong> - Number of times to repeat the animation</li>
-          <li><strong>callback</strong> - Function to be called when animation is completed</li>
+          <li><strong>complete</strong> - Function to be called when animation is completed</li>
         </ul>
 
         <p>A 'from'-property can be set on most properties. Note that 'from' has precedance over the previous end state.</p>
