@@ -14,6 +14,8 @@ Fast animations with Javascript and CSS transforms(Work in progress)
 ## Releases
 The initial release is out. Would love some feedback on things that can be improved. The release(and future ones) can be found in the release section
 
+- **0.5.0** - Refactoring, show deprecation warnings
+- **0.4.0** - Manual mode, function initalizers
 - **0.3.0** - Memory optimizations, improved Matrix API, better UMD wrappers
 - **0.2.0** - Added support for RequireJS and browserify. Published to npm and bower
 - **0.1.0** - Initial beta release
