@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href='//fonts.googleapis.com/css?family=Raleway:400,300,600' rel='stylesheet' type='text/css'>
+  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/normalize/3.0.2/normalize.min.css">
+  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/skeleton/2.0.1/skeleton.min.css">
+
+  <script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', 'UA-58043335-1', 'auto');
+    ga('send', 'pageview');
+  </script>
+  
+  <title>snabbt.js</title>
+  <style>
+
+body {
+  font-family: 'Raleway';
+  overflow: hidden;
+  background: #000;
+}
+
+.container {
+  position: relative;
+  -webkit-transform: translateZ(1000px);
+}
+
+.text-area {
+  margin: 5vh auto;
+  max-width: 400px;
+  color: #000;
+  transform-style: preserve-3d;
+  -webkit-transform-style: preserve-3d;
+  font-size: 30px;
+  color: #fff;
+}
+
+.text-area span {
+  display: inline-block;
+  transform: translateZ(0);
+  -webkit-transform: translateZ(0);
+}
+
+.text-area .text-area-word {
+  position: relative;
+}
+.text-area .text-area-letter {
+  opacity: 0;
+}
+
+#again-please {
+  color: #fff;
+  display: block;
+  margin: 0 auto;
+}
+
+.description {
+  text-align: center;
+  color: #fff;
+  margin-top: 10px;
+}
+
+  </style>
+</head>
+<body>
+  <div class="container">
+    
+    <div class="text-area">snabbt.js is a perfect fit for text animations. Each letter is rotated around the x-axis with a really tight perspective. </div>
+  </div>
+  <button class="button button-primary" id="again-please" onclick="animate()">Again please!</button>
+  <p class="description">DOM elements animated with <a href="index.html">snabbt.js</a>.</p>
+  <script type="text/javascript" src="snabbt.min.js"></script>
+  <script type="text/javascript">
+(function(window, document, snabbt) {
+
+  function splitText(element) {
+    var text = element.textContent;
+    var textParts = text.split(' ');
+
+    element.textContent = '';
+    textParts.forEach(function(textPart, i) {
+      var wordSpan = document.createElement('span');
+      wordSpan.className = 'text-area-word';
+
+      var chars = textPart.split('');
+      chars.forEach(function(letter, i) {
+        var letterSpan = document.createElement('span');
+        letterSpan.className = 'text-area-letter';
+        letterSpan.textContent = letter;
+        wordSpan.appendChild(letterSpan);
+      });
+      element.appendChild(wordSpan);
+      if(i !== textParts.length - 1)
+        wordSpan.insertAdjacentHTML('afterEnd', ' ');
+    });
+  }
+
+  function unsplitText(element) {
+    element.textContent = element.textContent;
+  }
+
+  var element = document.getElementsByClassName('text-area')[0];
+  splitText(element);
+
+  function letterWave() {
+    var letters = document.querySelectorAll('.text-area-letter');
+ 
+    for (var i=0; i<letters.length; i++) {
+      letters[i].style.opacity = 0;
+    }
+
+    snabbt(document.querySelectorAll('.text-area .text-area-letter'), {
+      fromRotation: function(i) {
+        if(i % 2 === 0)
+          return [-Math.PI/2, 0, 0];
+        return [Math.PI/2, 0, 0];
+      },
+      rotation: [0, 0, 0],
+      delay: function(i) { return i * 30 },
+      duration: 300,
+      perspective: 5,
+      fromOpacity: 0,
+      opacity: 1,
+      easing: 'spring',
+      springConstant: 0.4,
+      springDeceleration: 0.5,
+    });
+  }
+
+  setTimeout(letterWave, 500);
+
+  document.getElementById('again-please').onclick = function() {
+    letterWave();
+  }
+
+})(window, document, window.snabbt);
+  </script>
+</body>
+</html>

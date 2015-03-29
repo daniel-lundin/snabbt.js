@@ -18,6 +18,17 @@
   var tickRequests = [];
   var runningAnimations = [];
   var completedAnimations = [];
+  var transformProperty = 'transform';
+
+  // Find which vendor prefix to use
+  var styles = window.getComputedStyle(document.documentElement, '');
+  var vendorPrefix = (Array.prototype.slice
+      .call(styles)
+      .join('') 
+      .match(/-(moz|webkit|ms)-/) || (styles.OLink === '' && ['', 'o'])
+    )[1];
+  if(vendorPrefix === 'webkit')
+    transformProperty = 'webkitTransform';
 
   /* Entry point, only function to be called by user */
   var snabbt = function(arg1, arg2, arg3) {
@@ -391,6 +402,7 @@
     var startTime = 0;
     var currentTime = 0;
     var stopped = false;
+    var started = false;
 
     // Manual related
     var manual = options.manual;
@@ -455,14 +467,16 @@
         if(!startTime) {
           startTime = time;
         }
-        if(time - startTime > delay)
+        if(time - startTime > delay) {
+          started = true;
           currentTime = time - delay;
 
-        var curr = Math.min(Math.max(0.0, currentTime - startTime), duration);
-        easing.tick(curr/duration);
-        this.updateCurrentTransform();
-        if(this.completed() && manualCallback) {
-          manualCallback();
+          var curr = Math.min(Math.max(0.0, currentTime - startTime), duration);
+          easing.tick(curr/duration);
+          this.updateCurrentTransform();
+          if(this.completed() && manualCallback) {
+            manualCallback();
+          }
         }
       },
 
@@ -471,6 +485,7 @@
       },
 
       setValue: function(_manualValue) {
+        started = true;
         manualValue = Math.min(Math.max(_manualValue, 0.0001), 1 + manualDelayFactor);
       },
 
@@ -491,6 +506,8 @@
       },
 
       updateElement: function(element) {
+        if(!started)
+          return;
         var matrix = tweener.asMatrix();
         var properties = tweener.getProperties();
         updateElementTransform(element, matrix, perspective);
@@ -1156,8 +1173,7 @@
       cssPerspective = 'perspective(' + perspective + 'px) ';
     }
     var cssMatrix = matrix.asCSS();
-    element.style.webkitTransform = cssPerspective + cssMatrix;
-    element.style.transform = cssPerspective + cssMatrix;
+    element.style[transformProperty] = cssPerspective + cssMatrix;
   };
 
   var updateElementProperties = function(element, properties) {
