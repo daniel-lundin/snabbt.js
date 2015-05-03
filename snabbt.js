@@ -349,9 +349,11 @@
     return options;
   };
 
+  var polyFillrAF = window.requestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || window.msRequestAnimationFrame || function(callback) { return setTimeout(callback, 1000 / 60); }; 
+
   var queueTick = function(func) {
     if(tickRequests.length === 0)
-      window.requestAnimationFrame(tickAnimations);
+      polyFillrAF(tickAnimations);
     tickRequests.push(func);
   };
 
@@ -383,7 +385,7 @@
     });
 
     if(tickRequests.length !== 0)
-      window.requestAnimationFrame(tickAnimations);
+      polyFillrAF(tickAnimations);
   };
 
 
