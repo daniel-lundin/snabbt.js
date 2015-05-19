@@ -473,10 +473,16 @@ snabbt.setElementTransform(element, matrix);</code></pre>
               <td>Number of times to repeat the animation</td>
             </tr>
             <tr>
-              <td>complete</td>
+              <td>complete(index, total)</td>
               <td>function</td>
               <td>undefined</td>
-              <td>Function to be called when animation is completed</td>
+              <td>Function to be called when animation is completed. If multiple elements are animated, this function will be called once for every element with two parameters, index of current element and total elements in the animated collection. <em>this</em> will be bound the current element</td>
+            </tr>
+            <tr>
+              <td>allDone</td>
+              <td>function</td>
+              <td>undefined</td>
+              <td>Will be called once independent of how many elements animated</td>
             </tr>
           </tbody>
         </table>
@@ -491,7 +497,8 @@ snabbt.setElementTransform(element, matrix);</code></pre>
           <li><strong>duration</strong> - Animation duration in milliseconds</li>
           <li><strong>delay</strong> - Delay before the animation is started in milliseconds</li>
           <li><strong>loop</strong> - Number of times to repeat the animation</li>
-          <li><strong>complete</strong> - Function to be called when animation is completed</li>
+          <li><strong>complete(index, total)</strong> - Function to be called when animation is completed. If multiple elements are animated, this function will be called once for every element with two parameters, index of current element and total elements in the animated collection. <em>this</em> will be bound the current element</li>
+          <li><strong>allDone</strong> - Will be called once independent of how many elements animated</li>
         </ul>
 
         <p>A 'from'-property can be set on most properties. Note that 'from' has precedance over the previous end state.</p>

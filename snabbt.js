@@ -90,20 +90,32 @@
     if(!options)
       return options;
     var clone = cloneObject(options);
+
     if(isFunction(options.delay)) {
       clone.delay = options.delay(index, len);
     }
+
     if(isFunction(options.callback)) {
       console.log('DeprecationWarning: callback is renamed to complete');
       clone.complete = function() {
-        options.callback(index, len);
+        options.callback.call(this, index, len);
       };
     }
-    if(isFunction(options.complete)) {
+
+    var hasAllDoneCallback = isFunction(options.allDone);
+    var hasCompleteCallback = isFunction(options.complete);
+
+    if(hasCompleteCallback || hasAllDoneCallback) {
       clone.complete = function() {
-        options.complete(index, len);
+        if(hasCompleteCallback) {
+          options.complete.call(this, index, len);
+        }
+        if(hasAllDoneCallback && (index == len - 1)) {
+          options.allDone();
+        }
       };
     }
+
     if(isFunction(options.valueFeeder)) {
       clone.valueFeeder = function(i, matrix) {
         return options.valueFeeder(i, matrix, index, len);
@@ -198,7 +210,7 @@
         queueTick(tick);
       } else {
         if(options.complete) {
-          options.complete(element);
+          options.complete.call(element);
         }
 
         // Start next animation in queue
