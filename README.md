@@ -14,6 +14,7 @@ Fast animations with Javascript and CSS transforms(Work in progress)
 ## Releases
 The initial release is out. Would love some feedback on things that can be improved. The release(and future ones) can be found in the release section
 
+- **0.5.4** - Added allDone-callback, updated docs
 - **0.5.3** - Bugfix for manual mode with easings
 - **0.5.2** - Compability fixes, polyfill for request animation frame
 - **0.5.1** - Performance improvements
