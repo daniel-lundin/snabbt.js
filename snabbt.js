@@ -458,8 +458,8 @@
       tick: function(time) {
         if(stopped)
           return;
-        if(manual) {
 
+        if(manual) {
           currentTime = time;
           this.updateCurrentTransform();
           return;
@@ -493,8 +493,11 @@
 
       updateCurrentTransform: function() {
         var tweenValue = easing.getValue();
-        if(manual)
-          tweenValue = Math.max(0.00001, manualValue - manualDelayFactor);
+        if(manual) {
+          var val = Math.max(0.00001, manualValue - manualDelayFactor);
+          easing.tick(val);
+          tweenValue = easing.getValue();
+        }
         tweener.tween(tweenValue);
       },
 
