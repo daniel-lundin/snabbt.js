@@ -239,7 +239,7 @@
   };
 
   var setupAttentionAnimation = function(element,  options) {
-    var movement = stateFromOptions(options);
+    var movement = stateFromOptions(options, createState({}));
     options.movement = movement;
     var animation = createAttentionAnimation(options);
 
@@ -321,13 +321,21 @@
    * Parses an animation configuration object and returns a State instance
    */
   var stateFromOptions = function(options, state, useFromPrefix) {
-    if (!state)
-      state = createState({});
+    if (!state) {
+      state = createState({
+        position: [0, 0, 0],
+        rotation: [0, 0, 0],
+        rotationPost: [0, 0, 0],
+        scale: [1, 1],
+        skew: [0, 0]
+      });
+    }
     var position = 'position';
     var rotation = 'rotation';
     var skew = 'skew';
     var rotationPost = 'rotationPost';
     var scale = 'scale';
+    var scalePost = 'scalePost';
     var width = 'width';
     var height = 'height';
     var opacity = 'opacity';
@@ -338,6 +346,7 @@
       skew = 'fromSkew';
       rotationPost = 'fromRotationPost';
       scale = 'fromScale';
+      scalePost = 'fromScalePost';
       width = 'fromWidth';
       height = 'fromHeight';
       opacity = 'fromOpacity';
@@ -348,6 +357,7 @@
     state.rotationPost = optionOrDefault(options[rotationPost], state.rotationPost);
     state.skew = optionOrDefault(options[skew], state.skew);
     state.scale = optionOrDefault(options[scale], state.scale);
+    state.scalePost = optionOrDefault(options[scalePost], state.scalePost);
     state.opacity = options[opacity];
     state.width = options[width];
     state.height = options[height];
@@ -543,11 +553,23 @@
 
   var createAttentionAnimation = function(options) {
     var movement = options.movement;
-    var currentMovement = createState({});
     options.initialVelocity = 0.1;
     options.equilibriumPosition = 0;
     var spring = createSpringEasing(options);
     var stopped = false;
+    var tweenPosition = movement.position;
+    var tweenRotation = movement.rotation;
+    var tweenRotationPost = movement.rotationPost;
+    var tweenScale = movement.scale;
+    var tweenSkew = movement.skew;
+
+    var currentMovement = createState({
+      position: tweenPosition ? [0, 0, 0] : undefined,
+      rotation: tweenRotation ? [0, 0, 0] : undefined,
+      rotationPost: tweenRotationPost ? [0, 0, 0] : undefined,
+      scale: tweenScale ? [0, 0] : undefined,
+      skew: tweenSkew ? [0, 0] : undefined,
+    });
 
     // Public API
     return {
@@ -571,22 +593,30 @@
 
       updateMovement:function() {
         var value = spring.getValue();
-        currentMovement.position[0] = movement.position[0] * value;
-        currentMovement.position[1] = movement.position[1] * value;
-        currentMovement.position[2] = movement.position[2] * value;
-        currentMovement.rotation[0] = movement.rotation[0] * value;
-        currentMovement.rotation[1] = movement.rotation[1] * value;
-        currentMovement.rotation[2] = movement.rotation[2] * value;
-        currentMovement.rotationPost[0] = movement.rotationPost[0] * value;
-        currentMovement.rotationPost[1] = movement.rotationPost[1] * value;
-        currentMovement.rotationPost[2] = movement.rotationPost[2] * value;
-        if(movement.scale[0] !== 1 && movement.scale[1] !== 1) {
+        if(tweenPosition) {
+          currentMovement.position[0] = movement.position[0] * value;
+          currentMovement.position[1] = movement.position[1] * value;
+          currentMovement.position[2] = movement.position[2] * value;
+        }
+        if(tweenRotation) {
+          currentMovement.rotation[0] = movement.rotation[0] * value;
+          currentMovement.rotation[1] = movement.rotation[1] * value;
+          currentMovement.rotation[2] = movement.rotation[2] * value;
+        }
+        if(tweenRotationPost) {
+          currentMovement.rotationPost[0] = movement.rotationPost[0] * value;
+          currentMovement.rotationPost[1] = movement.rotationPost[1] * value;
+          currentMovement.rotationPost[2] = movement.rotationPost[2] * value;
+        }
+        if(tweenScale) {
           currentMovement.scale[0] = 1 + movement.scale[0] * value;
           currentMovement.scale[1] = 1 + movement.scale[1] * value;
         }
 
-        currentMovement.skew[0] = movement.skew[0] * value;
-        currentMovement.skew[1] = movement.skew[1] * value;
+        if(tweenSkew) {
+          currentMovement.skew[0] = movement.skew[0] * value;
+          currentMovement.skew[1] = movement.skew[1] * value;
+        }
       },
 
       updateElement: function(element) {
@@ -994,11 +1024,12 @@
 
     // Public API
     return {
-      position: optionOrDefault(config.position, [0, 0, 0]),
-      rotation: optionOrDefault(config.rotation, [0, 0, 0]),
-      rotationPost: optionOrDefault(config.rotationPost, [0, 0, 0]),
-      skew: optionOrDefault(config.skew, [0, 0]),
-      scale: optionOrDefault(config.scale, [1, 1]),
+      position: config.position,
+      rotation: config.rotation,
+      rotationPost: config.rotationPost,
+      skew: config.skew,
+      scale: config.scale,
+      scalePost: config.scalePost,
       opacity: config.opacity,
       width: config.width,
       height: config.height,
@@ -1006,11 +1037,12 @@
 
       clone: function() {
         return createState({
-          position: this.position.slice(0),
-          rotation: this.rotation.slice(0),
-          rotationPost: this.rotationPost.slice(0),
-          skew: this.skew.slice(0),
-          scale: this.scale.slice(0),
+          position: this.position ? this.position.slice(0) : undefined,
+          rotation: this.rotation ? this.rotation.slice(0) : undefined,
+          rotationPost: this.rotationPost ? this.rotationPost.slice(0) : undefined,
+          skew: this.skew ? this.skew.slice(0) : undefined,
+          scale: this.scale ? this.scale.slice(0) : undefined,
+          scalePost: this.scalePost ? this.scalePost.slice(0) : undefined,
           height: this.height,
           width: this.width,
           opacity: this.opacity
@@ -1024,28 +1056,32 @@
         if(this.transformOrigin)
           m.translate(-this.transformOrigin[0], -this.transformOrigin[1], -this.transformOrigin[2]);
 
-        if(this.scale[0] !== 1 || this.scale[1] !== 1) {
+        if(this.scale) {
           m.scale(this.scale[0], this.scale[1]);
         }
 
-        if(this.skew[0] !== 0 || this.skew[1] !== 0) {
+        if(this.skew) {
           m.skew(this.skew[0], this.skew[1]);
         }
 
-        if(this.rotation[0] !== 0 || this.rotation[1] !== 0 || this.rotation[2] !== 0) {
+        if(this.rotation) {
           m.rotateX(this.rotation[0]);
           m.rotateY(this.rotation[1]);
           m.rotateZ(this.rotation[2]);
         }
 
-        if(this.position[0] !== 0 || this.position[1] !== 0 || this.position[2] !== 0) {
+        if(this.position) {
           m.translate(this.position[0], this.position[1], this.position[2]);
         }
 
-        if(this.rotationPost[0] !== 0 || this.rotationPost[1] !== 0 || this.rotationPost[2] !== 0) {
+        if(this.rotationPost) {
           m.rotateX(this.rotationPost[0]);
           m.rotateY(this.rotationPost[1]);
           m.rotateZ(this.rotationPost[2]);
+        }
+
+        if(this.scalePost) {
+          m.scale(this.scalePost[0], this.scalePost[1]);
         }
 
         if(this.transformOrigin)
@@ -1069,48 +1105,80 @@
     var start = startState;
     var end = endState;
     var result = resultState;
+    
+    var tweenPosition = end.position !== undefined;
+    var tweenRotation = end.rotation !== undefined;
+    var tweenRotationPost = end.rotationPost !== undefined;
+    var tweenScale = end.scale !== undefined;
+    var tweenSkew = end.skew !== undefined;
+    var tweenWidth = end.width !== undefined;
+    var tweenHeight = end.height !== undefined;
+    var tweenOpacity = end.opacity !== undefined;
 
     // Public API
     return {
 
       tween: function(tweenValue) {
-        var dX = (end.position[0] - start.position[0]);
-        var dY = (end.position[1] - start.position[1]);
-        var dZ = (end.position[2] - start.position[2]);
-        var dAX = (end.rotation[0] - start.rotation[0]);
-        var dAY = (end.rotation[1] - start.rotation[1]);
-        var dAZ = (end.rotation[2] - start.rotation[2]);
-        var dBX = (end.rotationPost[0] - start.rotationPost[0]);
-        var dBY = (end.rotationPost[1] - start.rotationPost[1]);
-        var dBZ = (end.rotationPost[2] - start.rotationPost[2]);
-        var dSX = (end.scale[0] - start.scale[0]);
-        var dSY = (end.scale[1] - start.scale[1]);
-        var dSkewX = (end.skew[0] - start.skew[0]);
-        var dSkewY = (end.skew[1] - start.skew[1]);
-        var dWidth = (end.width - start.width);
-        var dHeight = (end.height - start.height);
-        var dOpacity = (end.opacity - start.opacity);
 
-        result.position[0] = start.position[0] + tweenValue*dX;
-        result.position[1] = start.position[1] + tweenValue*dY;
-        result.position[2] = start.position[2] + tweenValue*dZ;
-        result.rotation[0] = start.rotation[0] + tweenValue*dAX;
-        result.rotation[1] = start.rotation[1] + tweenValue*dAY;
-        result.rotation[2] = start.rotation[2] + tweenValue*dAZ;
-        result.rotationPost[0] = start.rotationPost[0] + tweenValue*dBX;
-        result.rotationPost[1] = start.rotationPost[1] + tweenValue*dBY;
-        result.rotationPost[2] = start.rotationPost[2] + tweenValue*dBZ;
-        result.skew[0] = start.skew[0] + tweenValue*dSkewX;
-        result.skew[1] = start.skew[1] + tweenValue*dSkewY;
-        result.scale[0] = start.scale[0] + tweenValue*dSX;
-        result.scale[1] = start.scale[1] + tweenValue*dSY;
+        if(tweenPosition) {
+          var dX = (end.position[0] - start.position[0]);
+          var dY = (end.position[1] - start.position[1]);
+          var dZ = (end.position[2] - start.position[2]);
+          result.position[0] = start.position[0] + tweenValue*dX;
+          result.position[1] = start.position[1] + tweenValue*dY;
+          result.position[2] = start.position[2] + tweenValue*dZ;
+        }
 
-        if(end.width !== undefined)
+        if(tweenRotation) {
+          var dAX = (end.rotation[0] - start.rotation[0]);
+          var dAY = (end.rotation[1] - start.rotation[1]);
+          var dAZ = (end.rotation[2] - start.rotation[2]);
+          result.rotation[0] = start.rotation[0] + tweenValue*dAX;
+          result.rotation[1] = start.rotation[1] + tweenValue*dAY;
+          result.rotation[2] = start.rotation[2] + tweenValue*dAZ;
+        }
+
+        if(tweenRotationPost) {
+          var dBX = (end.rotationPost[0] - start.rotationPost[0]);
+          var dBY = (end.rotationPost[1] - start.rotationPost[1]);
+          var dBZ = (end.rotationPost[2] - start.rotationPost[2]);
+          result.rotationPost[0] = start.rotationPost[0] + tweenValue*dBX;
+          result.rotationPost[1] = start.rotationPost[1] + tweenValue*dBY;
+          result.rotationPost[2] = start.rotationPost[2] + tweenValue*dBZ;
+        }
+
+        if(tweenSkew) {
+          var dSX = (end.scale[0] - start.scale[0]);
+          var dSY = (end.scale[1] - start.scale[1]);
+
+          result.scale[0] = start.scale[0] + tweenValue*dSX;
+          result.scale[1] = start.scale[1] + tweenValue*dSY;
+        }
+
+        if(tweenScale) {
+          var dSkewX = (end.skew[0] - start.skew[0]);
+          var dSkewY = (end.skew[1] - start.skew[1]);
+
+          result.skew[0] = start.skew[0] + tweenValue*dSkewX;
+          result.skew[1] = start.skew[1] + tweenValue*dSkewY;
+        }
+
+        if(tweenWidth) {
+          var dWidth = (end.width - start.width);
           result.width = start.width + tweenValue*dWidth;
-        if(end.height !== undefined)
+        }
+
+
+        if(tweenHeight) {
+          var dHeight = (end.height - start.height);
           result.height = start.height + tweenValue*dHeight;
-        if(end.opacity !== undefined)
+        }
+
+        if(tweenOpacity) {
+          var dOpacity = (end.opacity - start.opacity);
           result.opacity = start.opacity + tweenValue*dOpacity;
+        }
+
       },
 
       asMatrix: function() {
