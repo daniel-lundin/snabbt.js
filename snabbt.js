@@ -181,7 +181,7 @@
 
     runningAnimations.push([element, animation]);
 
-    animation.updateElement(element);
+    animation.updateElement(element, true);
     var queue = [];
     var chainer = {
       snabbt: function(opts) {
@@ -419,7 +419,7 @@
     var delay = optionOrDefault(options.delay, 0);
     var perspective = options.perspective;
     var easing = createEaser(optionOrDefault(options.easing, 'linear'), options);
-    var currentState = startState.clone();
+    var currentState = duration === 0 ? endState.clone() : startState.clone();
     var transformOrigin = options.transformOrigin;
     currentState.transformOrigin = options.transformOrigin;
 
@@ -487,7 +487,7 @@
           return;
         }
 
-        // If first tick, set start_time
+        // If first tick, set startTime
         if(!startTime) {
           startTime = time;
         }
@@ -496,7 +496,7 @@
           currentTime = time - delay;
 
           var curr = Math.min(Math.max(0.0, currentTime - startTime), duration);
-          easing.tick(curr/duration);
+          easing.tick(curr / duration);
           this.updateCurrentTransform();
           if(this.completed() && manualCallback) {
             manualCallback();
@@ -532,8 +532,8 @@
         return easing.completed();
       },
 
-      updateElement: function(element) {
-        if(!started)
+      updateElement: function(element, forceUpdate) {
+        if(!started && !forceUpdate)
           return;
         var matrix = tweener.asMatrix();
         var properties = tweener.getProperties();
