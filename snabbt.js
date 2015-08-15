@@ -24,7 +24,7 @@
   var styles = window.getComputedStyle(document.documentElement, '');
   var vendorPrefix = (Array.prototype.slice
       .call(styles)
-      .join('') 
+      .join('')
       .match(/-(moz|webkit|ms)-/) || (styles.OLink === '' && ['', 'o'])
     )[1];
   if(vendorPrefix === 'webkit')
@@ -313,7 +313,7 @@
     var state = findAnimationState(runningAnimations, element);
     if(state)
       return state;
-   
+
     return findAnimationState(completedAnimations, element);
   };
 
@@ -371,7 +371,7 @@
     return options;
   };
 
-  var polyFillrAF = window.requestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || window.msRequestAnimationFrame || function(callback) { return setTimeout(callback, 1000 / 60); }; 
+  var polyFillrAF = window.requestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || window.msRequestAnimationFrame || function(callback) { return setTimeout(callback, 1000 / 60); };
 
   var queueTick = function(func) {
     if(tickRequests.length === 0)
@@ -459,7 +459,7 @@
         var manualDuration = duration * manualValue;
         startTime = currentTime - manualDuration;
         manualCallback = callback;
-        easing.resetFrom = manualValue;
+        easing.resetFrom(manualValue);
       },
 
       rollback: function(callback) {
@@ -468,7 +468,7 @@
         var manualDuration = duration * (1 - manualValue);
         startTime = currentTime - manualDuration;
         manualCallback = callback;
-        easing.resetFrom = manualValue;
+        easing.resetFrom(manualValue);
       },
 
       restart: function() {
@@ -516,9 +516,13 @@
       updateCurrentTransform: function() {
         var tweenValue = easing.getValue();
         if(manual) {
-          var val = Math.max(0.00001, manualValue - manualDelayFactor);
-          easing.tick(val);
-          tweenValue = easing.getValue();
+          var value = Math.max(0.00001, manualValue - manualDelayFactor);
+          if(easing.isSpring) {
+            tweenValue = value;
+          } else {
+            easing.tick(value, true);
+            tweenValue = easing.getValue();
+          }
         }
         tweener.tween(tweenValue);
       },
@@ -672,9 +676,9 @@
 
     // Public API
     return {
-
-      tick: function(value) {
-        if(value === 0.0)
+      isSpring: true,
+      tick: function(value, isManual) {
+        if(value === 0.0 || isManual)
           return;
         if(equilibrium)
           return;
@@ -696,6 +700,7 @@
       },
 
       resetFrom: function(value) {
+        console.log('resetting spring from ' + value);
         position = value;
         velocity = 0;
       },
@@ -1098,14 +1103,14 @@
     };
   };
   // ------------------
-  // -- StateTweener -- 
+  // -- StateTweener --
   // -------------------
 
   var createStateTweener = function(startState, endState, resultState) {
     var start = startState;
     var end = endState;
     var result = resultState;
-    
+
     var tweenPosition = end.position !== undefined;
     var tweenRotation = end.rotation !== undefined;
     var tweenRotationPost = end.rotationPost !== undefined;
@@ -1198,7 +1203,7 @@
   };
 
   // ------------------------
-  // -- ValueFeederTweener -- 
+  // -- ValueFeederTweener --
   // ------------------------
 
   var createValueFeederTweener = function(valueFeeder, startState, endState, resultState) {
