@@ -133,6 +133,7 @@
       'skew',
       'rotationPost',
       'scale',
+      'scalePost',
       'width',
       'height',
       'opacity',
@@ -141,6 +142,7 @@
       'fromSkew',
       'fromRotationPost',
       'fromScale',
+      'fromScalePost',
       'fromWidth',
       'fromHeight',
       'fromOpacity',
@@ -327,6 +329,7 @@
         rotation: [0, 0, 0],
         rotationPost: [0, 0, 0],
         scale: [1, 1],
+        scalePost: [1, 1],
         skew: [0, 0]
       });
     }
@@ -565,6 +568,7 @@
     var tweenRotation = movement.rotation;
     var tweenRotationPost = movement.rotationPost;
     var tweenScale = movement.scale;
+    var tweenScalePost = movement.scalePost;
     var tweenSkew = movement.skew;
 
     var currentMovement = createState({
@@ -615,6 +619,10 @@
         if(tweenScale) {
           currentMovement.scale[0] = 1 + movement.scale[0] * value;
           currentMovement.scale[1] = 1 + movement.scale[1] * value;
+        }
+        if(tweenScalePost) {
+          currentMovement.scalePost[0] = 1 + movement.scalePost[0] * value;
+          currentMovement.scalePost[1] = 1 + movement.scalePost[1] * value;
         }
 
         if(tweenSkew) {
@@ -1115,6 +1123,7 @@
     var tweenRotation = end.rotation !== undefined;
     var tweenRotationPost = end.rotationPost !== undefined;
     var tweenScale = end.scale !== undefined;
+    var tweenScalePost = end.scalePost !== undefined;
     var tweenSkew = end.skew !== undefined;
     var tweenWidth = end.width !== undefined;
     var tweenHeight = end.height !== undefined;
@@ -1153,6 +1162,14 @@
         }
 
         if(tweenSkew) {
+          var dSkewX = (end.skew[0] - start.skew[0]);
+          var dSkewY = (end.skew[1] - start.skew[1]);
+
+          result.skew[0] = start.skew[0] + tweenValue*dSkewX;
+          result.skew[1] = start.skew[1] + tweenValue*dSkewY;
+        }
+
+        if(tweenScale) {
           var dSX = (end.scale[0] - start.scale[0]);
           var dSY = (end.scale[1] - start.scale[1]);
 
@@ -1160,13 +1177,14 @@
           result.scale[1] = start.scale[1] + tweenValue*dSY;
         }
 
-        if(tweenScale) {
-          var dSkewX = (end.skew[0] - start.skew[0]);
-          var dSkewY = (end.skew[1] - start.skew[1]);
+        if(tweenScalePost) {
+          var dSXPost = (end.scalePost[0] - start.scalePost[0]);
+          var dSYPost = (end.scalePost[1] - start.scalePost[1]);
 
-          result.skew[0] = start.skew[0] + tweenValue*dSkewX;
-          result.skew[1] = start.skew[1] + tweenValue*dSkewY;
+          result.scalePost[0] = start.scalePost[0] + tweenValue*dSXPost;
+          result.scalePost[1] = start.scalePost[1] + tweenValue*dSYPost;
         }
+
 
         if(tweenWidth) {
           var dWidth = (end.width - start.width);

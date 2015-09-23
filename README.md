@@ -14,6 +14,9 @@ Fast animations with Javascript and CSS transforms(Work in progress)
 ## Releases
 The initial release is out. Would love some feedback on things that can be improved. The release(and future ones) can be found in the release section
 
+- **0.5.8** - Add new tweenable property scalePost/fromScalePost
+- **0.5.7** - Fix issues manual mode and spring easings
+- **0.5.6** - Fix issues with duration: 0
 - **0.5.4** - Added allDone-callback, updated docs
 - **0.5.3** - Bugfix for manual mode with easings
 - **0.5.2** - Compability fixes, polyfill for request animation frame
