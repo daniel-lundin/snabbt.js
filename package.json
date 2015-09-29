@@ -12,7 +12,7 @@
     "snabbt.min.js"
   ],
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "watch": "watchify src/main.js -o bundle.js"
   },
   "repository": {
     "type": "git",
@@ -23,7 +23,9 @@
   "devDependencies": {
     "grunt-contrib-uglify": "^0.4.0",
     "grunt-contrib-concat": "^0.5.0",
-    "grunt-contrib-jshint": "^0.11.0"
+    "grunt-contrib-jshint": "^0.11.0",
+    "browserify": "^11.2.0",
+    "watchify": "^3.4.0"
   },
   "spm": {
     "main": "snabbt.js",
