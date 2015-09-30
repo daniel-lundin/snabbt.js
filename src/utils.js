@@ -1,6 +1,9 @@
 'use strict';
 
+var props = require('./properties.js').tweenableProperties;
+var fromPrefixed = require('./properties.js').fromPrefixed;
 var createState = require('./state.js').createState;
+console.log('creaeState', createState);
 
 function isFunction(object) {
   return typeof object === 'function';
@@ -107,48 +110,48 @@ var cloneObject = function(object) {
 
 var stateFromOptions = function(options, state, useFromPrefix) {
   if (!state) {
-    state = createState({
-      position: [0, 0, 0],
-      rotation: [0, 0, 0],
-      rotationPost: [0, 0, 0],
-      scale: [1, 1],
-      scalePost: [1, 1],
-      skew: [0, 0]
-    });
-  }
-  var position = 'position';
-  var rotation = 'rotation';
-  var skew = 'skew';
-  var rotationPost = 'rotationPost';
-  var scale = 'scale';
-  var scalePost = 'scalePost';
-  var width = 'width';
-  var height = 'height';
-  var opacity = 'opacity';
-
-  if (useFromPrefix) {
-    position = 'fromPosition';
-    rotation = 'fromRotation';
-    skew = 'fromSkew';
-    rotationPost = 'fromRotationPost';
-    scale = 'fromScale';
-    scalePost = 'fromScalePost';
-    width = 'fromWidth';
-    height = 'fromHeight';
-    opacity = 'fromOpacity';
+    state = createState({});
   }
 
-  state.position = optionOrDefault(options[position], state.position);
-  state.rotation = optionOrDefault(options[rotation], state.rotation);
-  state.rotationPost = optionOrDefault(options[rotationPost], state.rotationPost);
-  state.skew = optionOrDefault(options[skew], state.skew);
-  state.scale = optionOrDefault(options[scale], state.scale);
-  state.scalePost = optionOrDefault(options[scalePost], state.scalePost);
-  state.opacity = options[opacity];
-  state.width = options[width];
-  state.height = options[height];
+  var propName = useFromPrefix ? fromPrefixed : (p) => p;
+  Object.keys(props).forEach((key) => {
+    state[key] = optionOrDefault(propName(key), state[key]);
+  });
 
   return state;
+  //var position = 'position';
+  //var rotation = 'rotation';
+  //var skew = 'skew';
+  //var rotationPost = 'rotationPost';
+  //var scale = 'scale';
+  //var scalePost = 'scalePost';
+  //var width = 'width';
+  //var height = 'height';
+  //var opacity = 'opacity';
+
+  //if (useFromPrefix) {
+  //  position = 'fromPosition';
+  //  rotation = 'fromRotation';
+  //  skew = 'fromSkew';
+  //  rotationPost = 'fromRotationPost';
+  //  scale = 'fromScale';
+  //  scalePost = 'fromScalePost';
+  //  width = 'fromWidth';
+  //  height = 'fromHeight';
+  //  opacity = 'fromOpacity';
+  //}
+
+  //state.position = optionOrDefault(options[position], state.position);
+  //state.rotation = optionOrDefault(options[rotation], state.rotation);
+  //state.rotationPost = optionOrDefault(options[rotationPost], state.rotationPost);
+  //state.skew = optionOrDefault(options[skew], state.skew);
+  //state.scale = optionOrDefault(options[scale], state.scale);
+  //state.scalePost = optionOrDefault(options[scalePost], state.scalePost);
+  //state.opacity = options[opacity];
+  //state.width = options[width];
+  //state.height = options[height];
+
+  //return state;
 };
 
 module.exports = {

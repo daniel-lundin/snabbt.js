@@ -3,6 +3,7 @@
 var createMatrix = require('./matrix.js');
 var props = require('./properties.js').tweenableProperties;
 var types = require('./properties.js').types;
+var utils = require('./utils.js');
 
 function createState(config) {
   var matrix = createMatrix();
@@ -75,7 +76,7 @@ function createState(config) {
   };
 
   Object.keys(props).forEach((property) => {
-      API[property] = config[property];
+    API[property] = utils.optionOrDefault(config[property], props[property][1]);
   });
 
   return API;
