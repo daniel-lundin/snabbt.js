@@ -1,5 +1,7 @@
 'use strict';
 
+var createState = require('./state.js').createState;
+
 function isFunction(object) {
   return typeof object === 'function';
 }
@@ -11,13 +13,6 @@ function preprocessOptions(options, index, len) {
 
   if (isFunction(options.delay)) {
     clone.delay = options.delay(index, len);
-  }
-
-  if (isFunction(options.callback)) {
-    console.log('DeprecationWarning: callback is renamed to complete');
-    clone.complete = function() {
-      options.callback.call(this, index, len);
-    };
   }
 
   var hasAllDoneCallback = isFunction(options.allDone);
@@ -99,6 +94,7 @@ var updateElementProperties = function(element, properties) {
     element.style[key] = properties[key];
   }
 };
+
 var cloneObject = function(object) {
   if (!object)
     return object;
@@ -109,6 +105,51 @@ var cloneObject = function(object) {
   return clone;
 };
 
+var stateFromOptions = function(options, state, useFromPrefix) {
+  if (!state) {
+    state = createState({
+      position: [0, 0, 0],
+      rotation: [0, 0, 0],
+      rotationPost: [0, 0, 0],
+      scale: [1, 1],
+      scalePost: [1, 1],
+      skew: [0, 0]
+    });
+  }
+  var position = 'position';
+  var rotation = 'rotation';
+  var skew = 'skew';
+  var rotationPost = 'rotationPost';
+  var scale = 'scale';
+  var scalePost = 'scalePost';
+  var width = 'width';
+  var height = 'height';
+  var opacity = 'opacity';
+
+  if (useFromPrefix) {
+    position = 'fromPosition';
+    rotation = 'fromRotation';
+    skew = 'fromSkew';
+    rotationPost = 'fromRotationPost';
+    scale = 'fromScale';
+    scalePost = 'fromScalePost';
+    width = 'fromWidth';
+    height = 'fromHeight';
+    opacity = 'fromOpacity';
+  }
+
+  state.position = optionOrDefault(options[position], state.position);
+  state.rotation = optionOrDefault(options[rotation], state.rotation);
+  state.rotationPost = optionOrDefault(options[rotationPost], state.rotationPost);
+  state.skew = optionOrDefault(options[skew], state.skew);
+  state.scale = optionOrDefault(options[scale], state.scale);
+  state.scalePost = optionOrDefault(options[scalePost], state.scalePost);
+  state.opacity = options[opacity];
+  state.width = options[width];
+  state.height = options[height];
+
+  return state;
+};
 
 module.exports = {
   preprocessOptions: preprocessOptions,
@@ -116,5 +157,6 @@ module.exports = {
   updateElementTransform: updateElementTransform,
   updateElementProperties: updateElementProperties,
   isFunction: isFunction,
-  cloneObject: cloneObject
+  cloneObject: cloneObject,
+  stateFromOptions: stateFromOptions
 };

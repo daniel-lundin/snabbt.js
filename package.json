@@ -12,7 +12,9 @@
     "snabbt.min.js"
   ],
   "scripts": {
-    "watch": "watchify -v -t babelify src/main.es6 -o bundle.js"
+    "watch": "watchify -v -t babelify src/main.js -o bundle.js",
+    "test": "mocha src/**/*Tests.js --harmony",
+    "tdd": "mocha src/**/*Tests.js --harmony --watch"
   },
   "repository": {
     "type": "git",
@@ -21,12 +23,14 @@
   "author": "Daniel Lundin",
   "license": "MIT",
   "devDependencies": {
-    "grunt-contrib-uglify": "^0.4.0",
+    "babelify": "^6.3.0",
+    "browserify": "^11.2.0",
+    "chai": "^3.3.0",
     "grunt-contrib-concat": "^0.5.0",
     "grunt-contrib-jshint": "^0.11.0",
-    "browserify": "^11.2.0",
-    "watchify": "^3.4.0",
-    "babelify": "^6.3.0"
+    "grunt-contrib-uglify": "^0.4.0",
+    "mocha": "^2.3.3",
+    "watchify": "^3.4.0"
   },
   "spm": {
     "main": "snabbt.js",

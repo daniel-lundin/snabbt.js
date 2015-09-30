@@ -1,9 +1,11 @@
 'use strict';
 
-var matrix = require('./matrix.es6');
+var createMatrix = require('./matrix.js');
+var props = require('./properties.js').tweenableProperties;
+var types = require('./properties.js').types;
 
 function createState(config) {
-  var m = matrix.createMatrix();
+  var matrix = createMatrix();
   var properties = {
     opacity: undefined,
     width: undefined,
@@ -11,33 +13,21 @@ function createState(config) {
   };
 
   // Public API
-  return {
-    position: config.position,
-    rotation: config.rotation,
-    rotationPost: config.rotationPost,
-    skew: config.skew,
-    scale: config.scale,
-    scalePost: config.scalePost,
-    opacity: config.opacity,
-    width: config.width,
-    height: config.height,
-
+  var API = {
 
     clone() {
-      return createState({
-        position: this.position ? this.position.slice(0) : undefined,
-        rotation: this.rotation ? this.rotation.slice(0) : undefined,
-        rotationPost: this.rotationPost ? this.rotationPost.slice(0) : undefined,
-        skew: this.skew ? this.skew.slice(0) : undefined,
-        scale: this.scale ? this.scale.slice(0) : undefined,
-        scalePost: this.scalePost ? this.scalePost.slice(0) : undefined,
-        height: this.height,
-        width: this.width,
-        opacity: this.opacity
+      var clonedConfig = {};
+
+      Object.keys(props).forEach((property) => {
+        var type = props[property][0];
+        clonedConfig[property] = type === types.SCALAR ? this[property] : this[property].slice(0);
       });
+
+      return createState(clonedConfig);
     },
 
     asMatrix() {
+      var m = matrix;
       m.clear();
 
       if (this.transformOrigin)
@@ -83,6 +73,14 @@ function createState(config) {
       return properties;
     }
   };
+
+  Object.keys(props).forEach((property) => {
+      API[property] = config[property];
+  });
+
+  return API;
 }
 
-module.exports = createState;
+module.exports = {
+  createState: createState
+};

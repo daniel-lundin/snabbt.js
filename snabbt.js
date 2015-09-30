@@ -1,20 +1,3 @@
-(function (root, factory) {
-  var snabbt = factory();
-
-  if (typeof exports === 'object') {
-    // CommonJS
-    module.exports = snabbt;
-  } else if (typeof define === 'function' && define.amd) {
-    // AMD
-    define([], function () {
-      return (root.returnExportsGlobal = snabbt);
-    });
-  } else {
-    // As global variable
-    root.snabbt = snabbt;
-  }
-}(this, function () {
-
   var tickRequests = [];
   var runningAnimations = [];
   var completedAnimations = [];
@@ -246,54 +229,6 @@
     return findAnimationState(completedAnimations, element);
   };
 
-  /**
-   * Parses an animation configuration object and returns a State instance
-   */
-  var stateFromOptions = function(options, state, useFromPrefix) {
-    if (!state) {
-      state = createState({
-        position: [0, 0, 0],
-        rotation: [0, 0, 0],
-        rotationPost: [0, 0, 0],
-        scale: [1, 1],
-        scalePost: [1, 1],
-        skew: [0, 0]
-      });
-    }
-    var position = 'position';
-    var rotation = 'rotation';
-    var skew = 'skew';
-    var rotationPost = 'rotationPost';
-    var scale = 'scale';
-    var scalePost = 'scalePost';
-    var width = 'width';
-    var height = 'height';
-    var opacity = 'opacity';
-
-    if(useFromPrefix) {
-      position = 'fromPosition';
-      rotation = 'fromRotation';
-      skew = 'fromSkew';
-      rotationPost = 'fromRotationPost';
-      scale = 'fromScale';
-      scalePost = 'fromScalePost';
-      width = 'fromWidth';
-      height = 'fromHeight';
-      opacity = 'fromOpacity';
-    }
-
-    state.position = optionOrDefault(options[position], state.position);
-    state.rotation = optionOrDefault(options[rotation], state.rotation);
-    state.rotationPost = optionOrDefault(options[rotationPost], state.rotationPost);
-    state.skew = optionOrDefault(options[skew], state.skew);
-    state.scale = optionOrDefault(options[scale], state.scale);
-    state.scalePost = optionOrDefault(options[scalePost], state.scalePost);
-    state.opacity = options[opacity];
-    state.width = options[width];
-    state.height = options[height];
-
-    return state;
-  };
 
   var setupAnimationOptions = function(start, end, options) {
     options.startState = start;
@@ -579,125 +514,6 @@
   };
 
 
-  /**********
-  * Easings *
-  ***********/
-
-  var linearEasing = function(value) {
-    return value;
-  };
-
-  var ease = function(value) {
-    return (Math.cos(value*Math.PI + Math.PI) + 1)/2;
-  };
-
-  var easeIn = function(value) {
-    return value*value;
-  };
-
-  var easeOut = function(value) {
-    return -Math.pow(value - 1, 2) + 1;
-  };
-
-  var createSpringEasing = function(options) {
-    var position = optionOrDefault(options.startPosition, 0);
-    var equilibriumPosition = optionOrDefault(options.equilibriumPosition, 1);
-    var velocity = optionOrDefault(options.initialVelocity, 0);
-    var springConstant = optionOrDefault(options.springConstant, 0.8);
-    var deceleration = optionOrDefault(options.springDeceleration, 0.9);
-    var mass = optionOrDefault(options.springMass, 10);
-
-    var equilibrium = false;
-
-    // Public API
-    return {
-      isSpring: true,
-      tick: function(value, isManual) {
-        if(value === 0.0 || isManual)
-          return;
-        if(equilibrium)
-          return;
-        var springForce = -(position - equilibriumPosition) * springConstant;
-        // f = m * a
-        // a = f / m
-        var a = springForce / mass;
-        // s = v * t
-        // t = 1 ( for now )
-        velocity += a;
-        position += velocity;
-
-        // Deceleration
-        velocity *= deceleration;
-
-        if(Math.abs(position - equilibriumPosition) < 0.001 && Math.abs(velocity) < 0.001) {
-          equilibrium = true;
-        }
-      },
-
-      resetFrom: function(value) {
-        console.log('resetting spring from ' + value);
-        position = value;
-        velocity = 0;
-      },
-
-
-      getValue: function() {
-        if(equilibrium)
-          return equilibriumPosition;
-        return position;
-      },
-
-      completed: function() {
-        return equilibrium;
-      }
-    };
-  };
-
-  var EASING_FUNCS = {
-    'linear': linearEasing,
-    'ease': ease,
-    'easeIn': easeIn,
-    'easeOut': easeOut,
-  };
-
-
-  var createEaser = function(easerName, options) {
-    if(easerName == 'spring') {
-      return createSpringEasing(options);
-    }
-    var easeFunction = easerName;
-    if(!isFunction(easerName)) {
-      easeFunction = EASING_FUNCS[easerName];
-    }
-
-    var easer = easeFunction;
-    var value = 0;
-    var lastValue;
-
-    // Public API
-    return {
-      tick: function(v) {
-        value = easer(v);
-        lastValue = v;
-      },
-
-      resetFrom: function(value) {
-        lastValue = 0;
-      },
-
-      getValue: function() {
-        return value;
-      },
-
-      completed: function() {
-        if(lastValue >= 1) {
-          return lastValue;
-        }
-        return false;
-      }
-    };
-  };
-
   if(window.jQuery) {
     (function ( $ ) {
       $.fn.snabbt = function(arg1, arg2) {
@@ -709,4 +525,3 @@
   snabbt.createMatrix = createMatrix;
   snabbt.setElementTransform = updateElementTransform;
   return snabbt;
-}));

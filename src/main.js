@@ -1,6 +1,6 @@
 'use strict';
 
-var createMatrix = require('./matrix.es6');
+var createMatrix = require('./matrix.js');
 
 
 module.exports = function() {

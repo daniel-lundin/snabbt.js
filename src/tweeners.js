@@ -1,6 +1,6 @@
 'use strict';
 
-var matrix = require('./matrix.es6');
+var matrix = require('./matrix.js');
 
 function createStateTweener(startState, endState, resultState) {
   var start = startState;

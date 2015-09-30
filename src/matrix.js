@@ -179,7 +179,7 @@ function copyArray(a, b) {
   b[15] = a[15];
 }
 
-var createMatrix = function() {
+function createMatrix() {
     var data = new Float32Array(16);
     var a = new Float32Array(16);
     var b = new Float32Array(16);
@@ -251,7 +251,7 @@ var createMatrix = function() {
       return this;
     }
   };
-};
+}
 
 
 module.exports = createMatrix;
