@@ -1,5 +1,7 @@
 'use strict';
 
+var utils = require('./utils.js');
+
 const SCALAR = 1;
 const ARRAY_2 = 2;
 const ARRAY_3 = 3;
@@ -20,10 +22,51 @@ var tweenableProperties = {
   height: [SCALAR]
 };
 
+function preprocessOptions(options, index, len) {
+  if (!options)
+    return options;
+  var clone = utils.cloneObject(options);
+
+  var hasAllDoneCallback = utils.isFunction(options.allDone);
+  var hasCompleteCallback = utils.isFunction(options.complete);
+
+  if (hasCompleteCallback || hasAllDoneCallback) {
+    clone.complete = function() {
+      if (hasCompleteCallback) {
+        options.complete.call(this, index, len);
+      }
+      if (hasAllDoneCallback && index === len - 1) {
+        options.allDone();
+      }
+    };
+  }
+
+  if (utils.isFunction(options.valueFeeder)) {
+    clone.valueFeeder = function(i, matrix) {
+      return options.valueFeeder(i, matrix, index, len);
+    };
+  }
+  if (utils.isFunction(options.easing)) {
+    clone.easing = function(i) {
+      return options.easing(i, index, len);
+    };
+  }
+
+  var properties = Object.keys(tweenableProperties).concat(['transformOrigin', 'duration', 'delay']);
+
+  properties.forEach(function(property) {
+    if (utils.isFunction(options[property])) {
+      clone[property] = options[property](index, len);
+    }
+  });
+
+  return clone;
+}
 
 module.exports = {
   tweenableProperties: tweenableProperties,
   fromPrefixed: fromPrefixed,
+  preprocessOptions: preprocessOptions,
   types: {
     SCALAR: SCALAR,
     ARRAY_2: ARRAY_2,

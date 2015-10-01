@@ -90,7 +90,7 @@ function stateFromOptions(options, state, useFromPrefix) {
 
   var propName = useFromPrefix ? fromPrefixed : (p) => p;
   Object.keys(props).forEach((key) => {
-    state[key] = utils.optionOrDefault(propName(key), state[key]);
+    state[key] = utils.optionOrDefault(options[propName(key)], state[key]);
   });
 
   return state;
