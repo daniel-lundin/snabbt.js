@@ -58,4 +58,15 @@ describe('state', () => {
     expect(properties).to.have.property('height', '100px');
     expect(properties).to.have.property('opacity', 0.5);
   });
+
+  describe('stateFromOptions', () => {
+    it('should create new state with default values', () => {
+      var res = state.stateFromOptions({});
+
+      Object.keys(props).forEach((prop) => {
+        var defaultValue = props[prop][1];
+        expect(res[prop]).to.eql(defaultValue);
+      });
+    });
+  });
 });

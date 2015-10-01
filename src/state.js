@@ -2,6 +2,7 @@
 
 var createMatrix = require('./matrix.js');
 var props = require('./properties.js').tweenableProperties;
+var fromPrefixed = require('./properties.js').fromPrefixed;
 var types = require('./properties.js').types;
 var utils = require('./utils.js');
 
@@ -82,6 +83,21 @@ function createState(config) {
   return API;
 }
 
+function stateFromOptions(options, state, useFromPrefix) {
+  if (!state) {
+    state = createState({});
+  }
+
+  var propName = useFromPrefix ? fromPrefixed : (p) => p;
+  Object.keys(props).forEach((key) => {
+    state[key] = utils.optionOrDefault(propName(key), state[key]);
+  });
+
+  return state;
+}
+
+
 module.exports = {
-  createState: createState
+  createState: createState,
+  stateFromOptions: stateFromOptions
 };
