@@ -40,10 +40,6 @@
     if(elements.length !== undefined) {
       var aggregateChainer = {
         chainers: [],
-        then: function(opts) {
-          console.log('DeprecationWarning: then() is renamed to snabbt()');
-          return this.snabbt(opts);
-        },
         snabbt: function(opts) {
           var len = this.chainers.length;
           this.chainers.forEach(function(chainer, index) {
@@ -189,10 +185,6 @@
       snabbt: function(opts) {
         queue.unshift(preprocessOptions(opts, 0, 1));
         return chainer;
-      },
-      then: function(opts) {
-        console.log('DeprecationWarning: then() is renamed to snabbt()');
-        return this.snabbt(opts);
       }
     };
 
@@ -445,7 +437,7 @@
                                          endState,
                                          currentState);
     } else {
-      tweener = createStateTweener(startState, endState, currentState);
+      tweener = createStateTweener(options.update, startState, endState, currentState);
     }
 
     // Public api
@@ -1114,7 +1106,7 @@
   // -- StateTweener --
   // -------------------
 
-  var createStateTweener = function(startState, endState, resultState) {
+  var createStateTweener = function( update, startState, endState, resultState) {
     var start = startState;
     var end = endState;
     var result = resultState;
@@ -1133,6 +1125,7 @@
     return {
 
       tween: function(tweenValue) {
+        if( update ) update(tweenValue);
 
         if(tweenPosition) {
           var dX = (end.position[0] - start.position[0]);
