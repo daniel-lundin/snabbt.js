@@ -2,7 +2,7 @@
 
 Fast animations with Javascript and CSS transforms
 
-![travis build](https://travis-ci.org/daniel-lundin/snabbt.js.svg?branch=es6)
+[![travis build](https://travis-ci.org/daniel-lundin/snabbt.js.svg?branch=es6)](https://travis-ci.org/daniel-lundin/snabbt.js/builds/)
 
 **Docs**
 
