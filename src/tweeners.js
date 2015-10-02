@@ -1,6 +1,6 @@
 'use strict';
 
-var matrix = require('./matrix.js');
+var createMatrix = require('./matrix.js');
 var props = require('./properties').tweenableProperties;
 var types = require('./properties').types;
 
@@ -75,12 +75,11 @@ function createStateTweener(startState, endState, resultState) {
 }
 
 function createValueFeederTweener(valueFeeder, startState, endState, resultState) {
-  var currentMatrix = valueFeeder(0, matrix.createMatrix());
+  var currentMatrix = valueFeeder(0, createMatrix());
   var start = startState;
   var end = endState;
   var result = resultState;
   var reverse = false;
-
 
   // Public API
   return {

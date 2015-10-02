@@ -12,6 +12,7 @@ function createState(props, value) {
 }
 
 describe('tweeners', () => {
+
   describe('stateTweener', () => {
     it('should tween 3d properties that are present', () => {
       var props = ['position', 'rotation'];
@@ -52,4 +53,23 @@ describe('tweeners', () => {
       expect(result.width).to.eql(1.5);
     });
   });
+
+  describe('valueFeederTweener', () => {
+    it('should update currentMatrix with return value from valueFeeder', () => {
+      var savedMatrix;
+      var valueFeeder = (tweenValue, matrix) => {
+        savedMatrix = matrix.translate(100, 100, 100);
+        return savedMatrix;
+      };
+
+      var start = {};
+      var end = {};
+      var result = {};
+      var tweener = tweeners.createValueFeederTweener(valueFeeder, start, end, result);
+      tweener.tween(0);
+
+      expect(tweener.asMatrix()).to.eql(savedMatrix);
+    });
+  });
+
 });
