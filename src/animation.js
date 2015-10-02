@@ -1,10 +1,14 @@
+'use strict';
+var utils = require('./utils.js');
+var easing = require('./easing.js');
+
 function createAnimation(options) {
   var startState = options.startState;
   var endState = options.endState;
-  var duration = optionOrDefault(options.duration, 500);
-  var delay = optionOrDefault(options.delay, 0);
-  var perspective = options.perspective;
-  var easing = createEaser(optionOrDefault(options.easing, 'linear'), options);
+  var duration = utils.optionOrDefault(options.duration, 500);
+  var delay = utils.optionOrDefault(options.delay, 0);
+  var perspective = utils.options.perspective;
+  var easing = easing.createEaser(utils.optionOrDefault(options.easing, 'linear'), options);
   var currentState = duration === 0 ? endState.clone() : startState.clone();
   var transformOrigin = options.transformOrigin;
   currentState.transformOrigin = options.transformOrigin;
@@ -230,3 +234,7 @@ function createAttentionAnimation(options) {
   };
 }
 
+module.exports = {
+  createAnimation: createAnimation,
+  createAttentionAnimation: createAttentionAnimation
+};
