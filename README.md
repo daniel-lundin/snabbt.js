@@ -1,6 +1,8 @@
 # snabbt.js
 
-Fast animations with Javascript and CSS transforms(Work in progress)
+Fast animations with Javascript and CSS transforms
+
+![travis build](https://travis-ci.org/daniel-lundin/snabbt.js.svg?branch=es6)
 
 **Docs**
 
