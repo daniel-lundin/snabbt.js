@@ -11,7 +11,7 @@ function optionOrDefault(option, def) {
   return option;
 }
 
-function updateElementTransform(element, matrix, perspective, transformProperty) {
+function updateElementTransform(element, matrix, transformProperty, perspective) {
   var cssPerspective = '';
   if (perspective) {
     cssPerspective = 'perspective(' + perspective + 'px) ';
@@ -22,6 +22,8 @@ function updateElementTransform(element, matrix, perspective, transformProperty)
 
 var updateElementProperties = function(element, properties) {
   for (var key in properties) {
+    if (key === 'perspective') // TODO: Fix this
+      continue;
     element.style[key] = properties[key];
   }
 };

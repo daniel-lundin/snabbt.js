@@ -11,7 +11,8 @@ function createState(config) {
   var properties = {
     opacity: undefined,
     width: undefined,
-    height: undefined
+    height: undefined,
+    perspective: undefined
   };
 
   // Public API

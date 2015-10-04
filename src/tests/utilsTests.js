@@ -30,7 +30,7 @@ describe('utils', () => {
       var element = { style: {} };
       var perspective = 500;
       var transformProperty = 'transform';
-      utils.updateElementTransform(element, matrix, perspective, transformProperty);
+      utils.updateElementTransform(element, matrix, transformProperty, perspective);
 
       expect(element.style[transformProperty]).to.equal('perspective(' + perspective + 'px) matrix-as-css');
     });
