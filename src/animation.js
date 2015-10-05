@@ -4,10 +4,10 @@ var easing = require('./easing.js');
 var tweeners = require('./tweeners');
 var state = require('./state.js');
 
-function createAnimation(options) {
-  var startState = options.startState;
-  var endState = options.endState;
+function createAnimation(startState, endState, options) {
+  console.log('createAnimation');
   var duration = utils.optionOrDefault(options.duration, 500);
+
   var delay = utils.optionOrDefault(options.delay, 0);
   var easer = easing.createEaser(utils.optionOrDefault(options.easing, 'linear'), options);
   var currentState = duration === 0 ? endState.clone() : startState.clone();
@@ -37,14 +37,19 @@ function createAnimation(options) {
 
   // Public api
   return {
-    stop: function() {
+    stop() {
       stopped = true;
     },
-    isStopped: function() {
+
+    isStopped() {
       return stopped;
     },
 
-    finish: function(callback) {
+    isStarted() {
+      return started;
+    },
+
+    finish(callback) {
       manual = false;
       var manualDuration = duration * manualValue;
       startTime = currentTime - manualDuration;
@@ -52,7 +57,7 @@ function createAnimation(options) {
       easer.resetFrom(manualValue);
     },
 
-    rollback: function(callback) {
+    rollback(callback) {
       manual = false;
       tweener.setReverse();
       var manualDuration = duration * (1 - manualValue);
@@ -61,20 +66,19 @@ function createAnimation(options) {
       easer.resetFrom(manualValue);
     },
 
-    restart: function() {
+    restart() {
       // Restart timer
       startTime = undefined;
       easer.resetFrom(0);
     },
 
-    tick: function(time) {
+    tick(time) {
       if (stopped)
         return;
 
       if (manual) {
         currentTime = time;
-        this.updateCurrentTransform();
-        return;
+        return this.updateCurrentTransform();
       }
 
       // If first tick, set startTime
@@ -82,7 +86,7 @@ function createAnimation(options) {
         startTime = time;
       }
 
-      if (time - startTime > delay) {
+      if (time - startTime >= delay) {
         started = true;
         currentTime = time - delay;
 
@@ -105,14 +109,14 @@ function createAnimation(options) {
     },
 
     updateCurrentTransform: function() {
-      var tweenValue = easing.getValue();
+      var tweenValue = easer.getValue();
       if (manual) {
         var value = Math.max(0.00001, manualValue - manualDelayFactor);
-        if (easing.isSpring) {
+        if (easer.isSpring) {
           tweenValue = value;
         } else {
-          easing.tick(value, true);
-          tweenValue = easing.getValue();
+          easer.tick(value, true);
+          tweenValue = easer.getValue();
         }
       }
       tweener.tween(tweenValue);
@@ -124,7 +128,7 @@ function createAnimation(options) {
       if (startTime === 0) {
         return false;
       }
-      return easing.completed();
+      return easer.completed();
     },
 
     updateElement: function(element, forceUpdate) {

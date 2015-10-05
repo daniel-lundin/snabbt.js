@@ -4,6 +4,7 @@ var expect = require('chai').expect;
 var state = require('../state.js');
 var props = require('../properties.js').tweenableProperties;
 var types = require('../properties.js').types;
+var createMatrix = require('../matrix.js');
 
 function generateRandomConfig() {
   var config = {};
@@ -68,5 +69,8 @@ describe('state', () => {
         expect(res[prop]).to.eql(defaultValue);
       });
     });
+  });
+
+  describe('asMatrix', () => {
   });
 });

@@ -26,8 +26,8 @@
     "babelify": "^6.3.0",
     "chai": "^3.3.0",
     "mocha": "^2.3.3",
-    "watchify": "^3.4.0",
-    "sinon": "^1.17.1"
+    "sinon": "^1.17.1",
+    "watchify": "^3.4.0"
   },
   "spm": {
     "main": "snabbt.js",
