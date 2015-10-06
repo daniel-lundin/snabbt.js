@@ -11,11 +11,9 @@ describe('animations', () => {
   describe('tick', () => {
     var animation;
     beforeEach(() => {
-      var options = {
-        startState: createState({}),
-        endState: createState({})
-      };
-      animation = createAnimation(options);
+      var startState = createState({});
+      var endState = createState({});
+      animation = createAnimation(startState, endState, {});
       sinon.spy(animation, 'updateCurrentTransform');
     });
 

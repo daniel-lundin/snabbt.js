@@ -5,7 +5,6 @@ var tweeners = require('./tweeners');
 var state = require('./state.js');
 
 function createAnimation(startState, endState, options) {
-  console.log('createAnimation');
   var duration = utils.optionOrDefault(options.duration, 500);
 
   var delay = utils.optionOrDefault(options.delay, 0);

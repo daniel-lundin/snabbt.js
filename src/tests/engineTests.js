@@ -6,9 +6,9 @@ var Engine = require('../engine.js');
 var Animation = require('../animation.js');
 
 
-describe.only('Engine', () => {
+describe('Engine', () => {
 
-  describe('setAnimation', () => {
+  describe('stepAnimation', () => {
     it('should not tick if animation is stopped', () => {
       var animation = {
         isStopped() {
@@ -16,8 +16,9 @@ describe.only('Engine', () => {
         },
         tick: sinon.stub()
       };
+      var element = {};
 
-      Engine.stepAnimation(animation, 100);
+      Engine.stepAnimation(element, animation, 100);
 
       sinon.assert.notCalled(animation.tick);
     });
@@ -30,11 +31,77 @@ describe.only('Engine', () => {
         tick: sinon.stub(),
         updateElement: sinon.stub()
       };
-
-      Engine.stepAnimation(animation, 100);
+      var element = {};
+      var time = 42;
+      Engine.stepAnimation(element, animation, time);
 
       sinon.assert.calledOnce(animation.tick);
+      sinon.assert.calledWith(animation.tick, time);
       sinon.assert.calledOnce(animation.updateElement);
+    });
+  });
+
+  describe('stepAnimations', () => {
+    beforeEach(() => {
+      sinon.stub(Engine, 'stepAnimation');
+      sinon.stub(Engine, 'archiveCompletedAnimations');
+    });
+
+    afterEach(() => {
+      Engine.stepAnimation.restore();
+      Engine.archiveCompletedAnimations.restore();
+    });
+
+    it('should call stepAnimation for each animation', () => {
+      Engine.runningAnimations = [
+        [{}, {}, {}],
+        [{}, {}, {}]
+      ];
+
+      Engine.stepAnimations();
+
+      sinon.assert.calledTwice(Engine.stepAnimation);
+    });
+
+    it('should call archiveAnimations', () => {
+      Engine.stepAnimations();
+      sinon.assert.calledOnce(Engine.archiveCompletedAnimations);
+    });
+  });
+
+  describe('archiveCompletedAnimations', () => {
+    it('should move finished animations from running to completed', () => {
+      var animation = {
+        completed() {
+          return true;
+        }
+      };
+
+      Engine.runningAnimations = [[{}, animation, {}]];
+      Engine.completedAnimations = [[{}, animation, {}]];
+
+      Engine.archiveCompletedAnimations();
+
+      expect(Engine.runningAnimations.length).to.eql(0);
+      expect(Engine.completedAnimations.length).to.eql(2);
+    });
+
+    it('should not save old finished animations on the same element', () => {
+      var animation = {
+        completed() {
+          return true;
+        }
+      };
+      var element = 'an element';
+
+      Engine.runningAnimations = [[element, animation, {}]];
+      Engine.completedAnimations = [[element, animation, {}]];
+      Engine.completedAnimations = [[{}, animation, {}]];
+
+      Engine.archiveCompletedAnimations();
+
+      expect(Engine.runningAnimations.length).to.eql(0);
+      expect(Engine.completedAnimations.length).to.eql(2);
     });
   });
 
@@ -72,6 +139,7 @@ describe.only('Engine', () => {
       Engine.initializeAnimation(element, options);
 
       expect(Engine.runningAnimations.length).to.eql(1);
+      expect(Engine.runningAnimations[0].length).to.eql(3);
     });
   });
 });
