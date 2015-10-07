@@ -40,6 +40,13 @@ var Engine = {
   archiveCompletedAnimations() {
     var unFinished = this.runningAnimations.filter((animation) => !animation[1].completed());
     var finished = this.runningAnimations.filter((animation) => animation[1].completed());
+    var queuedAnimations = this.createQueuedAnimations(finished);
+    finished = this.runningAnimations.filter((finishedAnimation) => {
+      return !queuedAnimations.find((queuedAnimation) => {
+        return queuedAnimation[0] !== finishedAnimation[0];
+      });
+    });
+
 
     Engine.runningAnimations = unFinished;
     this.completedAnimations = this.completedAnimations.filter((animation) => {
@@ -48,24 +55,52 @@ var Engine = {
       });
     });
     Array.prototype.push.apply(this.completedAnimations, finished);
+    Array.prototype.push.apply(this.runningAnimations, queuedAnimations);
   },
 
-  initializeAnimation(element, options) {
-    var previousState = this.findPreviousState(element);
-    var startState = stateFromOptions(options, previousState, true);
-    var endState = stateFromOptions(options, null, false);
+  createQueuedAnimations(finished) {
+    var newAnimations = finished.filter((animation) => {
+      var chainer = animation[2];
+      return chainer.index < chainer.queue.length;
+    }).map((animation) => {
+      var element = animation[0];
+      var chainer = animation[2];
+      var options = chainer.queue[chainer.index];
+      chainer.index++;
+      return [animation[0], this.createAnimation(element, options), chainer];
+    });
 
-    var animation = Animation.createAnimation(startState, endState, options);
+    return newAnimations;
+  },
 
+  createChainer() {
     var chainer = {
+      index: 0,
       queue: [],
       snabbt: function(opts) {
         this.queue.unshift(opts);
         return chainer;
       }
     };
+    return chainer;
+  },
+
+  createAnimation(element, options) {
+    var previousState = this.findPreviousState(element);
+    var startState = stateFromOptions(options, previousState, true);
+    var endState = stateFromOptions(options, null, false);
+
+    var animation = Animation.createAnimation(startState, endState, options);
+    return animation;
+
+  },
+  initializeAnimation(element, options) {
+    var animation = this.createAnimation(element, options);
+    var chainer = this.createChainer();
 
     this.runningAnimations.push([element, animation, chainer]);
+
+    return chainer;
   },
 
   findPreviousState() {

@@ -77,8 +77,8 @@ describe('Engine', () => {
         }
       };
 
-      Engine.runningAnimations = [[{}, animation, {}]];
-      Engine.completedAnimations = [[{}, animation, {}]];
+      Engine.runningAnimations = [[{}, animation, Engine.createChainer()]];
+      Engine.completedAnimations = [[{}, animation, Engine.createChainer()]];
 
       Engine.archiveCompletedAnimations();
 
@@ -94,14 +94,30 @@ describe('Engine', () => {
       };
       var element = 'an element';
 
-      Engine.runningAnimations = [[element, animation, {}]];
-      Engine.completedAnimations = [[element, animation, {}]];
-      Engine.completedAnimations = [[{}, animation, {}]];
+      Engine.runningAnimations = [[element, animation, Engine.createChainer()]];
+      Engine.completedAnimations = [[element, animation, Engine.createChainer()]];
+      Engine.completedAnimations = [[{}, animation, Engine.createChainer()]];
 
       Engine.archiveCompletedAnimations();
 
       expect(Engine.runningAnimations.length).to.eql(0);
       expect(Engine.completedAnimations.length).to.eql(2);
+    });
+
+    it('should start next queued animation', () => {
+      var chainer = Engine.createChainer();
+      chainer.snabbt({});
+
+      var animation = {
+        completed() {
+          return true;
+        }
+      };
+      Engine.runningAnimations = [[{}, animation, chainer]];
+
+      Engine.archiveCompletedAnimations();
+
+      expect(Engine.runningAnimations.length).to.eql(1);
     });
   });
 
