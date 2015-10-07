@@ -19,6 +19,12 @@ var Engine = {
 
   },
 
+  scheduleNextFrame() {
+    window.requestAnimationFrame((time) => {
+      this.stepAnimations(time);
+    });
+  },
+
   stepAnimations(time) {
     this.runningAnimations.forEach((runningAnimation) => {
       var element = runningAnimation[0];
@@ -27,6 +33,10 @@ var Engine = {
     });
 
     this.archiveCompletedAnimations();
+
+    if (this.runningAnimations.length > 0) {
+      this.scheduleNextFrame();
+    }
   },
 
   stepAnimation(element, animation, time) {
@@ -94,11 +104,18 @@ var Engine = {
     return animation;
 
   },
+
   initializeAnimation(element, options) {
     var animation = this.createAnimation(element, options);
     var chainer = this.createChainer();
 
     this.runningAnimations.push([element, animation, chainer]);
+
+    console.log('create animation', this.runningAnimations);
+    if (this.runningAnimations.length === 1) {
+      this.scheduleNextFrame();
+      console.log('scheduling');
+    }
 
     return chainer;
   },

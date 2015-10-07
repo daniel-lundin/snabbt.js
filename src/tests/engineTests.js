@@ -45,11 +45,13 @@ describe('Engine', () => {
     beforeEach(() => {
       sinon.stub(Engine, 'stepAnimation');
       sinon.stub(Engine, 'archiveCompletedAnimations');
+      sinon.stub(Engine, 'scheduleNextFrame');
     });
 
     afterEach(() => {
       Engine.stepAnimation.restore();
       Engine.archiveCompletedAnimations.restore();
+      Engine.scheduleNextFrame.restore();
     });
 
     it('should call stepAnimation for each animation', () => {
@@ -125,12 +127,15 @@ describe('Engine', () => {
 
     beforeEach(() => {
       sinon.spy(Animation, 'createAnimation');
+      sinon.stub(Engine, 'scheduleNextFrame');
       Engine.runningAnimations = [];
     });
 
     afterEach(() => {
       Animation.createAnimation.restore();
+      Engine.scheduleNextFrame.restore();
     });
+
 
     it('should call createAnimation with states and options', () => {
       var element = {};
