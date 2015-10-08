@@ -77,7 +77,7 @@ var Engine = {
       var chainer = animation[2];
       var options = chainer.queue[chainer.index];
       chainer.index++;
-      return [animation[0], this.createAnimation(element, options), chainer];
+      return [animation[0], this.createAnimation(element, options, animation[1].endState()), chainer];
     });
 
     return newAnimations;
@@ -95,14 +95,13 @@ var Engine = {
     return chainer;
   },
 
-  createAnimation(element, options) {
-    var previousState = this.findPreviousState(element);
+  createAnimation(element, options, previousEndState) {
+    var previousState = previousEndState || this.findPreviousState(element);
     var startState = stateFromOptions(options, previousState, true);
     var endState = stateFromOptions(options, null, false);
 
     var animation = Animation.createAnimation(startState, endState, options);
     return animation;
-
   },
 
   initializeAnimation(element, options) {
@@ -111,17 +110,18 @@ var Engine = {
 
     this.runningAnimations.push([element, animation, chainer]);
 
-    console.log('create animation', this.runningAnimations);
     if (this.runningAnimations.length === 1) {
       this.scheduleNextFrame();
-      console.log('scheduling');
     }
 
     return chainer;
   },
 
-  findPreviousState() {
-    return null;
+  findPreviousState(element) {
+    var match =  this.completedAnimations.find((animation) => element === animation[0]);
+    if (match) {
+      return match[1].endState();
+    }
   }
 };
 

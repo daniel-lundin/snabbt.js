@@ -40,6 +40,10 @@ function createAnimation(startState, endState, options) {
       stopped = true;
     },
 
+    endState() {
+      return endState;
+    },
+
     isStopped() {
       return stopped;
     },

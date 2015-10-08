@@ -113,6 +113,9 @@ describe('Engine', () => {
       var animation = {
         completed() {
           return true;
+        },
+        endState() {
+          return null;
         }
       };
       Engine.runningAnimations = [[{}, animation, chainer]];

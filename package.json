@@ -2,7 +2,7 @@
   "name": "snabbt.js",
   "version": "0.5.8",
   "description": "Fast animations with javascript and CSS-transforms",
-  "main": "snabbt.min.js",
+  "main": "snabbt.js",
   "files": [
     "LICENSE.txt",
     "README.md",
@@ -14,7 +14,8 @@
   "scripts": {
     "watch": "watchify -v -t babelify src/main.js -o bundle.js",
     "test": "mocha src/**/*Tests.js --harmony",
-    "tdd": "mocha src/**/*Tests.js --harmony --watch"
+    "tdd": "mocha src/**/*Tests.js --harmony --watch",
+    "build": "browserify -t babelify src/main.js -o bundle.js && uglifyjs --compress --mangle -- bundle.js > snabbt.js"
   },
   "repository": {
     "type": "git",
@@ -27,7 +28,8 @@
     "chai": "^3.3.0",
     "mocha": "^2.3.3",
     "sinon": "^1.17.1",
-    "watchify": "^3.4.0"
+    "watchify": "^3.4.0",
+    "uglify-js": "^2.4.24"
   },
   "spm": {
     "main": "snabbt.js",

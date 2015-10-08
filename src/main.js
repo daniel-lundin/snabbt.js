@@ -9,6 +9,6 @@ module.exports.snabbt = function(element, options) {
 
 if (window) {
   window.snabbt = function(element, options) {
-    Engine.initializeAnimation(element, options);
+    return Engine.initializeAnimation(element, options);
   };
 }
