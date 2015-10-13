@@ -3,6 +3,7 @@
 
 var Engine = require('./engine.js');
 var preprocessOptions = require('./properties.js').preprocessOptions;
+var utils = require('./utils.js');
 
 function snabbt(elements, arg2, arg3) {
   if (!elements.length) {
@@ -26,14 +27,22 @@ function snabbt(elements, arg2, arg3) {
       });
       return aggregateChainer;
     },
-    finish() {
-      chainers.forEach(function(chainer) {
+    finish(callback) {
+      chainers.forEach(function(chainer, index) {
+        if (utils.isFunction(callback))
+          return chainer.finish(() => {
+            callback(index, chainers.length);
+          });
         chainer.finish();
       });
       return aggregateChainer;
     },
-    rollback() {
-      chainers.forEach(function(chainer) {
+    rollback(callback) {
+      chainers.forEach(function(chainer, index) {
+        if (utils.isFunction(callback))
+          return chainer.rollback(() => {
+            callback(index, chainers.length);
+          });
         chainer.rollback();
       });
       return aggregateChainer;
@@ -46,12 +55,10 @@ function snabbt(elements, arg2, arg3) {
     else
       chainers.push(Engine.initializeAnimation(elements[i], preprocessOptions(arg2, i, len), arg3));
   }
-  //console.log('returning aggregate chainer', aggregateChainer);
   return aggregateChainer;
 }
 module.exports.snabbt = function(element, arg2, arg3) {
   return snabbt(element, arg2, arg3);
-  //Engine.initializeAnimation(element, options);
 };
 
 if (typeof window !== 'undefined') {

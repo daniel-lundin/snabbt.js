@@ -35,15 +35,10 @@ describe('main', () => {
   });
 
   describe('chaining', () => {
-    var chainerStub;
-
     beforeEach(() => {
-      chainerStub = {
-        snabbt: sinon.stub()
-      };
       sinon.spy(Engine, 'initializeAnimation');
       sinon.stub(Engine, 'scheduleNextFrame');
-      sinon.stub(Engine, 'createChainer').returns(chainerStub);
+      sinon.stub(Engine, 'createChainer');
     });
 
     afterEach(() => {
@@ -53,6 +48,11 @@ describe('main', () => {
     });
 
     it('should multiplex chain operations', () => {
+      var chainerStub = {
+        snabbt: sinon.stub()
+      };
+      Engine.createChainer.returns(chainerStub);
+
       var elements = [{}, {}];
       var options = {};
       snabbt(elements, options)
@@ -61,6 +61,26 @@ describe('main', () => {
       sinon.assert.calledTwice(Engine.initializeAnimation);
       sinon.assert.calledTwice(chainerStub.snabbt);
     });
-  });
 
+    it('should multiplex manual mode operations', () => {
+      Engine.createChainer.returns({
+        finish: (callback) => {
+          callback();
+        }
+      });
+      var elements = [{}, {}];
+      var options = {
+        manual: true
+      };
+
+      var callback = sinon.stub();
+      var chainer = snabbt(elements, options);
+      chainer.finish(callback);
+
+
+      sinon.assert.calledTwice(callback);
+      expect(callback.firstCall.args).to.eql([0, 2]);
+      expect(callback.secondCall.args).to.eql([1, 2]);
+    });
+  });
 });
