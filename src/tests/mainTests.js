@@ -69,14 +69,11 @@ describe('main', () => {
         }
       });
       var elements = [{}, {}];
-      var options = {
-        manual: true
-      };
+      var options = {};
 
       var callback = sinon.stub();
       var chainer = snabbt(elements, options);
       chainer.finish(callback);
-
 
       sinon.assert.calledTwice(callback);
       expect(callback.firstCall.args).to.eql([0, 2]);

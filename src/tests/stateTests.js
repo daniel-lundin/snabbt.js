@@ -4,7 +4,6 @@ var expect = require('chai').expect;
 var state = require('../state.js');
 var props = require('../properties.js').tweenableProperties;
 var types = require('../properties.js').types;
-var createMatrix = require('../matrix.js');
 
 function generateRandomConfig() {
   var config = {};
@@ -62,7 +61,7 @@ describe('state', () => {
 
   describe('stateFromOptions', () => {
     it('should create new state with default values', () => {
-      var res = state.stateFromOptions({});
+      var res = state.stateFromOptions(state.createState({}, true));
 
       Object.keys(props).forEach((prop) => {
         var defaultValue = props[prop][1];

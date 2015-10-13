@@ -159,14 +159,13 @@ function createAttentionAnimation(options) {
   var tweenRotation = movement.rotation;
   var tweenRotationPost = movement.rotationPost;
   var tweenScale = movement.scale;
-  var tweenScalePost = movement.scalePost;
   var tweenSkew = movement.skew;
 
   var currentMovement = state.createState({
     position: tweenPosition ? [0, 0, 0] : undefined,
     rotation: tweenRotation ? [0, 0, 0] : undefined,
     rotationPost: tweenRotationPost ? [0, 0, 0] : undefined,
-    scale: tweenScale ? [0, 0] : undefined,
+    scale: tweenScale ? [1, 1] : undefined,
     skew: tweenSkew ? [0, 0] : undefined
   });
 
@@ -210,10 +209,6 @@ function createAttentionAnimation(options) {
       if (tweenScale) {
         currentMovement.scale[0] = 1 + movement.scale[0] * value;
         currentMovement.scale[1] = 1 + movement.scale[1] * value;
-      }
-      if (tweenScalePost) {
-        currentMovement.scalePost[0] = 1 + movement.scalePost[0] * value;
-        currentMovement.scalePost[1] = 1 + movement.scalePost[1] * value;
       }
 
       if (tweenSkew) {

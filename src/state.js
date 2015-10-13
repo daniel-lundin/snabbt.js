@@ -6,7 +6,7 @@ var fromPrefixed = require('./properties.js').fromPrefixed;
 var types = require('./properties.js').types;
 var utils = require('./utils.js');
 
-function createState(config) {
+function createState(config, useDefault) {
   var matrix = createMatrix();
   var properties = {
     opacity: undefined,
@@ -23,7 +23,8 @@ function createState(config) {
 
       Object.keys(props).forEach((property) => {
         var type = props[property][0];
-        clonedConfig[property] = type === types.SCALAR ? this[property] : this[property].slice(0);
+        if (this[property])
+            clonedConfig[property] = type === types.SCALAR ? this[property] : this[property].slice(0);
       });
 
       return createState(clonedConfig);
@@ -78,7 +79,10 @@ function createState(config) {
   };
 
   Object.keys(props).forEach((property) => {
-    API[property] = utils.optionOrDefault(config[property], props[property][1]);
+    if (useDefault)
+      API[property] = utils.optionOrDefault(config[property], props[property][1]);
+    else
+      API[property] = config[property];
   });
 
   return API;
@@ -86,7 +90,7 @@ function createState(config) {
 
 function stateFromOptions(options, state, useFromPrefix) {
   if (!state) {
-    state = createState({});
+    state = createState({}, true);
   }
 
   var propName = useFromPrefix ? fromPrefixed : (p) => p;

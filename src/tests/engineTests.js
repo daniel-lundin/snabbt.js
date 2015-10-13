@@ -165,5 +165,24 @@ describe('Engine', () => {
       expect(Engine.runningAnimations.length).to.eql(1);
       expect(Engine.runningAnimations[0].length).to.eql(3);
     });
+
+    describe('manual animations', () => {
+      beforeEach(() => {
+        sinon.stub(Animation, 'createAttentionAnimation');
+      });
+
+      afterEach(() => {
+        Animation.createAttentionAnimation.restore();
+      });
+
+      it('should create attention animation', () => {
+        var element = {};
+        var options = {};
+        Engine.initializeAnimation(element, 'attention', options);
+
+        sinon.assert.calledOnce(Animation.createAttentionAnimation);
+        sinon.assert.calledWith(Animation.createAttentionAnimation, options);
+      });
+    });
   });
 });

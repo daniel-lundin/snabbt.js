@@ -2,6 +2,7 @@
 /* global document, window */
 var stateFromOptions = require('./state.js').stateFromOptions;
 var Animation = require('./animation.js');
+var createState = require('./state.js').createState;
 
 var Engine = {
   runningAnimations: [],
@@ -57,7 +58,6 @@ var Engine = {
       });
     });
 
-
     Engine.runningAnimations = unFinished;
     this.completedAnimations = this.completedAnimations.filter((animation) => {
       return finished.find((finishedAnimation) => {
@@ -104,8 +104,21 @@ var Engine = {
     return animation;
   },
 
-  initializeAnimation(element, options) {
-    var animation = this.createAnimation(element, options);
+  createAttentionAnimation(element, options) {
+    var movement = stateFromOptions(options, createState({}, false));
+    options.movement = movement;
+    var animation = Animation.createAttentionAnimation(options);
+
+    return animation;
+  },
+
+  initializeAnimation(element, arg2, arg3) {
+    var animation;
+    if (arg2 === 'attention') {
+      animation = this.createAttentionAnimation(element, arg3);
+    } else {
+      animation = this.createAnimation(element, arg2);
+    }
     var chainer = this.createChainer();
 
     this.runningAnimations.push([element, animation, chainer]);

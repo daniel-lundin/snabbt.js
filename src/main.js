@@ -57,12 +57,13 @@ function snabbt(elements, arg2, arg3) {
   }
   return aggregateChainer;
 }
-module.exports.snabbt = function(element, arg2, arg3) {
-  return snabbt(element, arg2, arg3);
-};
-
 if (typeof window !== 'undefined') {
-  window.snabbt = function(element, options) {
-    return Engine.initializeAnimation(element, options);
+  window.snabbt = function(element, arg2, arg3) {
+    return snabbt(element, arg2, arg3);
+  };
+} else {
+  module.exports.snabbt = function(element, arg2, arg3) {
+    return snabbt(element, arg2, arg3);
   };
 }
+
