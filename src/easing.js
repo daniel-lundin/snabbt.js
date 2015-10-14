@@ -47,7 +47,6 @@ var createSpringEasing = function(options) {
 
       // Deceleration
       velocity *= deceleration;
-
       if (Math.abs(position - equilibriumPosition) < 0.001 && Math.abs(velocity) < 0.001) {
         equilibrium = true;
       }

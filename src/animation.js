@@ -227,7 +227,7 @@ function createAttentionAnimation(options) {
     },
 
     completed: function() {
-      return spring.equilibrium || stopped;
+      return spring.completed() || stopped;
     },
 
     restart: function() {
