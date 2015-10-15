@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <style>
+
+body {
+  background: #333;
+}
+
+.container {
+  position: relative;
+  width: 800px;
+  height: 600px;
+  margin: 0 auto;
+  transform-style: preserve-3d;
+  perspective: 500px;
+}
+
+.root {
+  position: relative;
+  width: 800px;
+  height: 600px;
+  margin: 0 auto;
+  transform-style: preserve-3d;
+  perspective: 500px;
+}
+
+.element {
+  position: absolute;
+  width: 50px;
+  height: 50px;
+  margin-left: -25px;
+  margin-top: -25px;
+  background: limegreen;
+  left: 50%;
+  /*top: 50%;*/
+  text-align: center;
+  line-height: 50px;
+}
+
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="root">
+      </div>
+    </div>
+    <button id="table">Table</button>
+    <button id="grid">Grid</button>
+    <script src="bundle.js"></script>
+    <script src="periodic.js"></script>
+  </body>
+</html>

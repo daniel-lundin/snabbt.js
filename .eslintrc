@@ -63,7 +63,7 @@
     "object-curly-spacing": [ 2, "always" ],
     "space-after-keywords": [ 2, "always" ],
     "semi-spacing": [2, {"before": false, "after": true}],
-    "brace-style": [ 2, "1tbs", { "allowSingleLine": false } ],
+    "brace-style": [ 2, "1tbs", { "allowSingleLine": true } ],
     "space-infix-ops": 2,
     "space-unary-ops": [ 2, { "words": true, "nonwords": false } ],
 
