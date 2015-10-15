@@ -88,7 +88,7 @@ var Engine = {
       index: 0,
       queue: [],
       snabbt: function(opts) {
-        this.queue.unshift(opts);
+        this.queue.push(opts);
         return chainer;
       }
     };
