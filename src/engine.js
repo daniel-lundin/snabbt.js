@@ -96,7 +96,7 @@ var Engine = {
   },
 
   createAnimation(element, options, previousEndState) {
-    var previousState = previousEndState || this.findPreviousState(element);
+    var previousState = previousEndState || this.findCurrentState(element);
     var startState = stateFromOptions(options, previousState, true);
     var endState = stateFromOptions(options, null, false);
 
@@ -130,8 +130,12 @@ var Engine = {
     return chainer;
   },
 
-  findPreviousState(element) {
-    var match =  this.completedAnimations.find((animation) => element === animation[0]);
+  findCurrentState(element) {
+    var match =  this.runningAnimations.find((animation) => element === animation[0]);
+    if (match) {
+      return match[1].getCurrentState();
+    }
+    match =  this.completedAnimations.find((animation) => element === animation[0]);
     if (match) {
       return match[1].endState();
     }

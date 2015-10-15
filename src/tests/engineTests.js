@@ -4,6 +4,7 @@ var sinon = require('sinon');
 var expect = require('chai').expect;
 var Engine = require('../engine.js');
 var Animation = require('../animation.js');
+var createState = require('../state.js').createState;
 
 
 describe('Engine', () => {
@@ -116,6 +117,9 @@ describe('Engine', () => {
         },
         endState() {
           return null;
+        },
+        getCurrentState() {
+          return null;
         }
       };
       Engine.runningAnimations = [[{}, animation, chainer]];
@@ -164,6 +168,25 @@ describe('Engine', () => {
 
       expect(Engine.runningAnimations.length).to.eql(1);
       expect(Engine.runningAnimations[0].length).to.eql(3);
+    });
+
+    it('should use current state from running animations', () => {
+      var previousState = createState({ position: [100, 100, 100] });
+      var previousAnimation = {
+        getCurrentState() {
+          return previousState;
+        }
+      };
+      var element = {};
+      Engine.runningAnimations = [[element, previousAnimation, {}]];
+
+      var options = {
+        position: [200, 200, 200]
+      };
+      Engine.initializeAnimation(element, options);
+
+      var startState = Animation.createAnimation.lastCall.args[0];
+      expect(startState.position).to.eql([100, 100, 100]);
     });
 
     describe('manual animations', () => {
