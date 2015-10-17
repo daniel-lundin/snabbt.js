@@ -1,5 +1,5 @@
 'use strict';
-/* global snabbt, document */
+/* global snabbt, window, document */
 
 var chemicalElements = [
   { symbol: 'H', name: 'Hydrogen', group: 1, period: 1 },
@@ -122,14 +122,40 @@ var chemicalElements = [
   { symbol: 'Uuo', name: 'Ununoctium', group: 18, period: 7 }
 ];
 
+var currentFormation = 0;
 var domElements = [];
+var formations = [
+  tableFormation,
+  gridFormation,
+  spiralFormation
+];
+
+var cameraPositions = [
+];
+var springConstant = 0.5;
+var springDeceleration = 0.7;
+
+function elementDelay(i) {
+  return i * 5;
+}
+
+
+function divWithClass(cls) {
+  var element = document.createElement('div');
+  element.classList.add(cls);
+  return element;
+}
 
 function createElements() {
   var root = document.querySelector('.root');
   chemicalElements.forEach(function(chemElement) {
-    var element = document.createElement('div');
-    element.classList.add('element');
-    element.textContent = chemElement.symbol;
+    var element = divWithClass('element');
+    var symbol = divWithClass('element__symbol');
+    var name = divWithClass('element__name');
+    symbol.textContent = chemElement.symbol;
+    name.textContent = chemElement.name;
+    element.appendChild(symbol);
+    element.appendChild(name);
     root.appendChild(element);
     domElements.push(element);
   });
@@ -137,64 +163,143 @@ function createElements() {
 
 function tableFormation() {
   var columns = 17;
+  var rows = 9;
   var spacing = 60;
+  var baseXOffset = -Math.floor(columns / 2) * spacing;
+  var baseYOffset = -Math.floor(rows / 2) * spacing;
   snabbt(domElements, {
+    rotation: [0, 0, 0],
     position: function(i) {
       var e = chemicalElements[i];
       //return [spacing - (i % 2) * 2 * spacing, e.period * spacing, 0];
-      return [-(columns / 2) * spacing + (e.group - 1) * spacing, e.period * spacing, 0];
+      return [baseXOffset + (e.group - 1) * spacing, baseYOffset + e.period * spacing, 0];
     },
-    easing: 'ease',
-    delay: function(i) { return i * 10; }
+    easing: 'spring',
+    springConstant: springConstant,
+    springDeceleration: springDeceleration,
+    delay: elementDelay
 
   });
 }
 
 function gridFormation() {
-  var spacing = 60;
+  var spacing = 120;
+  var layerSpacing = 120;
   var cols = 5;
   var elementsPerLayer = 5 * 5;
-  var baseXOffset = -(cols / 2) * spacing;
-  var baseYOffset = cols / 2 * spacing;
-  var layerOffset = 0;
+  var baseXOffset = -Math.floor(cols / 2) * spacing;
+  var baseYOffset = -Math.floor(cols / 2) * spacing;
+  var layerOffset = Math.floor(5 / 2) * layerSpacing;
   snabbt(domElements, {
+    rotation: [0, 0, 0],
     position: function(i) {
       var layerIndex = Math.floor(i / elementsPerLayer);
       var indexWithinLayer = i - layerIndex * elementsPerLayer;
       var row = Math.floor(indexWithinLayer / cols);
       var col = indexWithinLayer % cols;
-      return [baseXOffset + col * spacing, baseYOffset + row * spacing, layerOffset - layerIndex * 40];
+      return [baseXOffset + col * spacing, baseYOffset + row * spacing, layerOffset - layerIndex * layerSpacing];
     },
-    delay: function(i) {
-      return i * 20;
-    }
+    //delay: function(i) { return i * 5; },
+    duration: 10000,
+    easing: 'spring',
+    springConstant: springConstant,
+    springDeceleration: springDeceleration,
+    delay: elementDelay
   });
 }
 
-function rootRotation() {
+function spiralFormation() {
+  var rots = 5;
+
+  snabbt(domElements, {
+    position: function(i, len) {
+      var x = Math.sin(rots * 2 * Math.PI * i / len);
+      var z = Math.cos(rots * 2 * Math.PI * i / len);
+      var radius = 300;
+      return [radius * x, i * 3, radius * z];
+    },
+    rotation: function(i, len) {
+      var rotation = -(i / len) * rots * Math.PI * 2;
+      while (rotation < -2 * Math.PI)
+        rotation += 2 * Math.PI;
+      return [0, rotation, 0];
+    },
+    easing: 'spring',
+    springConstant: springConstant,
+    springDeceleration: springDeceleration,
+    delay: elementDelay
+  });
+}
+
+function rootAnimation() {
+  var root = document.querySelector('.root');
+  var constant = 0.2;
+  var perspective = 1000;
+  snabbt(root, {
+    rotation: [0, Math.PI / 4, 0],
+    perspective: perspective,
+    easing: 'spring',
+    springConstant: constant,
+    springDeceleration: springDeceleration
+  }).snabbt({
+    rotation: [-Math.PI / 4, 0, 0],
+    perspective: perspective,
+    easing: 'spring',
+    springConstant: constant,
+    springDeceleration: springDeceleration,
+  }).snabbt({
+    rotation: [0, -Math.PI / 4, 0],
+    perspective: perspective,
+    easing: 'spring',
+    springConstant: constant,
+    springDeceleration: springDeceleration,
+  }).snabbt({
+    rotation: [Math.PI / 4, 0, 0],
+    perspective: perspective,
+    easing: 'spring',
+    springConstant: constant,
+    springDeceleration: springDeceleration,
+    complete: rootAnimation
+  });
+}
+
+function cameraOne() {
   var root = document.querySelector('.root');
   snabbt(root, {
-    rotation: [Math.PI / 4, Math.PI / 4, 0],
-    duration: 5000,
-    perspective: 400
-  }).snabbt({
-    rotation: [-Math.PI / 4, -Math.PI / 4, 0],
-    complete: rootRotation,
-    duration: 5000,
-    perspective: 400
+    rotation: [Math.PI / 2, 0, 0],
+    position: [200, 200, 0],
+    duration: 3000,
+    perspective: 1000,
+    easing: 'spring',
+    springConstant: springConstant,
+    springDeceleration: springDeceleration
+
   });
+}
+
+function cameraTwo() {
+  var root = document.querySelector('.root');
+  snabbt(root, {
+    rotation: [0, 0, 0],
+    position: [0, 0, 1000],
+    duration: 3000,
+    perspective: 1000,
+  });
+}
+
+function switchFormation() {
+  currentFormation = (currentFormation + 1) % formations.length;
+  formations[currentFormation]();
 }
 
 function initEventListeners() {
-  var tableButton = document.getElementById('table');
-  var gridButton = document.getElementById('grid');
-  tableButton.addEventListener('click', function() {
-    tableFormation();
-  });
-  gridButton.addEventListener('click', function() {
-    gridFormation();
+  var container = document.querySelector('.container');
+  container.addEventListener('click', function() {
+    switchFormation();
   });
 }
 
 createElements();
+tableFormation();
+rootAnimation();
 initEventListeners();

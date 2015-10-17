@@ -4,7 +4,7 @@
     <style>
 
 body {
-  background: #333;
+  background: #111;
 }
 
 .container {
@@ -13,7 +13,7 @@ body {
   height: 600px;
   margin: 0 auto;
   transform-style: preserve-3d;
-  perspective: 500px;
+  /*perspective: 800px;*/
 }
 
 .root {
@@ -22,7 +22,7 @@ body {
   height: 600px;
   margin: 0 auto;
   transform-style: preserve-3d;
-  perspective: 500px;
+  /*perspective: 500px;*/
 }
 
 .element {
@@ -31,11 +31,24 @@ body {
   height: 50px;
   margin-left: -25px;
   margin-top: -25px;
-  background: limegreen;
+  background: rgba(30, 117, 123, 0.34);
+  font-family: sans-serif;
   left: 50%;
-  /*top: 50%;*/
+  top: 50%;
   text-align: center;
-  line-height: 50px;
+  text-shadow: 0 0 10px white;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  border-radius: 3px;
+  color: white;
+  user-select: none;
+}
+
+.element__symbol {
+  line-height: 30px;
+}
+.element__name {
+  line-height: 20px;
+  font-size: 6px;
 }
 
     </style>
@@ -45,9 +58,7 @@ body {
       <div class="root">
       </div>
     </div>
-    <button id="table">Table</button>
-    <button id="grid">Grid</button>
-    <script src="bundle.js"></script>
+    <script src="snabbt.js"></script>
     <script src="periodic.js"></script>
   </body>
 </html>
