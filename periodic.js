@@ -1,5 +1,5 @@
 'use strict';
-/* global snabbt, window, document */
+/* global snabbt, Hammer, window, document */
 
 var chemicalElements = [
   { symbol: 'H', name: 'Hydrogen', group: 1, period: 1 },
@@ -122,16 +122,7 @@ var chemicalElements = [
   { symbol: 'Uuo', name: 'Ununoctium', group: 18, period: 7 }
 ];
 
-var currentFormation = 0;
 var domElements = [];
-var formations = [
-  tableFormation,
-  gridFormation,
-  spiralFormation
-];
-
-var cameraPositions = [
-];
 var springConstant = 0.5;
 var springDeceleration = 0.7;
 
@@ -210,13 +201,15 @@ function gridFormation() {
 
 function spiralFormation() {
   var rots = 5;
+  var yStep = 3;
+  var baseYOffset = domElements.length / 2 * yStep;
 
   snabbt(domElements, {
     position: function(i, len) {
       var x = Math.sin(rots * 2 * Math.PI * i / len);
       var z = Math.cos(rots * 2 * Math.PI * i / len);
       var radius = 300;
-      return [radius * x, i * 3, radius * z];
+      return [radius * x, -baseYOffset + i * yStep, radius * z];
     },
     rotation: function(i, len) {
       var rotation = -(i / len) * rots * Math.PI * 2;
@@ -231,75 +224,87 @@ function spiralFormation() {
   });
 }
 
-function rootAnimation() {
-  var root = document.querySelector('.root');
-  var constant = 0.2;
-  var perspective = 1000;
-  snabbt(root, {
-    rotation: [0, Math.PI / 4, 0],
-    perspective: perspective,
-    easing: 'spring',
-    springConstant: constant,
-    springDeceleration: springDeceleration
-  }).snabbt({
-    rotation: [-Math.PI / 4, 0, 0],
-    perspective: perspective,
-    easing: 'spring',
-    springConstant: constant,
-    springDeceleration: springDeceleration,
-  }).snabbt({
-    rotation: [0, -Math.PI / 4, 0],
-    perspective: perspective,
-    easing: 'spring',
-    springConstant: constant,
-    springDeceleration: springDeceleration,
-  }).snabbt({
-    rotation: [Math.PI / 4, 0, 0],
-    perspective: perspective,
-    easing: 'spring',
-    springConstant: constant,
-    springDeceleration: springDeceleration,
-    complete: rootAnimation
+function setupCameraControls(container, root) {
+  var hammertime = new Hammer(container, { direction: Hammer.DIRECTION_ALL });
+  var translateZ = 0;
+  var rotateX = 0;
+  var rotateY = 0;
+  var rotateXOffset = 0;
+  var rotateYOffset = 0;
+  var rotateXVelocity = 0;
+  var rotateYVelocity = 0;
+
+  root.style.transform = 'perspective(1000px) rotateY(0deg) rotateX(0deg)';
+  function updateCamera(rotX, rotY, transZ) {
+    root.style.transform = 'perspective(1000px) translateZ(' + transZ + 'px) rotateY(' + rotX + 'deg) rotateX(' + rotY + 'deg)';
+  }
+
+  function stepCamera() {
+    rotateX += rotateXVelocity;
+    rotateY += rotateYVelocity;
+    var rotX = rotateX + rotateXOffset;
+    var rotY = rotateY + rotateYOffset;
+
+
+    rotateXVelocity *= 0.99;
+    rotateYVelocity *= 0.99;
+    updateCamera(rotX, rotY, translateZ);
+
+    window.requestAnimationFrame(stepCamera);
+  }
+  window.requestAnimationFrame(stepCamera);
+
+  hammertime.on('pan', function(ev) {
+
+    rotateXOffset = ev.deltaX / 10;
+    rotateYOffset = ev.deltaY / 10;
+    rotateXVelocity = 0;
+    rotateYVelocity = 0;
+    if (ev.isFinal) {
+      rotateX += rotateXOffset;
+      rotateY += rotateYOffset;
+      rotateXVelocity = -ev.velocityX;
+      rotateYVelocity = -ev.velocityY;
+      rotateXOffset = 0;
+      rotateYOffset = 0;
+    }
+    updateCamera();
   });
-}
-
-function cameraOne() {
-  var root = document.querySelector('.root');
-  snabbt(root, {
-    rotation: [Math.PI / 2, 0, 0],
-    position: [200, 200, 0],
-    duration: 3000,
-    perspective: 1000,
-    easing: 'spring',
-    springConstant: springConstant,
-    springDeceleration: springDeceleration
-
+  container.addEventListener('mousewheel', function(ev) {
+    translateZ += ev.deltaY;
+    translateZ = Math.min(Math.max(0, translateZ), 600);
+    updateCamera();
   });
-}
-
-function cameraTwo() {
-  var root = document.querySelector('.root');
-  snabbt(root, {
-    rotation: [0, 0, 0],
-    position: [0, 0, 1000],
-    duration: 3000,
-    perspective: 1000,
-  });
-}
-
-function switchFormation() {
-  currentFormation = (currentFormation + 1) % formations.length;
-  formations[currentFormation]();
 }
 
 function initEventListeners() {
+  var root = document.querySelector('.root');
   var container = document.querySelector('.container');
-  container.addEventListener('click', function() {
-    switchFormation();
+  var tableButton = document.getElementById('table');
+  var gridButton = document.getElementById('grid');
+  var spiralButton = document.getElementById('spiral');
+
+  window.addEventListener('scroll', function(evt) {
+    console.log('scroll');
+    evt.preventDefault();
+    evt.stopPropagation();
+    return false;
   });
+
+  tableButton.addEventListener('click', function() {
+    tableFormation();
+  });
+  gridButton.addEventListener('click', function() {
+    gridFormation();
+  });
+  spiralButton.addEventListener('click', function() {
+    spiralFormation();
+  });
+
+  setupCameraControls(container, root);
 }
 
 createElements();
 tableFormation();
-rootAnimation();
+//rootAnimation();
 initEventListeners();
