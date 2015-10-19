@@ -36,21 +36,11 @@ function createAnimation(startState, endState, options) {
 
   // Public api
   return {
-    stop() {
-      stopped = true;
-    },
-
-    endState() {
-      return endState;
-    },
-
-    isStopped() {
-      return stopped;
-    },
-
-    isStarted() {
-      return started;
-    },
+    options() { return options; },
+    stop() { stopped = true; },
+    endState() { return endState; },
+    isStopped() { return stopped; },
+    isStarted() { return started; },
 
     finish(callback) {
       manual = false;
@@ -171,13 +161,9 @@ function createAttentionAnimation(options) {
 
   // Public API
   return {
-    stop: function() {
-      stopped = true;
-    },
-
-    isStopped() {
-      return stopped;
-    },
+    options() { return options; },
+    stop: function() { stopped = true; },
+    isStopped() { return stopped; },
 
     tick() {
       if (stopped)

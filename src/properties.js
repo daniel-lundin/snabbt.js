@@ -55,8 +55,12 @@ function preprocessOptions(options, index, len) {
   var properties = Object.keys(tweenableProperties).concat(['transformOrigin', 'duration', 'delay']);
 
   properties.forEach(function(property) {
+    var fromProperty = fromPrefixed(property);
     if (utils.isFunction(options[property])) {
       clone[property] = options[property](index, len);
+    }
+    if (utils.isFunction(options[fromProperty])) {
+      clone[fromProperty] = options[fromProperty](index, len);
     }
   });
 

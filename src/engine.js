@@ -51,8 +51,9 @@ var Engine = {
   archiveCompletedAnimations() {
     var unFinished = this.runningAnimations.filter((animation) => !animation[1].completed());
     var finished = this.runningAnimations.filter((animation) => animation[1].completed());
+
     var queuedAnimations = this.createQueuedAnimations(finished);
-    finished = this.runningAnimations.filter((finishedAnimation) => {
+    var completed = finished.filter((finishedAnimation) => {
       return !queuedAnimations.find((queuedAnimation) => {
         return queuedAnimation[0] !== finishedAnimation[0];
       });
@@ -60,12 +61,20 @@ var Engine = {
 
     Engine.runningAnimations = unFinished;
     this.completedAnimations = this.completedAnimations.filter((animation) => {
-      return finished.find((finishedAnimation) => {
+      return completed.find((finishedAnimation) => {
         return finishedAnimation[0] !== animation[0];
       });
     });
-    Array.prototype.push.apply(this.completedAnimations, finished);
+    Array.prototype.push.apply(this.completedAnimations, completed);
     Array.prototype.push.apply(this.runningAnimations, queuedAnimations);
+
+    // Call complete callback
+    finished.forEach((animation) => {
+      var completeCallback = animation[1].options().complete;
+      if (completeCallback)
+        completeCallback();
+    });
+
   },
 
   createQueuedAnimations(finished) {
@@ -142,4 +151,5 @@ var Engine = {
   }
 };
 
+window.Engine = Engine;
 module.exports = Engine;

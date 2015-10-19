@@ -123,7 +123,7 @@ var chemicalElements = [
 ];
 
 var domElements = [];
-var springConstant = 0.5;
+var springConstant = 0.4;
 var springDeceleration = 0.7;
 
 function elementDelay(i) {
@@ -154,7 +154,7 @@ function createElements() {
 
 function tableFormation() {
   var columns = 17;
-  var rows = 9;
+  var rows = 10;
   var spacing = 60;
   var baseXOffset = -Math.floor(columns / 2) * spacing;
   var baseYOffset = -Math.floor(rows / 2) * spacing;
@@ -162,14 +162,12 @@ function tableFormation() {
     rotation: [0, 0, 0],
     position: function(i) {
       var e = chemicalElements[i];
-      //return [spacing - (i % 2) * 2 * spacing, e.period * spacing, 0];
       return [baseXOffset + (e.group - 1) * spacing, baseYOffset + e.period * spacing, 0];
     },
     easing: 'spring',
     springConstant: springConstant,
     springDeceleration: springDeceleration,
     delay: elementDelay
-
   });
 }
 
@@ -190,8 +188,6 @@ function gridFormation() {
       var col = indexWithinLayer % cols;
       return [baseXOffset + col * spacing, baseYOffset + row * spacing, layerOffset - layerIndex * layerSpacing];
     },
-    //delay: function(i) { return i * 5; },
-    duration: 10000,
     easing: 'spring',
     springConstant: springConstant,
     springDeceleration: springDeceleration,
@@ -225,7 +221,6 @@ function spiralFormation() {
 }
 
 function setupCameraControls(container, root) {
-  var hammertime = new Hammer(container, { direction: Hammer.DIRECTION_ALL });
   var translateZ = 0;
   var rotateX = 0;
   var rotateY = 0;
@@ -235,8 +230,10 @@ function setupCameraControls(container, root) {
   var rotateYVelocity = 0;
 
   root.style.transform = 'perspective(1000px) rotateY(0deg) rotateX(0deg)';
+  root.style.webkitTransform = 'perspective(1000px) rotateY(0deg) rotateX(0deg)';
   function updateCamera(rotX, rotY, transZ) {
-    root.style.transform = 'perspective(1000px) translateZ(' + transZ + 'px) rotateY(' + rotX + 'deg) rotateX(' + rotY + 'deg)';
+    root.style.transform = 'perspective(1000px) translateZ(' + transZ + 'px) rotateY(' + rotX + 'deg) rotateX(' + -rotY + 'deg)';
+    root.style.webkitTransform = 'perspective(1000px) translateZ(' + transZ + 'px) rotateY(' + rotX + 'deg) rotateX(' + -rotY + 'deg)';
   }
 
   function stepCamera() {
@@ -245,14 +242,19 @@ function setupCameraControls(container, root) {
     var rotX = rotateX + rotateXOffset;
     var rotY = rotateY + rotateYOffset;
 
-
     rotateXVelocity *= 0.99;
     rotateYVelocity *= 0.99;
+
     updateCamera(rotX, rotY, translateZ);
 
     window.requestAnimationFrame(stepCamera);
   }
   window.requestAnimationFrame(stepCamera);
+
+  var hammertime = new Hammer(container, { direction: Hammer.DIRECTION_ALL });
+  hammertime.get('pan').set({ direction: Hammer.DIRECTION_ALL });
+  hammertime.get('pinch').set({ enable: true });
+
 
   hammertime.on('pan', function(ev) {
 
@@ -268,12 +270,17 @@ function setupCameraControls(container, root) {
       rotateXOffset = 0;
       rotateYOffset = 0;
     }
-    updateCamera();
   });
   container.addEventListener('mousewheel', function(ev) {
     translateZ += ev.deltaY;
     translateZ = Math.min(Math.max(0, translateZ), 600);
-    updateCamera();
+  });
+
+  var log = document.getElementById('log');
+  hammertime.on('pinch', function(ev) {
+    //ev.scale
+    log.innerText = ev.scale;
+    translateZ = Math.min((ev.scale - 1) * 600, 600);
   });
 }
 
@@ -284,27 +291,55 @@ function initEventListeners() {
   var gridButton = document.getElementById('grid');
   var spiralButton = document.getElementById('spiral');
 
-  window.addEventListener('scroll', function(evt) {
-    console.log('scroll');
-    evt.preventDefault();
-    evt.stopPropagation();
-    return false;
-  });
-
   tableButton.addEventListener('click', function() {
     tableFormation();
+    tableButton.classList.add('controls__button--selected');
+    gridButton.classList.remove('controls__button--selected');
+    spiralButton.classList.remove('controls__button--selected');
   });
   gridButton.addEventListener('click', function() {
     gridFormation();
+    tableButton.classList.remove('controls__button--selected');
+    gridButton.classList.add('controls__button--selected');
+    spiralButton.classList.remove('controls__button--selected');
   });
   spiralButton.addEventListener('click', function() {
     spiralFormation();
+    tableButton.classList.remove('controls__button--selected');
+    gridButton.classList.remove('controls__button--selected');
+    spiralButton.classList.add('controls__button--selected');
   });
 
   setupCameraControls(container, root);
 }
 
+function initPositions() {
+  var distance = 400;
+  snabbt(domElements, {
+    fromPosition: function() {
+      return [
+        distance - 2 * distance * Math.random(),
+        distance - 2 * distance * Math.random(),
+        distance - 2 * distance * Math.random()
+      ];
+    },
+    position: function() {
+      return [
+        distance - 2 * distance * Math.random(),
+        distance - 2 * distance * Math.random(),
+        distance - 2 * distance * Math.random()
+      ];
+    },
+    fromOpacity: 0,
+    opacity: 1,
+    duration: 1000,
+    easing: 'ease',
+    allDone: function() {
+      tableFormation();
+    }
+  });
+}
+
 createElements();
-tableFormation();
-//rootAnimation();
+initPositions();
 initEventListeners();
