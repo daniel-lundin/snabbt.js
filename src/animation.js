@@ -36,7 +36,7 @@ function createAnimation(startState, endState, options) {
 
   // Public api
   return {
-    options() { return options; },
+    options: options,
     stop() { stopped = true; },
     endState() { return endState; },
     isStopped() { return stopped; },

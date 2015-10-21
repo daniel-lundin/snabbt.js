@@ -70,7 +70,7 @@ var Engine = {
 
     // Call complete callback
     finished.forEach((animation) => {
-      var completeCallback = animation[1].options().complete;
+      var completeCallback = animation[1].options.complete;
       if (completeCallback)
         completeCallback();
     });
@@ -151,5 +151,4 @@ var Engine = {
   }
 };
 
-window.Engine = Engine;
 module.exports = Engine;

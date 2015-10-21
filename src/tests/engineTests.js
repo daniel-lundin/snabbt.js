@@ -75,6 +75,7 @@ describe('Engine', () => {
   describe('archiveCompletedAnimations', () => {
     it('should move finished animations from running to completed', () => {
       var animation = {
+        options: {},
         completed() {
           return true;
         }
@@ -91,6 +92,7 @@ describe('Engine', () => {
 
     it('should not save old finished animations on the same element', () => {
       var animation = {
+        options: {},
         completed() {
           return true;
         }
@@ -112,15 +114,10 @@ describe('Engine', () => {
       chainer.snabbt({});
 
       var animation = {
-        completed() {
-          return true;
-        },
-        endState() {
-          return null;
-        },
-        getCurrentState() {
-          return null;
-        }
+        options: {},
+        completed() { return true; },
+        endState() { return null; },
+        getCurrentState() { return null; }
       };
       Engine.runningAnimations = [[{}, animation, chainer]];
 
