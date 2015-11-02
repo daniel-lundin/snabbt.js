@@ -1,13 +1,47 @@
 'use strict';
 
-var sinon = require('sinon');
-var expect = require('chai').expect;
-var Engine = require('../engine.js');
-var Animation = require('../animation.js');
-var createState = require('../state.js').createState;
+const sinon = require('sinon');
+const expect = require('chai').expect;
+const Engine = require('../engine.js');
+const Animation = require('../animation.js');
+const createState = require('../state.js').createState;
 
 
 describe('Engine', () => {
+
+  describe('createAnimation', () => {
+    const previousState = createState({ position: [1, 2, 3] });
+    const element = {};
+
+    beforeEach(() => {
+      sinon.stub(Animation, 'createAnimation');
+    });
+
+    afterEach(() => {
+      Animation.createAnimation.restore();
+
+    });
+
+    it('should use previous state as default for startState', () => {
+      const options = { position: [4, 5, 6] };
+      Engine.createAnimation(element, options, previousState);
+
+      const startState = Animation.createAnimation.lastCall.args[0];
+      const endState = Animation.createAnimation.lastCall.args[1];
+      expect(startState.position).to.eql([1, 2, 3]);
+      expect(endState.position).to.eql([4, 5, 6]);
+    });
+
+    it('should use previous state as default for endState', () => {
+      const options = {};
+      Engine.createAnimation(element, options, previousState);
+
+      const startState = Animation.createAnimation.lastCall.args[0];
+      const endState = Animation.createAnimation.lastCall.args[1];
+      expect(startState.position).to.eql([1, 2, 3]);
+      expect(endState.position).to.eql([1, 2, 3]);
+    });
+  });
 
   describe('stepAnimation', () => {
     it('should not tick if animation is stopped', () => {

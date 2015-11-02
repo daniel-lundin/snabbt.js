@@ -8,6 +8,7 @@ var Engine = {
   runningAnimations: [],
   completedAnimations: [],
   transformProperty: 'transform',
+  rAFScheduled: false,
   init() {
     var styles = window.getComputedStyle(document.documentElement, '');
     var vendorPrefix = (Array.prototype.slice
@@ -21,7 +22,11 @@ var Engine = {
   },
 
   scheduleNextFrame() {
+    if (this.rAFScheduled) return;
+    this.rAFScheduled = true;
+
     window.requestAnimationFrame((time) => {
+      this.rAFScheduled = false;
       this.stepAnimations(time);
     });
   },
@@ -35,9 +40,7 @@ var Engine = {
 
     this.archiveCompletedAnimations();
 
-    if (this.runningAnimations.length > 0) {
-      this.scheduleNextFrame();
-    }
+    this.scheduleNextFrame();
   },
 
   stepAnimation(element, animation, time) {
@@ -136,10 +139,7 @@ var Engine = {
     var chainer = this.createChainer();
 
     this.runningAnimations.push([element, animation, chainer]);
-
-    if (this.runningAnimations.length === 1) {
-      this.scheduleNextFrame();
-    }
+    this.scheduleNextFrame();
 
     return chainer;
   },
