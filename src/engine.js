@@ -53,6 +53,7 @@ var Engine = {
     var finished = this.runningAnimations.filter((animation) => animation[1].completed());
 
     var queuedAnimations = this.createQueuedAnimations(finished);
+    // Finished and not queued
     var completed = finished.filter((finishedAnimation) => {
       return !queuedAnimations.find((queuedAnimation) => {
         return queuedAnimation[0] !== finishedAnimation[0];
@@ -60,11 +61,15 @@ var Engine = {
     });
 
     Engine.runningAnimations = unFinished;
+
+    // Filter out just finished animation from previously completed
     this.completedAnimations = this.completedAnimations.filter((animation) => {
-      return completed.find((finishedAnimation) => {
-        return finishedAnimation[0] !== animation[0];
+      return !completed.find((finishedAnimation) => {
+        return finishedAnimation[0] === animation[0];
       });
     });
+
+
     Array.prototype.push.apply(this.completedAnimations, completed);
     Array.prototype.push.apply(this.runningAnimations, queuedAnimations);
 
@@ -107,7 +112,7 @@ var Engine = {
   createAnimation(element, options, previousEndState) {
     var previousState = previousEndState || this.findCurrentState(element);
     var startState = stateFromOptions(options, previousState, true);
-    var endState = stateFromOptions(options, null, false);
+    var endState = stateFromOptions(options, previousState, false);
 
     var animation = Animation.createAnimation(startState, endState, options);
     return animation;
@@ -142,6 +147,7 @@ var Engine = {
   findCurrentState(element) {
     var match =  this.runningAnimations.find((animation) => element === animation[0]);
     if (match) {
+      match[1].stop();
       return match[1].getCurrentState();
     }
     match =  this.completedAnimations.find((animation) => element === animation[0]);

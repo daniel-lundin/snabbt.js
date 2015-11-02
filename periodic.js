@@ -122,12 +122,18 @@ var chemicalElements = [
   { symbol: 'Uuo', name: 'Ununoctium', group: 18, period: 7 }
 ];
 
+chemicalElements.sort(function(a, b) {
+    if (a.period === b.period)
+        return a.group - b.group;
+    return a.period - b.period;
+});
+
 var domElements = [];
-var springConstant = 0.4;
+var springConstant = 0.3;
 var springDeceleration = 0.7;
 
 function elementDelay(i) {
-  return i * 5;
+  return i * 10;
 }
 
 
@@ -275,13 +281,6 @@ function setupCameraControls(container, root) {
     translateZ += ev.deltaY;
     translateZ = Math.min(Math.max(0, translateZ), 600);
   });
-
-  var log = document.getElementById('log');
-  hammertime.on('pinch', function(ev) {
-    //ev.scale
-    log.innerText = ev.scale;
-    translateZ = Math.min((ev.scale - 1) * 600, 600);
-  });
 }
 
 function initEventListeners() {
@@ -342,4 +341,5 @@ function initPositions() {
 
 createElements();
 initPositions();
+//tableFormation();
 initEventListeners();

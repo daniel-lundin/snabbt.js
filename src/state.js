@@ -88,14 +88,15 @@ function createState(config, useDefault) {
   return API;
 }
 
-function stateFromOptions(options, state, useFromPrefix) {
-  if (!state) {
-    state = createState({}, true);
-  }
+function stateFromOptions(options, previousState, useFromPrefix) {
+  var state = previousState && previousState.clone() || createState({}, true);
 
   var propName = useFromPrefix ? fromPrefixed : (p) => p;
   Object.keys(props).forEach((key) => {
     state[key] = utils.optionOrDefault(options[propName(key)], state[key]);
+    if (state[key] && state[key].slice) {
+      state[key] = state[key].slice();
+    }
   });
 
   return state;

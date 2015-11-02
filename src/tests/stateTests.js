@@ -61,12 +61,31 @@ describe('state', () => {
 
   describe('stateFromOptions', () => {
     it('should create new state with default values', () => {
-      var res = state.stateFromOptions(state.createState({}, true));
+      var res = state.stateFromOptions({});
 
       Object.keys(props).forEach((prop) => {
         var defaultValue = props[prop][1];
         expect(res[prop]).to.eql(defaultValue);
       });
+    });
+
+    it('should copy properties from previous state', () => {
+      var previousState = state.createState({
+        rotation: [1, 1, 1]
+      });
+      var res = state.stateFromOptions({ position: [2, 2, 2] }, previousState);
+
+      expect(res.rotation).to.eql([1, 1, 1]);
+      expect(res.position).to.eql([2, 2, 2]);
+    });
+
+    it('should overwrite properties from previous state', () => {
+      var previousState = state.createState({
+        rotation: [1, 1, 1]
+      });
+      var res = state.stateFromOptions({ rotation: [2, 2, 2] }, previousState);
+
+      expect(res.rotation).to.eql([2, 2, 2]);
     });
   });
 

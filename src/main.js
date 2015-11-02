@@ -61,6 +61,14 @@ if (typeof window !== 'undefined') {
   window.snabbt = function(element, arg2, arg3) {
     return snabbt(element, arg2, arg3);
   };
+
+  if (window.jQuery) {
+    (function ($) {
+      $.fn.snabbt = function(arg1, arg2) {
+        return snabbt(this.get(), arg1, arg2);
+      };
+    })(window.jQuery);
+  }
 } else {
   module.exports.snabbt = function(element, arg2, arg3) {
     return snabbt(element, arg2, arg3);

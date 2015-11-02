@@ -115,6 +115,7 @@ describe('Engine', () => {
 
       var animation = {
         options: {},
+        stop() {},
         completed() { return true; },
         endState() { return null; },
         getCurrentState() { return null; }
@@ -124,6 +125,16 @@ describe('Engine', () => {
       Engine.archiveCompletedAnimations();
 
       expect(Engine.runningAnimations.length).to.eql(1);
+    });
+
+    it('should not remove completed', () => {
+      Engine.runningAnimations = [];
+      Engine.completedAnimations = [[{}, {}, Engine.createChainer]];
+
+      Engine.archiveCompletedAnimations();
+      Engine.archiveCompletedAnimations();
+
+      expect(Engine.completedAnimations.length).to.eql(1);
     });
   });
 
@@ -170,6 +181,7 @@ describe('Engine', () => {
     it('should use current state from running animations', () => {
       var previousState = createState({ position: [100, 100, 100] });
       var previousAnimation = {
+        stop() {},
         getCurrentState() {
           return previousState;
         }
