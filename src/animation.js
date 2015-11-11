@@ -11,6 +11,7 @@ function createAnimation(startState, endState, options) {
   var easer = easing.createEaser(utils.optionOrDefault(options.easing, 'linear'), options);
   var currentState = duration === 0 ? endState.clone() : startState.clone();
   currentState.transformOrigin = options.transformOrigin;
+  currentState.perspective = options.perspective;
 
   var startTime = 0;
   var currentTime = 0;
@@ -129,7 +130,7 @@ function createAnimation(startState, endState, options) {
         return;
       var matrix = tweener.asMatrix();
       var properties = tweener.getProperties();
-      utils.updateElementTransform(element, matrix, properties.perspective);
+      utils.updateElementTransform(element, matrix, null, properties.perspective);
       utils.updateElementProperties(element, properties);
     }
   };

@@ -52,7 +52,7 @@ function preprocessOptions(options, index, len) {
     };
   }
 
-  var properties = Object.keys(tweenableProperties).concat(['transformOrigin', 'duration', 'delay']);
+  var properties = Object.keys(tweenableProperties).concat(['perspective', 'transformOrigin', 'duration', 'delay']);
 
   properties.forEach(function(property) {
     var fromProperty = fromPrefixed(property);

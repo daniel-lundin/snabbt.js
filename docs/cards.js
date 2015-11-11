@@ -120,7 +120,6 @@ function rotateContainer() {
     duration: 10000,
     perspective: 2000,
     complete: function() {
-      console.log('compoete');
       rotateContainer();
     }
   });

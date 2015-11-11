@@ -57,6 +57,7 @@ function snabbt(elements, arg2, arg3) {
   }
   return aggregateChainer;
 }
+
 if (typeof window !== 'undefined') {
   window.snabbt = function(element, arg2, arg3) {
     return snabbt(element, arg2, arg3);
@@ -75,3 +76,4 @@ if (typeof window !== 'undefined') {
   };
 }
 
+Engine.init();

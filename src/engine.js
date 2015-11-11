@@ -10,6 +10,7 @@ var Engine = {
   transformProperty: 'transform',
   rAFScheduled: false,
   init() {
+    if (typeof window !== undefined) return;
     var styles = window.getComputedStyle(document.documentElement, '');
     var vendorPrefix = (Array.prototype.slice
         .call(styles)

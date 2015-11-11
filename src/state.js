@@ -74,6 +74,7 @@ function createState(config, useDefault) {
       properties.opacity = this.opacity;
       properties.width = this.width + 'px';
       properties.height = this.height + 'px';
+      properties.perspective = this.perspective;
       return properties;
     }
   };

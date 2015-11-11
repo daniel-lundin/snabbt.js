@@ -1,21 +1,21 @@
+/* global $, window, document, snabbt, Hammer, FastClick*/
+'use strict';
 $(function() {
 
-  var title = $("h1").text();
-  var titleHeight = $("h1").height();
 
   // Title animation
-  $("h1 span").snabbt({
-    fromRotation: [0, 0, -8*Math.PI],
+  $('h1 span').snabbt({
+    fromRotation: [0, 0, -8 * Math.PI],
     delay: function(i) {
       return 1000 + i * 100;
     },
     duration: 1000,
     easing: 'ease',
     complete: function(i, length) {
-      if(i === length - 1) {
-        $("h1").snabbt({
+      if (i === length - 1) {
+        $('h1').snabbt({
           transformOrigin: [0, 100, 0],
-          rotation: [-Math.PI/4, 0, 0],
+          rotation: [-Math.PI / 4, 0, 0],
           perspective: 300,
           easing: 'linear',
           delay: 400,
@@ -27,39 +27,39 @@ $(function() {
           perspective: 300,
           springConstant: 0.2,
           springDeceleration: 0.90,
-          springMass: 4,
+          springMass: 4
         });
       }
     }
   });
 
   // Title easter egg
-  $("h1").on('click', function() {
-    var width = $("h1").width();
-    $("h1").snabbt({
+  $('h1').on('click', function() {
+    var width = $('h1').width();
+    $('h1').snabbt({
       fromPosition: [0, 0, 0],
       skew: [0, 0.9],
-      easing: 'ease',
+      easing: 'ease'
     }).snabbt({
-      position: [2*width, 0, 0],
+      position: [2 * width, 0, 0],
       skew: [0, 0],
       easing: 'easeIn',
-      duration: 200,
+      duration: 200
     }).snabbt({
-      transformOrigin: [-width/2, 0, 0],
+      transformOrigin: [-width / 2, 0, 0],
       rotation: [0, -Math.PI, 0],
-      fromPosition: [2*width, 0, 0],
-      position: [2*width, 0, 0],
+      fromPosition: [2 * width, 0, 0],
+      position: [2 * width, 0, 0],
       perspective: 500,
       easing: 'ease',
-      delay: 200,
+      delay: 200
     }).snabbt({
-      transformOrigin: [width/2, 0, 0],
+      transformOrigin: [width / 2, 0, 0],
       rotation: [0, 0, 0],
       fromPosition: [0, 0, 0],
       position: [0, 0, 0],
       perspective: 500,
-      easing: 'ease',
+      easing: 'ease'
     });
   });
 
@@ -79,56 +79,57 @@ $(function() {
       easing: 'ease'
     }).snabbt({
       position: [0, 0, 0],
-      fromRotation: [0, 0, -2*Math.PI],
+      fromRotation: [0, 0, -2 * Math.PI],
       rotation: [0, 0, 0],
       easing: 'spring',
       springConstant: 0.2,
       springDeceleration: 0.90,
-      springMass: 10,
+      springMass: 10
     });
   };
 
   // Easings
   var easingDemos = document.querySelectorAll('.easing-demo');
-  for(var i=0;i<easingDemos.length;++i) {
-    var container = easingDemos[i];
+  var container;
+  for (var i = 0; i < easingDemos.length; ++i) {
+    container = easingDemos[i];
     var easingName = container.attributes['data-easing-name'];
     var element = container.children[0];
-    container.onclick = function(container, element, easingName) {
-      var containerWidth = container.offsetWidth;
-      var elementWidth = element.offsetWidth;
-      snabbt(element, {
+    container.addEventListener('click', function(_container, _element, _easingName) {
+      var containerWidth = _container.offsetWidth;
+      var elementWidth = _element.offsetWidth;
+      snabbt(_element, {
         fromPosition: [0, 0, 0],
         position: [containerWidth - elementWidth, 0, 0],
-        easing: easingName.value,
+        easing: _easingName.value,
         duration: 500
       });
-    }.bind(undefined, container, element, easingName);
+    }.bind(null, container, element, easingName));
   }
 
   // Spring easings
-  $("#spring-example").on('click', function() {
-    $("#spring-example").snabbt({
+  $('#spring-example').on('click', function() {
+    $('#spring-example').snabbt({
       position: [100, 0, 0],
       fromRotation: [0, 0, 0],
-      rotation: [0, 0, 2*Math.PI],
+      rotation: [0, 0, 2 * Math.PI],
       easing: 'spring',
       springConstant: 0.3,
-      springDeceleration: 0.8,
+      springDeceleration: 0.8
     }).snabbt({
       position: [0, 0, 0],
       easing: 'spring',
       springConstant: 0.3,
-      springDeceleration: 0.8,
+      springDeceleration: 0.8
     });
   });
 
   // Custom easing
-  $("#custom-easer").on('click', function() {
-    $("#custom-easer").snabbt({
+  $('#custom-easer').on('click', function() {
+    $('#custom-easer').snabbt({
       position: [200, 0, 0],
       easing: function(value) {
-        return value + 0.3 * Math.sin(2*Math.PI * value);
+        return value + 0.3 * Math.sin(2 * Math.PI * value);
       }
     }).snabbt({
       position: [0, 0, 0],
@@ -137,91 +138,89 @@ $(function() {
   });
 
   // Value feed example
-  $("#value-feed-example").on('click', function() {
-    $("#value-feed-example").snabbt({
-      valueFeeder: function(i, matrix) {
-        var x = Math.sin(i*Math.PI);
-        return matrix.rotateZ(Math.sin(6*i*Math.PI)).translate(x*200, 0, 0);
+  $('#value-feed-example').on('click', function() {
+    $('#value-feed-example').snabbt({
+      valueFeeder: function(value, matrix) {
+        var x = Math.sin(value * Math.PI);
+        return matrix.rotateZ(Math.sin(6 * value * Math.PI)).translate(x * 200, 0, 0);
       },
-      duration: 1000,
+      duration: 1000
     });
   });
 
   // Transform origin example
-  $("#transform-origin-example").on('click', function() {
-    var elementWidth = $("#transform-origin-example").outerWidth();
-    $("#transform-origin-example").snabbt({
+  $('#transform-origin-example').on('click', function() {
+    var elementWidth = $('#transform-origin-example').outerWidth();
+    $('#transform-origin-example').snabbt({
       fromRotation: [0, 0, 0],
-      rotation: [0, 2*Math.PI, 0],
-      transformOrigin: [elementWidth/2, 0, 0],
-      perspective: 400,
+      rotation: [0, 2 * Math.PI, 0],
+      transformOrigin: [elementWidth / 2, 0, 0],
+      perspective: 400
     });
   });
 
   // Transform origin example
-  $("#transform-origin-example-2").on('click', function() {
-    var elementWidth = $("#transform-origin-example-2").outerWidth();
-    $("#transform-origin-example-2").snabbt({
+  $('#transform-origin-example-2').on('click', function() {
+    var elementWidth = $('#transform-origin-example-2').outerWidth();
+    $('#transform-origin-example-2').snabbt({
       rotation: [0, Math.PI, 0],
-      transformOrigin: [elementWidth/2, 0, 0],
+      transformOrigin: [elementWidth / 2, 0, 0],
       perspective: 400,
       duration: 300,
       easing: 'ease'
     }).snabbt({
-      fromPosition: [2*elementWidth, 0, 0],
-      position: [2*elementWidth, 0, 0],
+      fromPosition: [2 * elementWidth, 0, 0],
+      position: [2 * elementWidth, 0, 0],
       fromRotation: [0, -Math.PI, 0],
       rotation: [0, 0, 0],
-      transformOrigin: [-elementWidth/2, 0, 0],
+      transformOrigin: [-elementWidth / 2, 0, 0],
       perspective: 400,
       duration: 300,
       easing: 'ease'
     }).snabbt({
       fromRotation: [0, 0, 0],
-      fromPosition: [2*elementWidth, 0, 0],
+      fromPosition: [2 * elementWidth, 0, 0],
       position: [0, 0, 0],
       duration: 300,
       easing: 'ease'
     });
   });
 
-
-
   // Attention example
-  $("#attention-example-1").on('click', function() {
-    $("#attention-example-1").snabbt("attention", {
-      rotation: [0, 0, Math.PI/2],
+  $('#attention-example-1').on('click', function() {
+    $('#attention-example-1').snabbt('attention', {
+      rotation: [0, 0, Math.PI / 2],
       springConstant: 1.9,
-      springDeceleration: 0.9,
+      springDeceleration: 0.9
     });
   });
 
   // Attention example
-  $("#attention-example-2").on('click', function() {
-    $("#attention-example-2").snabbt("attention", {
+  $('#attention-example-2').on('click', function() {
+    $('#attention-example-2').snabbt('attention', {
       position: [50, 0, 0],
       springConstant: 2.4,
-      springDeceleration: 0.9,
+      springDeceleration: 0.9
     });
   });
 
   // Multi element animation
-  $("#multi-element-example").on('click', function() {
-    $(".multi-example").snabbt({
+  $('#multi-element-example').on('click', function() {
+    $('.multi-example').snabbt({
       fromRotation: [0, 0, 0],
-      rotation: function(i, total) {
-        return [0, 0, (i/(total - 1)) * (Math.PI/2)];
+      rotation: function(value, total) {
+        return [0, 0, value / (total - 1) * (Math.PI / 2)];
       },
-      delay: function(i) {
-        return i * 50;
+      delay: function(index) {
+        return index * 50;
       },
-      easing: 'spring',
+      easing: 'spring'
     }).snabbt({
       rotation: [0, 0, 0],
-      delay: function(i, total) {
-        return (total - i - 1) * 50;
+      delay: function(index, total) {
+        return (total - index - 1) * 50;
       },
-      easing: 'ease',
+      easing: 'ease'
     });
   });
 
@@ -247,7 +246,7 @@ $(function() {
       animations.push(snabbt(flipperBackground, {
         fromScale: [0.0, 0.0],
         scale: [1.0, 1.0],
-        fromRotation: [0, 0, 2*Math.PI],
+        fromRotation: [0, 0, 2 * Math.PI],
         rotation: [0, 0, 0],
         manual: true,
         easing: 'ease',
@@ -269,7 +268,7 @@ $(function() {
       animations.push(snabbt(flipperBackground, {
         scale: [0.0, 0.0],
         fromRotation: [0, 0, 0],
-        rotation: [0, 0, 2*Math.PI],
+        rotation: [0, 0, 2 * Math.PI],
         manual: true,
         easing: 'ease',
         duration: 1000
@@ -282,7 +281,7 @@ $(function() {
       var n = number;
       return function() {
         n--;
-        if(n === 0) {
+        if (n === 0) {
           callback();
         }
       };
@@ -293,8 +292,8 @@ $(function() {
     var opened = -1;
     var animations = [];
     hammer.on('pan', function(event) {
-      if(!dragInProgress) {
-        if(opened === -1) {
+      if (!dragInProgress) {
+        if (opened === -1) {
           animations = dragRightAnimations();
         } else {
           animations = dragLeftAnimations();
@@ -302,17 +301,17 @@ $(function() {
         dragInProgress = true;
       }
 
-      var delta = Math.min(1, Math.max(0, (-opened * event.deltaX)/200));
-      if(animations.length) {
+      var delta = Math.min(1, Math.max(0, -opened * event.deltaX / 200));
+      if (animations.length) {
         animations.forEach(function(animation) {
           animation.setValue(delta);
         });
       }
 
 
-      if(event.isFinal) {
-        if(animations) {
-          if(delta > 0.5) {
+      if (event.isFinal) {
+        if (animations) {
+          if (delta > 0.5) {
             var finishCallback = debouncedCallback(function() {
               dragInProgress = false;
               opened *= -1;
@@ -337,19 +336,19 @@ $(function() {
   })();
 
   // Scroll spy
-  var navtop = $("#navbar").offset().top;
-  var $dockedNavbar = $("#docked-navbar");
+  var navtop = $('#navbar').offset().top;
+  var $dockedNavbar = $('#docked-navbar');
   var $window = $(window);
-  $(window).on('scroll', function(event) {
-    if($window.scrollTop() > navtop) {
-      if($dockedNavbar.hasClass('hidden'))
-        $("#docked-navbar").removeClass("hidden");
+  $(window).on('scroll', function() {
+    if ($window.scrollTop() > navtop) {
+      if ($dockedNavbar.hasClass('hidden'))
+        $('#docked-navbar').removeClass('hidden');
     } else {
-      if(!$dockedNavbar.hasClass('hidden'))
-        $("#docked-navbar").addClass("hidden");
+      if (!$dockedNavbar.hasClass('hidden'))
+        $('#docked-navbar').addClass('hidden');
     }
   });
 
   FastClick.attach(document.body);
 
-}());
+})();
