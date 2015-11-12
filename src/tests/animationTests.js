@@ -1,20 +1,28 @@
 'use strict';
 
-var sinon = require('sinon');
-var expect = require('chai').expect;
-var createAnimation = require('../animation.js').createAnimation;
-var createState = require('../state.js').createState;
+const sinon = require('sinon');
+const expect = require('chai').expect;
+const createAnimation = require('../animation.js').createAnimation;
+const createState = require('../state.js').createState;
 
 
 describe('animations', () => {
 
   describe('tick', () => {
-    var animation;
+    let animation;
+    let startedCallback;
+    let updateCallback;
+    const startState = createState({});
+    const endState = createState({});
+
     beforeEach(() => {
-      var startState = createState({});
-      var endState = createState({});
-      animation = createAnimation(startState, endState, {});
-      sinon.spy(animation, 'updateCurrentTransform');
+      startedCallback = sinon.stub();
+      updateCallback = sinon.stub();
+      animation = createAnimation(startState, endState, {
+        start: startedCallback,
+        update: updateCallback
+      });
+      sinon.stub(animation, 'updateCurrentTransform');
     });
 
     afterEach(() => {
@@ -28,6 +36,26 @@ describe('animations', () => {
       animation.tick(100);
       expect(animation.isStarted()).to.be.ok;
       sinon.assert.calledOnce(animation.updateCurrentTransform);
+    });
+
+    it('should call started callback for first tick', () => {
+
+      animation.tick(1);
+      animation.tick(2);
+
+      sinon.assert.calledOnce(startedCallback);
+    });
+
+    it('should call update callback for every tick', () => {
+
+      animation.tick(0);
+      animation.tick(250);
+      animation.tick(500);
+
+      sinon.assert.calledThrice(updateCallback);
+      expect(updateCallback.firstCall.args[0]).to.equal(0);
+      expect(updateCallback.secondCall.args[0]).to.equal(0.5);
+      expect(updateCallback.thirdCall.args[0]).to.equal(1);
     });
   });
 

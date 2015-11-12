@@ -13,7 +13,7 @@ function createAnimation(startState, endState, options) {
   currentState.transformOrigin = options.transformOrigin;
   currentState.perspective = options.perspective;
 
-  var startTime = 0;
+  var startTime = -1;
   var currentTime = 0;
   var stopped = false;
   var started = false;
@@ -62,7 +62,7 @@ function createAnimation(startState, endState, options) {
 
     restart() {
       // Restart timer
-      startTime = undefined;
+      startTime = -1;
       easer.resetFrom(0);
     },
 
@@ -76,17 +76,23 @@ function createAnimation(startState, endState, options) {
       }
 
       // If first tick, set startTime
-      if (!startTime) {
+      if (startTime === -1) {
         startTime = time;
       }
 
       if (time - startTime >= delay) {
+        if (!started && options.start) {
+          options.start();
+        }
         started = true;
         currentTime = time - delay;
 
         var curr = Math.min(Math.max(0.0, currentTime - startTime), duration);
         easer.tick(curr / duration);
         this.updateCurrentTransform();
+        if (options.update) {
+          options.update(curr / duration);
+        }
         if (this.completed() && manualCallback) {
           manualCallback();
         }

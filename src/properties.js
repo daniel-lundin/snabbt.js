@@ -51,6 +51,16 @@ function preprocessOptions(options, index, len) {
       return options.easing(i, index, len);
     };
   }
+  if (utils.isFunction(options.start)) {
+    clone.start = function() {
+      return options.start(index, len);
+    };
+  }
+  if (utils.isFunction(options.update)) {
+    clone.update = function(i) {
+      return options.update(i, index, len);
+    };
+  }
 
   var properties = Object.keys(tweenableProperties).concat(['perspective', 'transformOrigin', 'duration', 'delay']);
 
