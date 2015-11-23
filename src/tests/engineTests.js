@@ -5,9 +5,18 @@ const expect = require('chai').expect;
 const Engine = require('../engine.js');
 const Animation = require('../animation.js');
 const createState = require('../state.js').createState;
+const utils = require('../utils.js');
 
 
 describe('Engine', () => {
+  beforeEach(() => {
+    const ultimateAncestor = {
+      body: 'body'
+    };
+    sinon.stub(utils, 'findUltimateAncestor').returns(ultimateAncestor);
+  });
+
+  afterEach(() => utils.findUltimateAncestor.restore());
 
   describe('createAnimation', () => {
     const previousState = createState({ position: [1, 2, 3] });

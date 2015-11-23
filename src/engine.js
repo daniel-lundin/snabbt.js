@@ -1,18 +1,19 @@
 'use strict';
 /* global document, window */
-var stateFromOptions = require('./state.js').stateFromOptions;
-var Animation = require('./animation.js');
-var createState = require('./state.js').createState;
+const stateFromOptions = require('./state.js').stateFromOptions;
+const Animation = require('./animation.js');
+const createState = require('./state.js').createState;
+const utils = require('./utils.js');
 
-var Engine = {
+const Engine = {
   runningAnimations: [],
   completedAnimations: [],
   transformProperty: 'transform',
   rAFScheduled: false,
   init() {
     if (typeof window !== undefined) return;
-    var styles = window.getComputedStyle(document.documentElement, '');
-    var vendorPrefix = (Array.prototype.slice
+    const styles = window.getComputedStyle(document.documentElement, '');
+    const vendorPrefix = (Array.prototype.slice
         .call(styles)
         .join('')
         .match(/-(moz|webkit|ms)-/) || styles.OLink === '' && ['', 'o']
@@ -34,8 +35,8 @@ var Engine = {
 
   stepAnimations(time) {
     this.runningAnimations.forEach((runningAnimation) => {
-      var element = runningAnimation[0];
-      var animation = runningAnimation[1];
+      const element = runningAnimation[0];
+      const animation = runningAnimation[1];
       this.stepAnimation(element, animation, time);
     });
 
@@ -53,12 +54,12 @@ var Engine = {
   },
 
   archiveCompletedAnimations() {
-    var unFinished = this.runningAnimations.filter((animation) => !animation[1].completed());
-    var finished = this.runningAnimations.filter((animation) => animation[1].completed());
+    const unFinished = this.runningAnimations.filter((animation) => !animation[1].completed());
+    const finished = this.runningAnimations.filter((animation) => animation[1].completed());
 
-    var queuedAnimations = this.createQueuedAnimations(finished);
+    const queuedAnimations = this.createQueuedAnimations(finished);
     // Finished and not queued
-    var completed = finished.filter((finishedAnimation) => {
+    const completed = finished.filter((finishedAnimation) => {
       return !queuedAnimations.find((queuedAnimation) => {
         return queuedAnimation[0] !== finishedAnimation[0];
       });
@@ -79,11 +80,11 @@ var Engine = {
 
     // Call complete callback
     finished.forEach((animation) => {
-      var completeCallback = animation[1].options.complete;
+      const completeCallback = animation[1].options.complete;
       if (completeCallback)
         completeCallback();
     });
-
+    //this.clearOphanedEndStates();
   },
 
   createQueuedAnimations(finished) {
@@ -155,6 +156,12 @@ var Engine = {
     if (match) {
       return match[1].endState();
     }
+  },
+
+  clearOphanedEndStates() {
+    this.completedAnimations = this.completedAnimations.filter((animation) => {
+      return utils.findUltimateAncestor(animation[0].body);
+    });
   }
 };
 

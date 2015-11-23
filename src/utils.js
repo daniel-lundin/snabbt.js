@@ -39,10 +39,19 @@ function cloneObject(object) {
   return clone;
 }
 
+function findUltimateAncestor(node) {
+  var ancestor = node;
+  while (ancestor.parentNode) {
+    ancestor = ancestor.parentNode;
+  }
+  return ancestor;
+}
+
 module.exports = {
   optionOrDefault: optionOrDefault,
   updateElementTransform: updateElementTransform,
   updateElementProperties: updateElementProperties,
   isFunction: isFunction,
-  cloneObject: cloneObject
+  cloneObject: cloneObject,
+  findUltimateAncestor: findUltimateAncestor
 };
