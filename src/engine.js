@@ -143,7 +143,7 @@ const Engine = {
     this.runningAnimations.push([element, animation, chainer]);
     this.scheduleNextFrame();
 
-    return chainer;
+    return arg2.manual ? animation : chainer;
   },
 
   findCurrentState(element) {
@@ -160,7 +160,7 @@ const Engine = {
 
   clearOphanedEndStates() {
     this.completedAnimations = this.completedAnimations.filter((animation) => {
-      return utils.findUltimateAncestor(animation[0].body);
+      return utils.findUltimateAncestor(animation[0]).body;
     });
   }
 };

@@ -1,30 +1,30 @@
 'use strict';
-var utils = require('./utils.js');
-var easing = require('./easing.js');
-var tweeners = require('./tweeners');
-var state = require('./state.js');
+const utils = require('./utils.js');
+const easing = require('./easing.js');
+const tweeners = require('./tweeners');
+const state = require('./state.js');
 
 function createAnimation(startState, endState, options) {
-  var duration = utils.optionOrDefault(options.duration, 500);
+  const duration = utils.optionOrDefault(options.duration, 500);
 
-  var delay = utils.optionOrDefault(options.delay, 0);
-  var easer = easing.createEaser(utils.optionOrDefault(options.easing, 'linear'), options);
-  var currentState = duration === 0 ? endState.clone() : startState.clone();
+  const delay = utils.optionOrDefault(options.delay, 0);
+  const easer = easing.createEaser(utils.optionOrDefault(options.easing, 'linear'), options);
+  const currentState = duration === 0 ? endState.clone() : startState.clone();
   currentState.transformOrigin = options.transformOrigin;
   currentState.perspective = options.perspective;
 
-  var startTime = -1;
-  var currentTime = 0;
-  var stopped = false;
-  var started = false;
+  let startTime = -1;
+  let currentTime = 0;
+  let stopped = false;
+  let started = false;
 
   // Manual related
-  var manual = options.manual;
-  var manualValue = 0;
-  var manualDelayFactor = delay / duration;
-  var manualCallback;
+  const manualDelayFactor = delay / duration;
+  let manual = options.manual;
+  let manualValue = 0;
+  let manualCallback;
 
-  var tweener;
+  let tweener;
   // Setup tweener
   if (options.valueFeeder) {
     tweener = tweeners.createValueFeederTweener(options.valueFeeder,
@@ -99,11 +99,11 @@ function createAnimation(startState, endState, options) {
       }
     },
 
-    getCurrentState: function() {
+    getCurrentState() {
       return currentState;
     },
 
-    setValue: function(_manualValue) {
+    setValue(_manualValue) {
       started = true;
       manualValue = Math.min(Math.max(_manualValue, 0.0001), 1 + manualDelayFactor);
     },
@@ -122,7 +122,7 @@ function createAnimation(startState, endState, options) {
       tweener.tween(tweenValue);
     },
 
-    completed: function() {
+    completed() {
       if (stopped)
         return true;
       if (startTime === 0) {
@@ -131,7 +131,7 @@ function createAnimation(startState, endState, options) {
       return easer.completed();
     },
 
-    updateElement: function(element, forceUpdate) {
+    updateElement(element, forceUpdate) {
       if (!started && !forceUpdate)
         return;
       var matrix = tweener.asMatrix();
