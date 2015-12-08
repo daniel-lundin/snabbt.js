@@ -59,5 +59,18 @@ describe('animations', () => {
     });
   });
 
+  describe('updateElement', () => {
+    const startState = createState({});
+    const endState = createState({});
 
+    it('should use transformProperty passed in constructor', () => {
+      const element = { style: {} };
+      const transformProperty = 'webkitTransform';
+      const animation = createAnimation(startState, endState, {},  transformProperty);
+
+      animation.updateElement(element, true);
+
+      expect(element.style).to.have.property(transformProperty);
+    });
+  });
 });

@@ -119,7 +119,7 @@ const Engine = {
     var startState = stateFromOptions(options, previousState, true);
     var endState = stateFromOptions(options, previousState, false);
 
-    var animation = Animation.createAnimation(startState, endState, options);
+    var animation = Animation.createAnimation(startState, endState, options, this.transformProperty);
     return animation;
   },
 

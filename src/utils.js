@@ -17,8 +17,7 @@ function updateElementTransform(element, matrix, transformProperty, perspective)
     cssPerspective = 'perspective(' + perspective + 'px) ';
   }
   var cssMatrix = matrix.asCSS();
-  //element.style[transformProperty] = cssPerspective + cssMatrix;
-  element.style.transform = cssPerspective + cssMatrix;
+  element.style[transformProperty] = cssPerspective + cssMatrix;
 }
 
 var updateElementProperties = function(element, properties) {

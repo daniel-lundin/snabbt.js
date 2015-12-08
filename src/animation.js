@@ -4,7 +4,7 @@ const easing = require('./easing.js');
 const tweeners = require('./tweeners');
 const state = require('./state.js');
 
-function createAnimation(startState, endState, options) {
+function createAnimation(startState, endState, options, transformProperty) {
   const duration = utils.optionOrDefault(options.duration, 500);
 
   const delay = utils.optionOrDefault(options.delay, 0);
@@ -136,7 +136,7 @@ function createAnimation(startState, endState, options) {
         return;
       var matrix = tweener.asMatrix();
       var properties = tweener.getProperties();
-      utils.updateElementTransform(element, matrix, null, properties.perspective);
+      utils.updateElementTransform(element, matrix, transformProperty, properties.perspective);
       utils.updateElementProperties(element, properties);
     }
   };
