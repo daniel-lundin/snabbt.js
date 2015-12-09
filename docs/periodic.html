@@ -2,12 +2,33 @@
 <html>
   <head>
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href='//fonts.googleapis.com/css?family=Raleway:400,300,600' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/skeleton/2.0.1/skeleton.min.css">
     <style>
 
 body {
   background: #111;
   margin: 0;
   overflow: hidden;
+  font-family: 'Raleway', Arial, sans-serif;
+}
+
+.periodic {
+  overflow: hidden;
+}
+
+.info {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  text-align: center;
+  font-family: 'Raleway', Arial, sans-serif;
+  color: white;
+}
+
+.info a {
+  color: #1eaedb;
 }
 
 .container {
@@ -36,7 +57,6 @@ body {
   margin-left: -25px;
   margin-top: -25px;
   background: rgba(30, 117, 123, 0.34);
-  font-family: sans-serif;
   left: 50%;
   top: 50%;
   text-align: center;
@@ -62,40 +82,32 @@ body {
   transform: translateZ(10000px);
   z-index: 1;
 }
+
 .controls__button {
-  border: 0;
-  padding: 1vh 3vh;
-  background: rgb(30, 37, 30);
-  color: white;
-  font-size: 3vh;
-  line-height: 4vh;
   margin: 3vh 1vh;
-  cursor: pointer;
-}
-
-.controls__button--selected {
-  background: rgb(30, 117, 123);
-}
-
-.controls__button:focus {
-  outline: none;
+  color: white;
 }
 
     </style>
   </head>
   <body>
-    <div class="controls">
-      <button id="table" class="controls__button controls__button--selected">Table</button>
-      <button id="grid" class="controls__button">Grid</button>
-      <button id="spiral" class="controls__button">Spiral</button>
-    </div>
-    <div class="container">
-      <div class="root">
+    <div class="periodic">
+      <div class="controls">
+        <button id="table" class="controls__button button-primary">Table</button>
+        <button id="grid" class="controls__button">Grid</button>
+        <button id="spiral" class="controls__button">Spiral</button>
+      </div>
+      <div class="container">
+        <div class="root">
+        </div>
       </div>
     </div>
-    <div id="log"></div>
-    <script src="http://hammerjs.github.io/dist/hammer.min.js"></script>
-    <script src="bundle.js"></script>
+    <div class="info">
+      <p>DOM elements animated with <a href="index.html">snabbt.js</a>.</p>
+    </div>
+
+    <script src="//hammerjs.github.io/dist/hammer.min.js"></script>
+    <script src="../snabbt.min.js"></script>
     <script src="periodic.js"></script>
   </body>
 </html>

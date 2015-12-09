@@ -85,7 +85,7 @@ var Deck = (function() {
     length: function() {
       return cards.length;
     }
-  }
+  };
 })();
 
 function build_formation(positions) {

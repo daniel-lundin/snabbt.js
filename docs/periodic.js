@@ -123,9 +123,9 @@ var chemicalElements = [
 ];
 
 chemicalElements.sort(function(a, b) {
-    if (a.period === b.period)
-        return a.group - b.group;
-    return a.period - b.period;
+  if (a.period === b.period)
+    return a.group - b.group;
+  return a.period - b.period;
 });
 
 var domElements = [];
@@ -234,12 +234,14 @@ function setupCameraControls(container, root) {
   var rotateYOffset = 0;
   var rotateXVelocity = 0;
   var rotateYVelocity = 0;
+  var staticTranslateZ = window.innerWidth < 480 ? 800 : 0;
 
   root.style.transform = 'perspective(1000px) rotateY(0deg) rotateX(0deg)';
   root.style.webkitTransform = 'perspective(1000px) rotateY(0deg) rotateX(0deg)';
   function updateCamera(rotX, rotY, transZ) {
-    root.style.transform = 'perspective(1000px) translateZ(' + transZ + 'px) rotateY(' + rotX + 'deg) rotateX(' + -rotY + 'deg)';
-    root.style.webkitTransform = 'perspective(1000px) translateZ(' + transZ + 'px) rotateY(' + rotX + 'deg) rotateX(' + -rotY + 'deg)';
+    var transformString = 'perspective(1000px) translateZ(' + (transZ - staticTranslateZ) + 'px) rotateY(' + rotX + 'deg) rotateX(' + -rotY + 'deg)';
+    root.style.transform = transformString;
+    root.style.webkitTransform = transformString;
   }
 
   function stepCamera() {
@@ -292,21 +294,21 @@ function initEventListeners() {
 
   tableButton.addEventListener('click', function() {
     tableFormation();
-    tableButton.classList.add('controls__button--selected');
-    gridButton.classList.remove('controls__button--selected');
-    spiralButton.classList.remove('controls__button--selected');
+    tableButton.classList.add('button-primary');
+    gridButton.classList.remove('button-primary');
+    spiralButton.classList.remove('button-primary');
   });
   gridButton.addEventListener('click', function() {
     gridFormation();
-    tableButton.classList.remove('controls__button--selected');
-    gridButton.classList.add('controls__button--selected');
-    spiralButton.classList.remove('controls__button--selected');
+    tableButton.classList.remove('button-primary');
+    gridButton.classList.add('button-primary');
+    spiralButton.classList.remove('button-primary');
   });
   spiralButton.addEventListener('click', function() {
     spiralFormation();
-    tableButton.classList.remove('controls__button--selected');
-    gridButton.classList.remove('controls__button--selected');
-    spiralButton.classList.add('controls__button--selected');
+    tableButton.classList.remove('button-primary');
+    gridButton.classList.remove('button-primary');
+    spiralButton.classList.add('button-primary');
   });
 
   setupCameraControls(container, root);
@@ -341,5 +343,4 @@ function initPositions() {
 
 createElements();
 initPositions();
-//tableFormation();
 initEventListeners();
