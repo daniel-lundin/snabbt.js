@@ -11,13 +11,14 @@ function optionOrDefault(option, def) {
   return option;
 }
 
-function updateElementTransform(element, matrix, transformProperty, perspective) {
-  var cssPerspective = '';
-  if (perspective) {
-    cssPerspective = 'perspective(' + perspective + 'px) ';
-  }
+function updateElementTransform(element, matrix, transformProperty, perspective, staticTransform) {
+  var cssPerspective = perspective ? 'perspective(' + perspective + 'px) ' : '';
   var cssMatrix = matrix.asCSS();
-  element.style[transformProperty] = cssPerspective + cssMatrix;
+  var cssStaticTransform = staticTransform ? staticTransform : '';
+  if (transformProperty)
+    element.style[transformProperty] = cssStaticTransform + cssPerspective + cssMatrix;
+  else
+    element.style.transform = cssStaticTransform + cssPerspective + cssMatrix;
 }
 
 var updateElementProperties = function(element, properties) {

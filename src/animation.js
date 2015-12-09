@@ -136,7 +136,7 @@ function createAnimation(startState, endState, options, transformProperty) {
         return;
       var matrix = tweener.asMatrix();
       var properties = tweener.getProperties();
-      utils.updateElementTransform(element, matrix, transformProperty, properties.perspective);
+      utils.updateElementTransform(element, matrix, transformProperty, properties.perspective, options.staticTransform);
       utils.updateElementProperties(element, properties);
     }
   };

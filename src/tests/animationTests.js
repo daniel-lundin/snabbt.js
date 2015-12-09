@@ -1,7 +1,9 @@
 'use strict';
 
 const sinon = require('sinon');
-const expect = require('chai').expect;
+const chai = require('chai')
+const expect = chai.expect;
+chai.use(require('chai-string'));
 const createAnimation = require('../animation.js').createAnimation;
 const createState = require('../state.js').createState;
 
@@ -71,6 +73,27 @@ describe('animations', () => {
       animation.updateElement(element, true);
 
       expect(element.style).to.have.property(transformProperty);
+    });
+
+    it('should default to transform if no transformProperty is passed', () => {
+      const element = { style: {} };
+      const animation = createAnimation(startState, endState, {});
+
+      animation.updateElement(element, true);
+
+      expect(element.style).to.have.property('transform');
+    });
+
+    it('should use set staticTransform if present in options', () => {
+      const element = { style: {} };
+      const options = {
+        staticTransform: 'translateX(100px)'
+      };
+      const animation = createAnimation(startState, endState, options);
+
+      animation.updateElement(element, true);
+
+      expect(element.style.transform).to.startWith(options.staticTransform);
     });
   });
 });

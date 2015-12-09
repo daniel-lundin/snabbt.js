@@ -29,7 +29,8 @@
     "mocha": "^2.3.3",
     "sinon": "^1.17.1",
     "watchify": "^3.4.0",
-    "uglify-js": "^2.4.24"
+    "uglify-js": "^2.4.24",
+    "chai-string": "^1.1.4"
   },
   "spm": {
     "main": "snabbt.js",
