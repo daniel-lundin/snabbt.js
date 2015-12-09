@@ -12,10 +12,10 @@
     "snabbt.min.js"
   ],
   "scripts": {
-    "watch": "watchify -v -t babelify src/main.js -o bundle.js",
+    "watch": "watchify -v -t babelify src/main.js -o snabbt.js",
     "test": "mocha src/**/*Tests.js --harmony",
     "tdd": "mocha src/**/*Tests.js --harmony --watch",
-    "build": "browserify -t babelify src/main.js -o bundle.js && uglifyjs --compress --mangle -- bundle.js > snabbt.js"
+    "build": "browserify -t babelify src/main.js -o snabbt.js && uglifyjs --compress --mangle -- snabbt.js > snabbt.min.js"
   },
   "repository": {
     "type": "git",
@@ -29,7 +29,6 @@
     "mocha": "^2.3.3",
     "sinon": "^1.17.1",
     "watchify": "^3.4.0",
-    "uglify-js": "^2.4.24",
     "chai-string": "^1.1.4"
   },
   "spm": {
