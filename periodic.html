@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Minimalistic animation library in javascript. Fast, lightweight and easy-to-use.">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:site" content="@danielundin">
+    <meta name="twitter:creator" content="@danielundin">
+    <meta name="twitter:title" content="snabbt.js">
+    <meta name="twitter:description" content="Minimalistic animation library in javascript. Fast, lightweight and easy-to-use.">
+    <meta name="twitter:image" content="http://daniel-lundin.github.io/snabbt.js/assets/snabbt-sharing.png">
+
+    <meta property="og:url" content="http://daniel-lundin.github.io/snabbt.js">
+    <meta property="og:title" content="snabbt.js" />
+    <meta property="og:description" content="Minimalistic animation library in javascript. Fast, lightweight and easy-to-use." />
+    <meta property="og:image" content="http://daniel-lundin.github.io/snabbt.js/assets/snabbt-sharing.png">
+
+    <link href='//fonts.googleapis.com/css?family=Raleway:400,300,600' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/skeleton/2.0.1/skeleton.min.css">
+    <style>
+
+body {
+  background: #111;
+  margin: 0;
+  overflow: hidden;
+  font-family: 'Raleway', Arial, sans-serif;
+}
+
+.periodic {
+  overflow: hidden;
+}
+
+.info {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  text-align: center;
+  font-family: 'Raleway', Arial, sans-serif;
+  color: white;
+}
+
+.info a {
+  color: #1eaedb;
+}
+
+.container {
+  position: relative;
+  width: 100%;
+  height: 90vh;
+  margin: 0 auto;
+  transform-style: preserve-3d;
+  -webkit-transform-style: preserve-3d;
+  cursor: move;
+}
+
+.root {
+  position: relative;
+  width: 100%;
+  height: 90vh;
+  margin: 0 auto;
+  transform-style: preserve-3d;
+  -webkit-transform-style: preserve-3d;
+}
+
+.element {
+  position: absolute;
+  width: 50px;
+  height: 50px;
+  margin-left: -25px;
+  margin-top: -25px;
+  background: rgba(30, 117, 123, 0.34);
+  left: 50%;
+  top: 50%;
+  text-align: center;
+  text-shadow: 0 0 10px white;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  border-radius: 3px;
+  color: white;
+  user-select: none;
+}
+
+.element__symbol {
+  line-height: 30px;
+}
+.element__name {
+  line-height: 20px;
+  font-size: 6px;
+}
+
+.controls {
+  text-align: center;
+  height: 10vh;
+  position: relative;
+  transform: translateZ(10000px);
+  z-index: 1;
+}
+
+.controls__button {
+  margin: 3vh 1vh;
+  color: white;
+}
+
+    </style>
+  </head>
+  <body>
+    <div class="periodic">
+      <div class="controls">
+        <button id="table" class="controls__button button-primary">Table</button>
+        <button id="grid" class="controls__button">Grid</button>
+        <button id="spiral" class="controls__button">Spiral</button>
+      </div>
+      <div class="container">
+        <div class="root">
+        </div>
+      </div>
+    </div>
+    <div class="info">
+      <p>DOM elements animated with <a href="index.html">snabbt.js</a>.</p>
+    </div>
+
+    <script src="//hammerjs.github.io/dist/hammer.min.js"></script>
+    <script src="../snabbt.min.js"></script>
+    <script src="periodic.js"></script>
+  </body>
+</html>
