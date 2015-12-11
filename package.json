@@ -1,6 +1,6 @@
 {
   "name": "snabbt.js",
-  "version": "0.5.8",
+  "version": "0.6.0",
   "description": "Fast animations with javascript and CSS-transforms",
   "main": "snabbt.js",
   "files": [
@@ -15,7 +15,9 @@
     "watch": "watchify -v -t babelify src/main.js -o snabbt.js",
     "test": "mocha src/**/*Tests.js --harmony",
     "tdd": "mocha src/**/*Tests.js --harmony --watch",
-    "build": "browserify -t babelify src/main.js -o snabbt.js && uglifyjs --compress --mangle -- snabbt.js > snabbt.min.js"
+    "build": "browserify -t babelify src/main.js -o snabbt.js && uglifyjs --compress --mangle -- snabbt.js > snabbt.min.js",
+    "bannerify": "cat snabbt.js > /tmp/snabbt.js && node banner.js > snabbt.js && cat /tmp/snabbt.js >> snabbt.js && cat snabbt.min.js > /tmp/snabbt.min.js && node banner.js > snabbt.min.js && cat /tmp/snabbt.min.js >> snabbt.min.js",
+    "release": "npm run build && npm run bannerify"
   },
   "repository": {
     "type": "git",
@@ -26,10 +28,11 @@
   "devDependencies": {
     "babelify": "^6.3.0",
     "chai": "^3.3.0",
+    "chai-string": "^1.1.4",
     "mocha": "^2.3.3",
+    "moment": "^2.10.6",
     "sinon": "^1.17.1",
-    "watchify": "^3.4.0",
-    "chai-string": "^1.1.4"
+    "watchify": "^3.4.0"
   },
   "spm": {
     "main": "snabbt.js",

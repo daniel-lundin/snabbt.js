@@ -13,10 +13,13 @@ Fast animations with Javascript and CSS transforms
 
 - [Card formations](http://daniel-lundin.github.io/snabbt.js/cards.html)
 - [Crazy sticks](http://daniel-lundin.github.io/snabbt.js/sticks.html)
+- [Periodic table](http://daniel-lundin.github.io/snabbt.js/periodic.html)
+- [Laser words](http://daniel-lundin.github.io/snabbt.js/words.html)
 
 ## Releases
 The initial release is out. Would love some feedback on things that can be improved. The release(and future ones) can be found in the release section
 
+- **0.6.0** - ES6, test suite, life cycle events, new demos
 - **0.5.8** - Add new tweenable property scalePost/fromScalePost
 - **0.5.7** - Fix issues manual mode and spring easings
 - **0.5.6** - Fix issues with duration: 0
