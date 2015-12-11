@@ -13,7 +13,7 @@
     <meta name="twitter:image" content="http://daniel-lundin.github.io/snabbt.js/assets/snabbt-sharing.png">
 
     <meta property="og:url" content="http://daniel-lundin.github.io/snabbt.js">
-    <meta property="og:title" content="When Great Minds Don’t Think Alike" />
+    <meta property="og:title" content="snabbt.js" />
     <meta property="og:description" content="Minimalistic animation library in javascript. Fast, lightweight and easy-to-use." />
     <meta property="og:image" content="http://daniel-lundin.github.io/snabbt.js/assets/snabbt-sharing.png">
 
@@ -68,16 +68,17 @@
           </div>
           <div class="four columns">
             <h3><i class="fa fa-paper-plane"></i>Light</h3>
-            <p> 4kb minified and gzipped</p>
+            <p> ~4kb minified and gzipped</p>
           </div>
           <div class="four columns">
             <h3><i class="fa fa-user"></i>Simple</h3>
             <p>Write less, animate more</p>
           </div>
         </div>
+        <p class="shell-command"><code>npm install snabbt.js</code></p>
+        <p class="shell-command"><code>bower install snabbt.js</code></p>
         <a href="https://github.com/daniel-lundin/snabbt.js/releases" class="button button-primary">Download</a>
       </div>
-      <p class="warning"><span class="label">Warning:</span> snabbt.js is under development, expect some changes to the API before 1.0.</p>
       <div id="navbar" class="nav">
         <ul>
           <li><a href="#intro">Introduction</a></li>
@@ -244,6 +245,15 @@
 });</code></pre>
         <button id="spring-example" class="button-primary extra-top-margin">Run example</button>
       </section>
+      <!--<section id="event-hooks">
+        <h3>Life cycle events</h3>
+        <p>Snabbt provides a number of events which you can to use for get information on the current state of the animation. Adding callbacks to </p>
+        <ul>
+          <li><strong>start</strong> - Will be called just before the animation starts.</li>
+          <li><strong>update</strong> - Will be called for every update of the animation. One parameter is provided which is the current progress between 0 and 1.</li>
+          <li><strong>complete</strong> - Will be called for when the animation is completed update of the animation. </li>
+        </ul>
+      </section>-->
       <section id="advanced">
         <h2>Advanced concepts</h2>
         <p>This section describes some of the more advanced usages.</p>
@@ -404,7 +414,7 @@ snabbt(element, {
         <pre><code class="javascript">matrix.translate(100, 0, 0).rotateX(Math.PI);</code></pre>
 
         <h3 class="extra-top-margin">Freeform transforms</h3>
-        <p>The matrix operations can be used outside of snabbt's animation engine. This could be useful for interactive animations. </p>
+        <p>The matrix operations can be used outside of snabbt's animation engine. This could be useful for interactive animations. Check out the <a href="periodic.html">periodic</a> demo for and example of this.</p>
         <pre><code class="javascript">var matrix = snabbt.createMatrix();
 matrix.translate(100, 0, 0);
 snabbt.setElementTransform(element, matrix);</code></pre>
@@ -412,7 +422,7 @@ snabbt.setElementTransform(element, matrix);</code></pre>
 
       <section id="api">
         <h3>Animation configuration</h3>
-        <p>The following parameters can on the configuration object:</p>
+        <p>The following parameters can be used in the configuration object:</p>
         <table class="hide-mobile">
           <thead>
             <tr>
@@ -482,6 +492,18 @@ snabbt.setElementTransform(element, matrix);</code></pre>
               <td>Scalar</td>
               <td>0</td>
               <td>Number of times to repeat the animation</td>
+            </tr>
+            <tr>
+              <td>start(index, total)</td>
+              <td>function</td>
+              <td>undefined</td>
+              <td>Function to be called just before the animation starts. If multiple elements are animated, this function will be called once for every element with two parameters, index of current element and total elements in the animated collection.</td>
+            </tr>
+            <tr>
+              <td>update(i, index, total)</td>
+              <td>function</td>
+              <td>undefined</td>
+              <td>Function to be called on every progress step of the animation. The first parameter is a value between 0 and 1 and indicates the current progress of the animation. If multiple elements are animated, this function will be called for every progress step for every element in the collection. <em>index</em> indicates the current element and <em>total</em> corresponds to the total number of elements in the colletion.</td>
             </tr>
             <tr>
               <td>complete(index, total)</td>

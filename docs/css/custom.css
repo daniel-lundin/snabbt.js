@@ -211,3 +211,11 @@ footer {
 .extra-top-margin {
   margin-top: 20px;
 }
+
+.shell-command {
+  text-align: center;
+}
+
+.shell-command code {
+  display: inline-block;
+}
