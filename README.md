@@ -19,6 +19,7 @@ Fast animations with Javascript and CSS transforms
 ## Releases
 The initial release is out. Would love some feedback on things that can be improved. The release(and future ones) can be found in the release section
 
+- **0.6.1** - Fixed UMD-build
 - **0.6.0** - ES6, test suite, life cycle events, new demos
 - **0.5.8** - Add new tweenable property scalePost/fromScalePost
 - **0.5.7** - Fix issues manual mode and spring easings
