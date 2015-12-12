@@ -1,7 +1,7 @@
 'use strict';
 
 var expect = require('chai').expect;
-var snabbt = require('../main.js').snabbt;
+var snabbt = require('../main.js');
 var sinon = require('sinon');
 var Engine = require('../engine.js');
 

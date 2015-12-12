@@ -54,13 +54,13 @@ describe('Engine', () => {
 
   describe('stepAnimation', () => {
     it('should not tick if animation is stopped', () => {
-      var animation = {
+      const animation = {
         isStopped() {
           return true;
         },
         tick: sinon.stub()
       };
-      var element = {};
+      const element = {};
 
       Engine.stepAnimation(element, animation, 100);
 
@@ -68,15 +68,15 @@ describe('Engine', () => {
     });
 
     it('should call animation.tick and animation.updateElement', () => {
-      var animation = {
+      const animation = {
         isStopped() {
           return false;
         },
         tick: sinon.stub(),
         updateElement: sinon.stub()
       };
-      var element = {};
-      var time = 42;
+      const element = {};
+      const time = 42;
       Engine.stepAnimation(element, animation, time);
 
       sinon.assert.calledOnce(animation.tick);
@@ -117,7 +117,7 @@ describe('Engine', () => {
 
   describe('archiveCompletedAnimations', () => {
     it('should move finished animations from running to completed', () => {
-      var animation = {
+      const animation = {
         options: {},
         completed() {
           return true;
@@ -134,13 +134,13 @@ describe('Engine', () => {
     });
 
     it('should not save old finished animations on the same element', () => {
-      var animation = {
+      const animation = {
         options: {},
         completed() {
           return true;
         }
       };
-      var element = 'an element';
+      const element = 'an element';
 
       Engine.runningAnimations = [[element, animation, Engine.createChainer()]];
       Engine.completedAnimations = [[element, animation, Engine.createChainer()]];
@@ -153,10 +153,10 @@ describe('Engine', () => {
     });
 
     it('should start next queued animation', () => {
-      var chainer = Engine.createChainer();
+      const chainer = Engine.createChainer();
       chainer.snabbt({});
 
-      var animation = {
+      const animation = {
         options: {},
         stop() {},
         completed() { return true; },
@@ -196,8 +196,8 @@ describe('Engine', () => {
 
 
     it('should call createAnimation with states and options', () => {
-      var element = {};
-      var options = {
+      const element = {};
+      const options = {
         fromPosition: [-1, -1, -1],
         position: [1, 1, 1]
       };
@@ -210,8 +210,8 @@ describe('Engine', () => {
     it('should append to runningAnimations', () => {
       expect(Engine.runningAnimations.length).to.eql(0);
 
-      var element = {};
-      var options = {
+      const element = {};
+      const options = {
         fromPosition: [-1, -1, -1],
         position: [1, 1, 1]
       };
@@ -222,23 +222,36 @@ describe('Engine', () => {
     });
 
     it('should use current state from running animations', () => {
-      var previousState = createState({ position: [100, 100, 100] });
-      var previousAnimation = {
+      const previousState = createState({ position: [100, 100, 100] });
+      const previousAnimation = {
         stop() {},
         getCurrentState() {
           return previousState;
         }
       };
-      var element = {};
+      const element = {};
       Engine.runningAnimations = [[element, previousAnimation, {}]];
 
-      var options = {
+      const options = {
         position: [200, 200, 200]
       };
       Engine.initializeAnimation(element, options);
 
-      var startState = Animation.createAnimation.lastCall.args[0];
+      const startState = Animation.createAnimation.lastCall.args[0];
       expect(startState.position).to.eql([100, 100, 100]);
+    });
+
+    it('should cancel running animations on the same element', () => {
+      const element = {};
+      const animation = {
+        stop() {},
+        getCurrentState() {}
+      }
+      Engine.runningAnimations = [[element, animation, {}]];
+
+      Engine.initializeAnimation(element, {});
+
+      expect(Engine.runningAnimations).to.have.length(1);
     });
 
     describe('manual animations', () => {
@@ -251,8 +264,8 @@ describe('Engine', () => {
       });
 
       it('should create attention animation', () => {
-        var element = {};
-        var options = {};
+        const element = {};
+        const options = {};
         Engine.initializeAnimation(element, 'attention', options);
 
         sinon.assert.calledOnce(Animation.createAttentionAnimation);

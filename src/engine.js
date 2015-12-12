@@ -84,7 +84,7 @@ const Engine = {
       if (completeCallback)
         completeCallback();
     });
-    //this.clearOphanedEndStates();
+    this.clearOphanedEndStates();
   },
 
   createQueuedAnimations(finished) {
@@ -119,6 +119,9 @@ const Engine = {
     var startState = stateFromOptions(options, previousState, true);
     var endState = stateFromOptions(options, previousState, false);
 
+    this.runningAnimations = this.runningAnimations.filter((animation) => {
+      return element !== animation[0];
+    });
     var animation = Animation.createAnimation(startState, endState, options, this.transformProperty);
     return animation;
   },

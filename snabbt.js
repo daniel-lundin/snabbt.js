@@ -1,5 +1,4 @@
-/* snabbt.js Version: 0.6.0 Build date: 2015-12-11 (c) 2015 Daniel Lundin @license MIT */
-(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
+(function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.snabbt = f()}})(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 'use strict';
 var utils = require('./utils.js');
 var easing = require('./easing.js');
@@ -447,7 +446,7 @@ var Engine = {
       var completeCallback = animation[1].options.complete;
       if (completeCallback) completeCallback();
     });
-    //this.clearOphanedEndStates();
+    this.clearOphanedEndStates();
   },
 
   createQueuedAnimations: function createQueuedAnimations(finished) {
@@ -484,6 +483,10 @@ var Engine = {
     var startState = stateFromOptions(options, previousState, true);
     var endState = stateFromOptions(options, previousState, false);
 
+    this.runningAnimations = this.runningAnimations.filter(function (animation) {
+      var animationElement = animation[0];
+      return element !== animationElement;
+    });
     var animation = Animation.createAnimation(startState, endState, options, this.transformProperty);
     return animation;
   },
@@ -543,6 +546,8 @@ module.exports = Engine;
 var Engine = require('./engine.js');
 var preprocessOptions = require('./properties.js').preprocessOptions;
 var utils = require('./utils.js');
+var createMatrix = require('./matrix.js');
+var updateElementTransform = require('./utils.js').updateElementTransform;
 
 function snabbt(elements, arg2, arg3) {
   if (!elements.length) {
@@ -591,27 +596,41 @@ function snabbt(elements, arg2, arg3) {
   return aggregateChainer;
 }
 
-if (typeof window !== 'undefined') {
-  window.snabbt = function (element, arg2, arg3) {
-    return snabbt(element, arg2, arg3);
-  };
+//if (typeof window !== 'undefined') {
+//  window.snabbt = function(element, arg2, arg3) {
+//    return snabbt(element, arg2, arg3);
+//  };
+//  window.snabbt.createMatrix = createMatrix;
+//  window.snabbt.setElementTransform = updateElementTransform;
+//
+//  if (window.jQuery) {
+//    (function ($) {
+//      $.fn.snabbt = function(arg1, arg2) {
+//        return snabbt(this.get(), arg1, arg2);
+//      };
+//    })(window.jQuery);
+//  }
+//} else {
 
-  if (window.jQuery) {
-    (function ($) {
-      $.fn.snabbt = function (arg1, arg2) {
-        return snabbt(this.get(), arg1, arg2);
-      };
-    })(window.jQuery);
-  }
-} else {
-  module.exports.snabbt = function (element, arg2, arg3) {
-    return snabbt(element, arg2, arg3);
-  };
+module.exports = function (element, arg2, arg3) {
+  return snabbt(element, arg2, arg3);
+};
+module.exports.createMatrix = createMatrix;
+module.exports.setElementTransform = updateElementTransform;
+
+if (typeof window !== 'undefined' && window.jQuery) {
+  (function ($) {
+    $.fn.snabbt = function (arg1, arg2) {
+      return snabbt(this.get(), arg1, arg2);
+    };
+  })(window.jQuery);
 }
+
+//}
 
 Engine.init();
 
-},{"./engine.js":3,"./properties.js":6,"./utils.js":9}],5:[function(require,module,exports){
+},{"./engine.js":3,"./matrix.js":5,"./properties.js":6,"./utils.js":9}],5:[function(require,module,exports){
 'use strict';
 
 function assignedMatrixMultiplication(a, b, res) {
@@ -1239,4 +1258,5 @@ module.exports = {
   findUltimateAncestor: findUltimateAncestor
 };
 
-},{}]},{},[4]);
+},{}]},{},[4])(4)
+});

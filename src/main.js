@@ -4,6 +4,8 @@
 var Engine = require('./engine.js');
 var preprocessOptions = require('./properties.js').preprocessOptions;
 var utils = require('./utils.js');
+var createMatrix = require('./matrix.js');
+var updateElementTransform = require('./utils.js').updateElementTransform;
 
 function snabbt(elements, arg2, arg3) {
   if (!elements.length) {
@@ -58,22 +60,36 @@ function snabbt(elements, arg2, arg3) {
   return aggregateChainer;
 }
 
-if (typeof window !== 'undefined') {
-  window.snabbt = function(element, arg2, arg3) {
-    return snabbt(element, arg2, arg3);
-  };
+//if (typeof window !== 'undefined') {
+//  window.snabbt = function(element, arg2, arg3) {
+//    return snabbt(element, arg2, arg3);
+//  };
+//  window.snabbt.createMatrix = createMatrix;
+//  window.snabbt.setElementTransform = updateElementTransform;
+//
+//  if (window.jQuery) {
+//    (function ($) {
+//      $.fn.snabbt = function(arg1, arg2) {
+//        return snabbt(this.get(), arg1, arg2);
+//      };
+//    })(window.jQuery);
+//  }
+//} else {
 
-  if (window.jQuery) {
-    (function ($) {
-      $.fn.snabbt = function(arg1, arg2) {
-        return snabbt(this.get(), arg1, arg2);
-      };
-    })(window.jQuery);
-  }
-} else {
-  module.exports.snabbt = function(element, arg2, arg3) {
-    return snabbt(element, arg2, arg3);
-  };
+module.exports = function(element, arg2, arg3) {
+  return snabbt(element, arg2, arg3);
+};
+module.exports.createMatrix = createMatrix;
+module.exports.setElementTransform = updateElementTransform;
+
+if (typeof window !== 'undefined' && window.jQuery) {
+  (function ($) {
+    $.fn.snabbt = function(arg1, arg2) {
+      return snabbt(this.get(), arg1, arg2);
+    };
+  })(window.jQuery);
 }
+
+//}
 
 Engine.init();
