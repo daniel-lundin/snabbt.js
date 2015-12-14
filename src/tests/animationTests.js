@@ -1,7 +1,7 @@
 'use strict';
 
 const sinon = require('sinon');
-const chai = require('chai')
+const chai = require('chai');
 const expect = chai.expect;
 chai.use(require('chai-string'));
 const createAnimation = require('../animation.js').createAnimation;
@@ -31,12 +31,10 @@ describe('animations', () => {
       animation.updateCurrentTransform.restore();
     });
 
-    it('should set started and call updateTransform for first tick', () => {
-      expect(animation.isStarted()).to.not.be.ok;
+    it('should call updateTransform for first tick', () => {
       sinon.assert.notCalled(animation.updateCurrentTransform);
 
       animation.tick(100);
-      expect(animation.isStarted()).to.be.ok;
       sinon.assert.calledOnce(animation.updateCurrentTransform);
     });
 

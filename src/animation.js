@@ -41,7 +41,6 @@ function createAnimation(startState, endState, options, transformProperty) {
     stop() { stopped = true; },
     endState() { return endState; },
     isStopped() { return stopped; },
-    isStarted() { return started; },
 
     finish(callback) {
       manual = false;
@@ -108,7 +107,7 @@ function createAnimation(startState, endState, options, transformProperty) {
       manualValue = Math.min(Math.max(_manualValue, 0.0001), 1 + manualDelayFactor);
     },
 
-    updateCurrentTransform: function() {
+    updateCurrentTransform() {
       var tweenValue = easer.getValue();
       if (manual) {
         var value = Math.max(0.00001, manualValue - manualDelayFactor);

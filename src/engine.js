@@ -138,6 +138,10 @@ const Engine = {
     var animation;
     if (arg2 === 'attention') {
       animation = this.createAttentionAnimation(element, arg3);
+    } else if (arg2 === 'stop') {
+      return this.runningAnimations = this.runningAnimations.filter((animation) => {
+        return element !== animation[0];
+      });
     } else {
       animation = this.createAnimation(element, arg2);
     }

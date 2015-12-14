@@ -254,6 +254,15 @@ describe('Engine', () => {
       expect(Engine.runningAnimations).to.have.length(1);
     });
 
+    it('should stop animation with \'stop\' command', () => {
+      const element = {};
+      Engine.runningAnimations = [[element, {}, {}]];
+
+      Engine.initializeAnimation(element, 'stop');
+
+      expect(Engine.runningAnimations).to.have.length(0);
+    });
+
     describe('manual animations', () => {
       beforeEach(() => {
         sinon.stub(Animation, 'createAttentionAnimation');
