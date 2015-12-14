@@ -15,7 +15,6 @@ function createAnimation(startState, endState, options, transformProperty) {
 
   let startTime = -1;
   let currentTime = 0;
-  let stopped = false;
   let started = false;
 
   // Manual related
@@ -38,9 +37,7 @@ function createAnimation(startState, endState, options, transformProperty) {
   // Public api
   return {
     options: options,
-    stop() { stopped = true; },
     endState() { return endState; },
-    isStopped() { return stopped; },
 
     finish(callback) {
       manual = false;
@@ -66,9 +63,6 @@ function createAnimation(startState, endState, options, transformProperty) {
     },
 
     tick(time) {
-      if (stopped)
-        return;
-
       if (manual) {
         currentTime = time;
         return this.updateCurrentTransform();
@@ -122,11 +116,8 @@ function createAnimation(startState, endState, options, transformProperty) {
     },
 
     completed() {
-      if (stopped)
-        return true;
-      if (startTime === 0) {
+      if (startTime === 0)
         return false;
-      }
       return easer.completed();
     },
 
@@ -150,7 +141,6 @@ function createAttentionAnimation(options) {
   options.initialVelocity = 0.1;
   options.equilibriumPosition = 0;
   var spring = easing.createSpringEasing(options);
-  var stopped = false;
   var tweenPosition = movement.position;
   var tweenRotation = movement.rotation;
   var tweenRotationPost = movement.rotationPost;
@@ -168,12 +158,8 @@ function createAttentionAnimation(options) {
   // Public API
   return {
     options() { return options; },
-    stop: function() { stopped = true; },
-    isStopped() { return stopped; },
 
     tick() {
-      if (stopped)
-        return;
       if (spring.equilibrium)
         return;
       spring.tick();
@@ -219,7 +205,7 @@ function createAttentionAnimation(options) {
     },
 
     completed: function() {
-      return spring.completed() || stopped;
+      return spring.completed();
     },
 
     restart: function() {

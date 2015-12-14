@@ -46,9 +46,6 @@ const Engine = {
   },
 
   stepAnimation(element, animation, time) {
-    if (animation.isStopped())
-      return;
-
     animation.tick(time);
     animation.updateElement(element);
   },
@@ -73,7 +70,6 @@ const Engine = {
         return finishedAnimation[0] === animation[0];
       });
     });
-
 
     Array.prototype.push.apply(this.completedAnimations, completed);
     Array.prototype.push.apply(this.runningAnimations, queuedAnimations);
@@ -134,18 +130,22 @@ const Engine = {
     return animation;
   },
 
+  stopAnimation(element) {
+    const stoppedAnimation = this.runningAnimations.filter((animation) => animation[0] === element);
+    this.runningAnimations = this.runningAnimations.filter((animation) => animation[0] !== element);
+    Array.prototype.push.apply(this.completedAnimations, stoppedAnimation);
+  },
+
   initializeAnimation(element, arg2, arg3) {
-    var animation;
+    let animation;
     if (arg2 === 'attention') {
       animation = this.createAttentionAnimation(element, arg3);
     } else if (arg2 === 'stop') {
-      return this.runningAnimations = this.runningAnimations.filter((animation) => {
-        return element !== animation[0];
-      });
+      return this.stopAnimation(element);
     } else {
       animation = this.createAnimation(element, arg2);
     }
-    var chainer = this.createChainer();
+    const chainer = this.createChainer();
 
     this.runningAnimations.push([element, animation, chainer]);
     this.scheduleNextFrame();
@@ -156,7 +156,6 @@ const Engine = {
   findCurrentState(element) {
     var match =  this.runningAnimations.find((animation) => element === animation[0]);
     if (match) {
-      match[1].stop();
       return match[1].getCurrentState();
     }
     match =  this.completedAnimations.find((animation) => element === animation[0]);

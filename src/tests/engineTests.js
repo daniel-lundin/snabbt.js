@@ -53,20 +53,6 @@ describe('Engine', () => {
   });
 
   describe('stepAnimation', () => {
-    it('should not tick if animation is stopped', () => {
-      const animation = {
-        isStopped() {
-          return true;
-        },
-        tick: sinon.stub()
-      };
-      const element = {};
-
-      Engine.stepAnimation(element, animation, 100);
-
-      sinon.assert.notCalled(animation.tick);
-    });
-
     it('should call animation.tick and animation.updateElement', () => {
       const animation = {
         isStopped() {
@@ -256,11 +242,13 @@ describe('Engine', () => {
 
     it('should stop animation with \'stop\' command', () => {
       const element = {};
+      Engine.completedAnimations = [];
       Engine.runningAnimations = [[element, {}, {}]];
 
       Engine.initializeAnimation(element, 'stop');
 
       expect(Engine.runningAnimations).to.have.length(0);
+      expect(Engine.completedAnimations).to.have.length(1);
     });
 
     describe('manual animations', () => {
