@@ -60,27 +60,31 @@ function snabbt(elements, arg2, arg3) {
   return aggregateChainer;
 }
 
-//if (typeof window !== 'undefined') {
-//  window.snabbt = function(element, arg2, arg3) {
-//    return snabbt(element, arg2, arg3);
-//  };
-//  window.snabbt.createMatrix = createMatrix;
-//  window.snabbt.setElementTransform = updateElementTransform;
-//
-//  if (window.jQuery) {
-//    (function ($) {
-//      $.fn.snabbt = function(arg1, arg2) {
-//        return snabbt(this.get(), arg1, arg2);
-//      };
-//    })(window.jQuery);
-//  }
-//} else {
-
 module.exports = function(element, arg2, arg3) {
   return snabbt(element, arg2, arg3);
 };
 module.exports.createMatrix = createMatrix;
 module.exports.setElementTransform = updateElementTransform;
+module.exports.sequence = (queue) => {
+  let i = 0;
+
+  const next = () => {
+    ++i;
+    if (i > queue.length - 1)
+      return;
+    const [ element, options ] = queue[i];
+
+    const previousAllDone = options.allDone;
+    options.allDone = previousAllDone ? () => { previousAllDone(); next() } : next;
+    snabbt(element, options);
+  }
+
+  const [ element, options ] = queue[0];
+  const previousAllDone = options.allDone;
+  options.allDone = previousAllDone ? () => { previousAllDone(); next() } : next;
+
+  snabbt(element, options);
+};
 
 if (typeof window !== 'undefined' && window.jQuery) {
   (function ($) {
@@ -89,7 +93,5 @@ if (typeof window !== 'undefined' && window.jQuery) {
     };
   })(window.jQuery);
 }
-
-//}
 
 Engine.init();

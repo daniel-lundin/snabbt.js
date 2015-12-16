@@ -530,6 +530,8 @@ module.exports = Engine;
 'use strict';
 /* global window */
 
+var _slicedToArray = (function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i['return']) _i['return'](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError('Invalid attempt to destructure non-iterable instance'); } }; })();
+
 var Engine = require('./engine.js');
 var preprocessOptions = require('./properties.js').preprocessOptions;
 var utils = require('./utils.js');
@@ -583,27 +585,42 @@ function snabbt(elements, arg2, arg3) {
   return aggregateChainer;
 }
 
-//if (typeof window !== 'undefined') {
-//  window.snabbt = function(element, arg2, arg3) {
-//    return snabbt(element, arg2, arg3);
-//  };
-//  window.snabbt.createMatrix = createMatrix;
-//  window.snabbt.setElementTransform = updateElementTransform;
-//
-//  if (window.jQuery) {
-//    (function ($) {
-//      $.fn.snabbt = function(arg1, arg2) {
-//        return snabbt(this.get(), arg1, arg2);
-//      };
-//    })(window.jQuery);
-//  }
-//} else {
-
 module.exports = function (element, arg2, arg3) {
   return snabbt(element, arg2, arg3);
 };
 module.exports.createMatrix = createMatrix;
 module.exports.setElementTransform = updateElementTransform;
+module.exports.sequence = function (queue) {
+  var i = 0;
+
+  var next = function next() {
+    ++i;
+    if (i > queue.length - 1) return;
+
+    var _queue$i = _slicedToArray(queue[i], 2);
+
+    var element = _queue$i[0];
+    var options = _queue$i[1];
+
+    var previousAllDone = options.allDone;
+    options.allDone = previousAllDone ? function () {
+      previousAllDone();next();
+    } : next;
+    snabbt(element, options);
+  };
+
+  var _queue$0 = _slicedToArray(queue[0], 2);
+
+  var element = _queue$0[0];
+  var options = _queue$0[1];
+
+  var previousAllDone = options.allDone;
+  options.allDone = previousAllDone ? function () {
+    previousAllDone();next();
+  } : next;
+
+  snabbt(element, options);
+};
 
 if (typeof window !== 'undefined' && window.jQuery) {
   (function ($) {
@@ -612,8 +629,6 @@ if (typeof window !== 'undefined' && window.jQuery) {
     };
   })(window.jQuery);
 }
-
-//}
 
 Engine.init();
 
