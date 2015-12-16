@@ -139,9 +139,9 @@ $(function() {
 
   // Sequence example
   $('#sequence-element-example').on('click', function() {
-    console.log('click');
     var elementOne = document.getElementById('sequence-one');
     var elementTwo = document.getElementById('sequence-two');
+
     snabbt.sequence([
         [elementTwo, {
           position: [100, 0, 0],
@@ -372,4 +372,4 @@ $(function() {
 
   FastClick.attach(document.body);
 
-})();
+});

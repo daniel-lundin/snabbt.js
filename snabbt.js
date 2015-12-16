@@ -1,3 +1,4 @@
+/* snabbt.js Version: 0.6.2 Build date: 2015-12-16 (c) 2015 Daniel Lundin @license MIT */
 (function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.snabbt = f()}})(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 'use strict';
 var utils = require('./utils.js');
@@ -530,8 +531,6 @@ module.exports = Engine;
 'use strict';
 /* global window */
 
-var _slicedToArray = (function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i['return']) _i['return'](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError('Invalid attempt to destructure non-iterable instance'); } }; })();
-
 var Engine = require('./engine.js');
 var preprocessOptions = require('./properties.js').preprocessOptions;
 var utils = require('./utils.js');
@@ -596,11 +595,8 @@ module.exports.sequence = function (queue) {
   var next = function next() {
     ++i;
     if (i > queue.length - 1) return;
-
-    var _queue$i = _slicedToArray(queue[i], 2);
-
-    var element = _queue$i[0];
-    var options = _queue$i[1];
+    var element = queue[i][0];
+    var options = queue[i][1];
 
     var previousAllDone = options.allDone;
     options.allDone = previousAllDone ? function () {
@@ -609,11 +605,8 @@ module.exports.sequence = function (queue) {
     snabbt(element, options);
   };
 
-  var _queue$0 = _slicedToArray(queue[0], 2);
-
-  var element = _queue$0[0];
-  var options = _queue$0[1];
-
+  var element = queue[0][0];
+  var options = queue[0][1];
   var previousAllDone = options.allDone;
   options.allDone = previousAllDone ? function () {
     previousAllDone();next();

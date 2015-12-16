@@ -72,14 +72,16 @@ module.exports.sequence = (queue) => {
     ++i;
     if (i > queue.length - 1)
       return;
-    const [ element, options ] = queue[i];
+    const element = queue[i][0];
+    const options = queue[i][1];
 
     const previousAllDone = options.allDone;
     options.allDone = previousAllDone ? () => { previousAllDone(); next() } : next;
     snabbt(element, options);
   }
 
-  const [ element, options ] = queue[0];
+  const element = queue[0][0];
+  const options = queue[0][1];
   const previousAllDone = options.allDone;
   options.allDone = previousAllDone ? () => { previousAllDone(); next() } : next;
 
