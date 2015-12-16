@@ -137,6 +137,27 @@ $(function() {
     });
   });
 
+  // Sequence example
+  $('#sequence-element-example').on('click', function() {
+    var elementOne = document.getElementById('sequence-one');
+    var elementTwo = document.getElementById('sequence-two');
+
+    snabbt.sequence([
+        [elementTwo, {
+          position: [100, 0, 0],
+        }],
+        [elementOne, {
+          position: [100, 0, 0],
+        }],
+        [elementOne, {
+          position: [0, 0, 0],
+        }],
+        [elementTwo, {
+          position: [0, 0, 0],
+        }],
+      ]
+    );
+  });
   // Value feed example
   $('#value-feed-example').on('click', function() {
     $('#value-feed-example').snabbt({
@@ -351,4 +372,4 @@ $(function() {
 
   FastClick.attach(document.body);
 
-})();
+});

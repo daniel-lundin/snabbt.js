@@ -68,7 +68,7 @@
           </div>
           <div class="four columns">
             <h3><i class="fa fa-paper-plane"></i>Light</h3>
-            <p> ~4kb minified and gzipped</p>
+            <p> ~5kb minified and gzipped</p>
           </div>
           <div class="four columns">
             <h3><i class="fa fa-user"></i>Simple</h3>
@@ -257,6 +257,29 @@
       <section id="advanced">
         <h2>Advanced concepts</h2>
         <p>This section describes some of the more advanced usages.</p>
+
+        <h3>Sequence</h3>
+        <p>Chaining is convenient when animating a single element or group of elements in multiple steps. However, if you want to trigger animations on a different set of element once one animation is completed you often end up with a lot of callbacks. This is where sequencing comes into play. <em>snabbt.sequence</em> is a function call that allows you to specify an array of animations that should run in sequence.</p>
+        <pre><code class="javascript">snabbt.sequence([
+    [elementTwo, {
+      position: [100, 0, 0],
+    }],
+    [elementOne, {
+      position: [100, 0, 0],
+    }],
+    [elementOne, {
+      position: [0, 0, 0],
+    }],
+    [elementTwo, {
+      position: [0, 0, 0],
+    }],
+  ]
+);</code></pre>
+        <button id="sequence-element-example" class="button-primary extra-top-margin">Run example</button>
+        <div>
+          <div id="sequence-one" class="sequence-example"></div>
+          <div id="sequence-two" class="sequence-example"></div>
+        </div>
 
         <h3>Value feeding</h3>
         <p>The animation object is very simple to work with but has it limitations. Sometimes you want to do the transforms in another order. This is where value feeding comes handy. The <em>valueFeeder</em> parameter expects a function that takes two parameters, one which will progress from 0 to 1 and an identity matrix that you can modify. The function will be called every frame and should return a matrix(see <a href="#matrix">Matrix API</a>) representing the current transform.</p>
