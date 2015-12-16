@@ -53,7 +53,7 @@ describe('main', () => {
       };
       Engine.createChainer.returns(chainerStub);
 
-      var elements = [{}, {}];
+      var elements = [{ style: {} }, { style: {} }];
       var options = {};
       snabbt(elements, options)
         .snabbt(options);
@@ -68,7 +68,7 @@ describe('main', () => {
           callback();
         }
       });
-      var elements = [{}, {}];
+      var elements = [{ style: {} }, { style: {} }];
       var options = {};
 
       var callback = sinon.stub();

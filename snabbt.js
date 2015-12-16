@@ -1,4 +1,3 @@
-/* snabbt.js Version: 0.6.1 Build date: 2015-12-12 (c) 2015 Daniel Lundin @license MIT */
 (function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.snabbt = f()}})(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 'use strict';
 var utils = require('./utils.js');
@@ -17,7 +16,6 @@ function createAnimation(startState, _endState, options, transformProperty) {
 
   var startTime = -1;
   var currentTime = 0;
-  var stopped = false;
   var started = false;
 
   // Manual related
@@ -37,17 +35,8 @@ function createAnimation(startState, _endState, options, transformProperty) {
   // Public api
   return {
     options: options,
-    stop: function stop() {
-      stopped = true;
-    },
     endState: function endState() {
       return _endState;
-    },
-    isStopped: function isStopped() {
-      return stopped;
-    },
-    isStarted: function isStarted() {
-      return started;
     },
 
     finish: function finish(callback) {
@@ -74,8 +63,6 @@ function createAnimation(startState, _endState, options, transformProperty) {
     },
 
     tick: function tick(time) {
-      if (stopped) return;
-
       if (manual) {
         currentTime = time;
         return this.updateCurrentTransform();
@@ -94,7 +81,7 @@ function createAnimation(startState, _endState, options, transformProperty) {
         currentTime = time - delay;
 
         var curr = Math.min(Math.max(0.0, currentTime - startTime), duration);
-        easer.tick(curr / duration);
+        easer.tick(duration === 0 ? 1 : curr / duration);
         this.updateCurrentTransform();
         if (options.update) {
           options.update(curr / duration);
@@ -129,10 +116,7 @@ function createAnimation(startState, _endState, options, transformProperty) {
     },
 
     completed: function completed() {
-      if (stopped) return true;
-      if (startTime === 0) {
-        return false;
-      }
+      if (startTime === 0) return false;
       return easer.completed();
     },
 
@@ -155,7 +139,6 @@ function createAttentionAnimation(_options) {
   _options.initialVelocity = 0.1;
   _options.equilibriumPosition = 0;
   var spring = easing.createSpringEasing(_options);
-  var stopped = false;
   var tweenPosition = movement.position;
   var tweenRotation = movement.rotation;
   var tweenRotationPost = movement.rotationPost;
@@ -175,15 +158,8 @@ function createAttentionAnimation(_options) {
     options: function options() {
       return _options;
     },
-    stop: function stop() {
-      stopped = true;
-    },
-    isStopped: function isStopped() {
-      return stopped;
-    },
 
     tick: function tick() {
-      if (stopped) return;
       if (spring.equilibrium) return;
       spring.tick();
 
@@ -228,7 +204,7 @@ function createAttentionAnimation(_options) {
     },
 
     completed: function completed() {
-      return spring.completed() || stopped;
+      return spring.completed();
     },
 
     restart: function restart() {
@@ -404,12 +380,10 @@ var Engine = {
 
     this.archiveCompletedAnimations();
 
-    this.scheduleNextFrame();
+    if (this.runningAnimations.length > 0) this.scheduleNextFrame();
   },
 
   stepAnimation: function stepAnimation(element, animation, time) {
-    if (animation.isStopped()) return;
-
     animation.tick(time);
     animation.updateElement(element);
   },
@@ -499,14 +473,28 @@ var Engine = {
     return animation;
   },
 
+  stopAnimation: function stopAnimation(element) {
+    var stoppedAnimation = this.runningAnimations.filter(function (animation) {
+      return animation[0] === element;
+    });
+    this.runningAnimations = this.runningAnimations.filter(function (animation) {
+      return animation[0] !== element;
+    });
+    Array.prototype.push.apply(this.completedAnimations, stoppedAnimation);
+  },
+
   initializeAnimation: function initializeAnimation(element, arg2, arg3) {
-    var animation;
+    var animation = undefined;
     if (arg2 === 'attention') {
       animation = this.createAttentionAnimation(element, arg3);
+    } else if (arg2 === 'stop') {
+      return this.stopAnimation(element);
     } else {
       animation = this.createAnimation(element, arg2);
     }
     var chainer = this.createChainer();
+
+    animation.updateElement(element, true);
 
     this.runningAnimations.push([element, animation, chainer]);
     this.scheduleNextFrame();
@@ -519,14 +507,13 @@ var Engine = {
       return element === animation[0];
     });
     if (match) {
-      match[1].stop();
       return match[1].getCurrentState();
     }
     match = this.completedAnimations.find(function (animation) {
       return element === animation[0];
     });
     if (match) {
-      return match[1].endState();
+      return match[1].getCurrentState();
     }
   },
 

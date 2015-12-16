@@ -42,7 +42,8 @@ const Engine = {
 
     this.archiveCompletedAnimations();
 
-    this.scheduleNextFrame();
+    if (this.runningAnimations.length > 0)
+      this.scheduleNextFrame();
   },
 
   stepAnimation(element, animation, time) {
@@ -147,6 +148,8 @@ const Engine = {
     }
     const chainer = this.createChainer();
 
+    animation.updateElement(element, true);
+
     this.runningAnimations.push([element, animation, chainer]);
     this.scheduleNextFrame();
 
@@ -160,7 +163,7 @@ const Engine = {
     }
     match =  this.completedAnimations.find((animation) => element === animation[0]);
     if (match) {
-      return match[1].endState();
+      return match[1].getCurrentState();
     }
   },
 

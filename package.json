@@ -12,7 +12,6 @@
     "snabbt.min.js"
   ],
   "scripts": {
-    "watch": "watchify -v -t babelify src/main.js -o snabbt.js",
     "test": "mocha src/**/*Tests.js --harmony",
     "tdd": "mocha src/**/*Tests.js --harmony --watch",
     "build": "browserify -s snabbt -t babelify src/main.js -o snabbt.js && uglifyjs --compress --mangle -- snabbt.js > snabbt.min.js",

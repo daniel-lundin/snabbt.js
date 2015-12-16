@@ -81,7 +81,7 @@ function createAnimation(startState, endState, options, transformProperty) {
         currentTime = time - delay;
 
         var curr = Math.min(Math.max(0.0, currentTime - startTime), duration);
-        easer.tick(curr / duration);
+        easer.tick(duration === 0 ? 1 : curr / duration);
         this.updateCurrentTransform();
         if (options.update) {
           options.update(curr / duration);

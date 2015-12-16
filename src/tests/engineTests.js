@@ -20,7 +20,7 @@ describe('Engine', () => {
 
   describe('createAnimation', () => {
     const previousState = createState({ position: [1, 2, 3] });
-    const element = {};
+    const element = { style: {} };
 
     beforeEach(() => {
       sinon.stub(Animation, 'createAnimation');
@@ -61,7 +61,7 @@ describe('Engine', () => {
         tick: sinon.stub(),
         updateElement: sinon.stub()
       };
-      const element = {};
+      const element = { style: {} };
       const time = 42;
       Engine.stepAnimation(element, animation, time);
 
@@ -182,7 +182,7 @@ describe('Engine', () => {
 
 
     it('should call createAnimation with states and options', () => {
-      const element = {};
+      const element = { style: {} };
       const options = {
         fromPosition: [-1, -1, -1],
         position: [1, 1, 1]
@@ -196,7 +196,7 @@ describe('Engine', () => {
     it('should append to runningAnimations', () => {
       expect(Engine.runningAnimations.length).to.eql(0);
 
-      const element = {};
+      const element = { style: {} };
       const options = {
         fromPosition: [-1, -1, -1],
         position: [1, 1, 1]
@@ -215,7 +215,7 @@ describe('Engine', () => {
           return previousState;
         }
       };
-      const element = {};
+      const element = { style: {} };
       Engine.runningAnimations = [[element, previousAnimation, {}]];
 
       const options = {
@@ -228,7 +228,7 @@ describe('Engine', () => {
     });
 
     it('should cancel running animations on the same element', () => {
-      const element = {};
+      const element = { style: {} };
       const animation = {
         stop() {},
         getCurrentState() {}
@@ -241,7 +241,7 @@ describe('Engine', () => {
     });
 
     it('should stop animation with \'stop\' command', () => {
-      const element = {};
+      const element = { style: {} };
       Engine.completedAnimations = [];
       Engine.runningAnimations = [[element, {}, {}]];
 
@@ -251,9 +251,11 @@ describe('Engine', () => {
       expect(Engine.completedAnimations).to.have.length(1);
     });
 
-    describe('manual animations', () => {
+    describe('attention animations', () => {
       beforeEach(() => {
-        sinon.stub(Animation, 'createAttentionAnimation');
+        sinon.stub(Animation, 'createAttentionAnimation').returns({
+          updateElement() {}
+        });
       });
 
       afterEach(() => {
@@ -261,7 +263,7 @@ describe('Engine', () => {
       });
 
       it('should create attention animation', () => {
-        const element = {};
+        const element = { style: {} };
         const options = {};
         Engine.initializeAnimation(element, 'attention', options);
 
