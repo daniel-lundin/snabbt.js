@@ -1,6 +1,8 @@
 'use strict';
 /* global window */
 
+require('array.prototype.find');
+
 var Engine = require('./engine.js');
 var preprocessOptions = require('./properties.js').preprocessOptions;
 var utils = require('./utils.js');

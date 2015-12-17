@@ -1,5 +1,39 @@
-/* snabbt.js Version: 0.6.2 Build date: 2015-12-16 (c) 2015 Daniel Lundin @license MIT */
 (function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.snabbt = f()}})(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
+// Array.prototype.find - MIT License (c) 2013 Paul Miller <http://paulmillr.com>
+// For all details and docs: https://github.com/paulmillr/array.prototype.find
+// Fixes and tests supplied by Duncan Hall <http://duncanhall.net> 
+(function(globals){
+  if (Array.prototype.find) return;
+
+  var find = function(predicate) {
+    var list = Object(this);
+    var length = list.length < 0 ? 0 : list.length >>> 0; // ES.ToUint32;
+    if (length === 0) return undefined;
+    if (typeof predicate !== 'function' || Object.prototype.toString.call(predicate) !== '[object Function]') {
+      throw new TypeError('Array#find: predicate must be a function');
+    }
+    var thisArg = arguments[1];
+    for (var i = 0, value; i < length; i++) {
+      value = list[i];
+      if (predicate.call(thisArg, value, i, list)) return value;
+    }
+    return undefined;
+  };
+
+  if (Object.defineProperty) {
+    try {
+      Object.defineProperty(Array.prototype, 'find', {
+        value: find, configurable: true, enumerable: false, writable: true
+      });
+    } catch(e) {}
+  }
+
+  if (!Array.prototype.find) {
+    Array.prototype.find = find;
+  }
+})(this);
+
+},{}],2:[function(require,module,exports){
 'use strict';
 var utils = require('./utils.js');
 var easing = require('./easing.js');
@@ -220,7 +254,7 @@ module.exports = {
   createAttentionAnimation: createAttentionAnimation
 };
 
-},{"./easing.js":2,"./state.js":7,"./tweeners":8,"./utils.js":9}],2:[function(require,module,exports){
+},{"./easing.js":3,"./state.js":8,"./tweeners":9,"./utils.js":10}],3:[function(require,module,exports){
 'use strict';
 
 var utils = require('./utils.js');
@@ -338,7 +372,7 @@ module.exports = {
   createSpringEasing: createSpringEasing
 };
 
-},{"./utils.js":9}],3:[function(require,module,exports){
+},{"./utils.js":10}],4:[function(require,module,exports){
 'use strict';
 /* global document, window */
 var stateFromOptions = require('./state.js').stateFromOptions;
@@ -527,9 +561,11 @@ var Engine = {
 
 module.exports = Engine;
 
-},{"./animation.js":1,"./state.js":7,"./utils.js":9}],4:[function(require,module,exports){
+},{"./animation.js":2,"./state.js":8,"./utils.js":10}],5:[function(require,module,exports){
 'use strict';
 /* global window */
+
+require('array.prototype.find');
 
 var Engine = require('./engine.js');
 var preprocessOptions = require('./properties.js').preprocessOptions;
@@ -625,7 +661,7 @@ if (typeof window !== 'undefined' && window.jQuery) {
 
 Engine.init();
 
-},{"./engine.js":3,"./matrix.js":5,"./properties.js":6,"./utils.js":9}],5:[function(require,module,exports){
+},{"./engine.js":4,"./matrix.js":6,"./properties.js":7,"./utils.js":10,"array.prototype.find":1}],6:[function(require,module,exports){
 'use strict';
 
 function assignedMatrixMultiplication(a, b, res) {
@@ -881,7 +917,7 @@ function createMatrix() {
 
 module.exports = createMatrix;
 
-},{}],6:[function(require,module,exports){
+},{}],7:[function(require,module,exports){
 'use strict';
 
 var utils = require('./utils.js');
@@ -971,7 +1007,7 @@ module.exports = {
   }
 };
 
-},{"./utils.js":9}],7:[function(require,module,exports){
+},{"./utils.js":10}],8:[function(require,module,exports){
 'use strict';
 
 var createMatrix = require('./matrix.js');
@@ -1080,7 +1116,7 @@ module.exports = {
   stateFromOptions: stateFromOptions
 };
 
-},{"./matrix.js":5,"./properties.js":6,"./utils.js":9}],8:[function(require,module,exports){
+},{"./matrix.js":6,"./properties.js":7,"./utils.js":10}],9:[function(require,module,exports){
 'use strict';
 
 var createMatrix = require('./matrix.js');
@@ -1198,7 +1234,7 @@ module.exports = {
   createValueFeederTweener: createValueFeederTweener
 };
 
-},{"./matrix.js":5,"./properties":6}],9:[function(require,module,exports){
+},{"./matrix.js":6,"./properties":7}],10:[function(require,module,exports){
 'use strict';
 
 function isFunction(object) {
@@ -1253,5 +1289,5 @@ module.exports = {
   findUltimateAncestor: findUltimateAncestor
 };
 
-},{}]},{},[4])(4)
+},{}]},{},[5])(5)
 });

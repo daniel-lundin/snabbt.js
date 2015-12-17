@@ -25,6 +25,7 @@
   "author": "Daniel Lundin",
   "license": "MIT",
   "devDependencies": {
+    "array.prototype.find": "^1.0.0",
     "babelify": "^6.3.0",
     "chai": "^3.3.0",
     "chai-string": "^1.1.4",
