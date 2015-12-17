@@ -511,12 +511,6 @@ snabbt.setElementTransform(element, matrix);</code></pre>
               <td>Delay before the animation is started in milliseconds</td>
             </tr>
             <tr>
-              <td>loop</td>
-              <td>Scalar</td>
-              <td>0</td>
-              <td>Number of times to repeat the animation</td>
-            </tr>
-            <tr>
               <td>start(index, total)</td>
               <td>function</td>
               <td>undefined</td>
@@ -552,7 +546,6 @@ snabbt.setElementTransform(element, matrix);</code></pre>
           <li><strong>opacity</strong> - Element opacity(0 - 1)(<em>fromOpactiy</em> mandatory if used)</li>
           <li><strong>duration</strong> - Animation duration in milliseconds</li>
           <li><strong>delay</strong> - Delay before the animation is started in milliseconds</li>
-          <li><strong>loop</strong> - Number of times to repeat the animation</li>
           <li><strong>complete(index, total)</strong> - Function to be called when animation is completed. If multiple elements are animated, this function will be called once for every element with two parameters, index of current element and total elements in the animated collection. <em>this</em> will be bound the current element</li>
           <li><strong>allDone</strong> - Will be called once independent of how many elements animated</li>
         </ul>

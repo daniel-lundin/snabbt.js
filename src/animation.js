@@ -56,12 +56,6 @@ function createAnimation(startState, endState, options, transformProperty) {
       easer.resetFrom(manualValue);
     },
 
-    restart() {
-      // Restart timer
-      startTime = -1;
-      easer.resetFrom(0);
-    },
-
     tick(time) {
       if (manual) {
         currentTime = time;
@@ -195,22 +189,17 @@ function createAttentionAnimation(options) {
       }
     },
 
-    updateElement: function(element) {
+    updateElement(element) {
       utils.updateElementTransform(element, currentMovement.asMatrix());
       utils.updateElementProperties(element, currentMovement.getProperties());
     },
 
-    getCurrentState: function() {
+    getCurrentState() {
       return currentMovement;
     },
 
-    completed: function() {
+    completed() {
       return spring.completed();
-    },
-
-    restart: function() {
-      // Restart spring
-      spring = easing.createSpringEasing(options);
     }
   };
 }
