@@ -68,26 +68,22 @@ module.exports = function(element, arg2, arg3) {
 module.exports.createMatrix = createMatrix;
 module.exports.setElementTransform = updateElementTransform;
 module.exports.sequence = (queue) => {
-  let i = 0;
+  let i = -1;
 
   const next = () => {
     ++i;
     if (i > queue.length - 1)
       return;
+
     const element = queue[i][0];
     const options = queue[i][1];
 
     const previousAllDone = options.allDone;
-    options.allDone = previousAllDone ? () => { previousAllDone(); next() } : next;
+    options.allDone = previousAllDone ? () => { previousAllDone(); next(); } : next;
     snabbt(element, options);
-  }
+  };
 
-  const element = queue[0][0];
-  const options = queue[0][1];
-  const previousAllDone = options.allDone;
-  options.allDone = previousAllDone ? () => { previousAllDone(); next() } : next;
-
-  snabbt(element, options);
+  next();
 };
 
 if (typeof window !== 'undefined' && window.jQuery) {

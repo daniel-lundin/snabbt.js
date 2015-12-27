@@ -1,4 +1,4 @@
-/* snabbt.js Version: 0.6.3 Build date: 2015-12-17 (c) 2015 Daniel Lundin @license MIT */
+/* snabbt.js Version: 0.6.4 Build date: 2015-12-27 (c) 2015 Daniel Lundin @license MIT */
 (function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.snabbt = f()}})(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 // Array.prototype.find - MIT License (c) 2013 Paul Miller <http://paulmillr.com>
 // For all details and docs: https://github.com/paulmillr/array.prototype.find
@@ -128,7 +128,7 @@ function createAnimation(startState, _endState, options, transformProperty) {
 
     setValue: function setValue(_manualValue) {
       started = true;
-      manualValue = Math.min(Math.max(_manualValue, 0.0001), 1 + manualDelayFactor);
+      manualValue = Math.min(Math.max(_manualValue, 0.0001), 0.9999 + manualDelayFactor);
     },
 
     updateCurrentTransform: function updateCurrentTransform() {
@@ -616,11 +616,12 @@ module.exports = function (element, arg2, arg3) {
 module.exports.createMatrix = createMatrix;
 module.exports.setElementTransform = updateElementTransform;
 module.exports.sequence = function (queue) {
-  var i = 0;
+  var i = -1;
 
   var next = function next() {
     ++i;
     if (i > queue.length - 1) return;
+
     var element = queue[i][0];
     var options = queue[i][1];
 
@@ -631,14 +632,7 @@ module.exports.sequence = function (queue) {
     snabbt(element, options);
   };
 
-  var element = queue[0][0];
-  var options = queue[0][1];
-  var previousAllDone = options.allDone;
-  options.allDone = previousAllDone ? function () {
-    previousAllDone();next();
-  } : next;
-
-  snabbt(element, options);
+  next();
 };
 
 if (typeof window !== 'undefined' && window.jQuery) {

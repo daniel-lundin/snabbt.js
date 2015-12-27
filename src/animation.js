@@ -92,7 +92,7 @@ function createAnimation(startState, endState, options, transformProperty) {
 
     setValue(_manualValue) {
       started = true;
-      manualValue = Math.min(Math.max(_manualValue, 0.0001), 1 + manualDelayFactor);
+      manualValue = Math.min(Math.max(_manualValue, 0.0001), 0.9999 + manualDelayFactor);
     },
 
     updateCurrentTransform() {

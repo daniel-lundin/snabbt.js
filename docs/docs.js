@@ -144,17 +144,17 @@ $(function() {
 
     snabbt.sequence([
         [elementTwo, {
-          position: [100, 0, 0],
+          position: [100, 0, 0]
         }],
         [elementOne, {
-          position: [100, 0, 0],
+          position: [100, 0, 0]
         }],
         [elementOne, {
-          position: [0, 0, 0],
+          position: [0, 0, 0]
         }],
         [elementTwo, {
-          position: [0, 0, 0],
-        }],
+          position: [0, 0, 0]
+        }]
       ]
     );
   });
@@ -328,7 +328,6 @@ $(function() {
           animation.setValue(delta);
         });
       }
-
 
       if (event.isFinal) {
         if (animations) {
