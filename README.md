@@ -19,6 +19,7 @@ Fast animations with Javascript and CSS transforms
 ## Releases
 The initial release is out. Would love some feedback on things that can be improved. The release(and future ones) can be found in the release section
 
+- **0.6.4** - Manual mode complete bug fix
 - **0.6.3** - IE Bug fix, polyfill for Array.prototype.find
 - **0.6.2** - Bug fixes, Added sequencing of animations
 - **0.6.1** - Fixed UMD-build
