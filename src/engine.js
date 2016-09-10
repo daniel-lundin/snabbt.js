@@ -11,7 +11,7 @@ const Engine = {
   transformProperty: 'transform',
   rAFScheduled: false,
   init() {
-    if (typeof window !== undefined) return;
+    if (typeof window !== 'undefined') return;
     const styles = window.getComputedStyle(document.documentElement, '');
     const vendorPrefix = (Array.prototype.slice
         .call(styles)
